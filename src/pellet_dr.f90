@@ -77,7 +77,7 @@ REAL(KIND=rspec) :: &
   rseg_p(3,2),         & !coordinates defining the segment [see k_seg_p]
                          !(:,1) is launch point
                          !(:,2) is target point
-                         !required only for k_equil = 0
+                         !required only for k_equil = 0  (**always needed?)
   r0,                  & !major radius of geometric center [m]
   a0,                  & !minor radius in midplane [m]
   dsol,                & !SOL thickness in midplane normalized to a0 [-]
@@ -851,7 +851,7 @@ CALL PELLET(k_pel,amu_pel,r_pel,v_pel,nc,dvol_r,den_r,te_r,n_p-1,izone_p,s_p, &
 IF(iflag /= 0) THEN
 
   CALL WRITE_LINE(n_msg,message,1,1)
-  IF(iflag > 0) GOTO 9999
+! IF(iflag > 0) GOTO 9999
   iflag=0
   message=''
 
@@ -1851,7 +1851,7 @@ READ(nin,'(5e16.9)') (x_lim(i),y_lim(i),i=1,n_lim)
 x_xy(1:nx_xy)=rmin+rdim*(/ (i-1,i=1,nx_xy) /)/(nx_xy-1)
 y_xy(1:ny_xy)=zmid-zdim/2+zdim*(/ (i-1,i=1,ny_xy) /)/(ny_xy-1)
 
-!1D radial grid and and poloidal flux
+!1D radial grid and poloidal flux
 psi_x(1:nx_xy)=psimag+(psilim-psimag)*(/ (i-1,i=1,nx_xy) /)/(nx_xy-1)
 rhop_x(1:nx_xy)=(psi_x(1:nx_xy)-psi_x(1))/(psi_x(nx_xy)-psi_x(1))
 

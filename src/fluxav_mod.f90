@@ -3098,7 +3098,7 @@ tlim=30.0
       !Compute volume enclosed
       vol_f(j)=0
 
-      DO i=2,mp_f(j)
+      DO i=2,mp_f(j)   
 
         vol_f(j)=vol_f(j)+(xp_f(i,j)-xp_f(i-1,j)) &
                          *(xp_f(i,j)*yp_f(i,j)+xp_f(i-1,j)*yp_f(i-1,j))/2
@@ -3108,23 +3108,25 @@ tlim=30.0
       vol_f(j)=ABS(vol_f(j))*2*z_pi
 
       !See if volume of this surface is less than next outer surface
-      IF(j < nr_f .AND. &
-         vol_f(j)-vol_f(j+1) >= 0.0) THEN
+      IF (j < nr_f) THEN
+      
+         IF (vol_f(j)-vol_f(j+1) >= 0.0) THEN
 
-        !Failed to find contour
-        IF(psifctr < 1.0e-3) THEN
+          !Failed to find contour
+          IF(psifctr < 1.0e-3) THEN
 
-          !Pull in outer boundary a little and start all over
-          psifctr=0.1
-          GOTO 10
+            !Pull in outer boundary a little and start all over
+            psifctr=0.1
+            GOTO 10
 
-        ELSE
+          ELSE
 
-          !Everything failed
-          iflag=1
-          message='FLUXAV_SURF(7)/ERROR:total failure'
-          GOTO 9999
+            !Everything failed
+            iflag=1
+            message='FLUXAV_SURF(7)/ERROR:total failure'
+            GOTO 9999
 
+          ENDIF
         ENDIF
 
       ENDIF

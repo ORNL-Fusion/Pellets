@@ -2596,7 +2596,7 @@ LOGICAL :: &
   l_newcell
 
 INTEGER, PARAMETER :: &
-  mstep=1000
+  mstep=5000
 
 INTEGER :: &
   i,istep,nstep
