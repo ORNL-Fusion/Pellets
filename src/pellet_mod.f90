@@ -818,7 +818,8 @@ ELSEIF(amup_pl >= 20.0 .AND. &
 
   !Neon (nominally 20.2)
   coeff=2.32e15
-  rhomass=2.205e6
+  !rhomass=2.205e6 ! Ideal value
+  rhomass=1.44e6 ! measured value
 
 ELSEIF(amup_pl >= 39.0 .AND. &
        amup_pl <= 40.0) THEN
@@ -990,7 +991,8 @@ ELSEIF(amup_pl >= 20.0 .AND. &
 
   !Neon (nominally 20.2)
   coeff=2.32e15
-  rhomass=2.205e6
+  !rhomass=2.205e6 ! Ideal value
+  rhomass=1.44e6 ! measured value
 
 ELSEIF(amup_pl >= 39.0 .AND. &
        amup_pl <= 40.0) THEN
@@ -2135,7 +2137,8 @@ IF(amup_pl >= 20.0 .AND. &
 
   !Neon (nominally 20.2)
   coeff=2.343e15
-  rhomass=2.205e6
+  !rhomass=2.205e6 ! Ideal value
+  rhomass=1.44e6 ! measured value
 
 ELSEIF(amup_pl >= 39.0 .AND. &
        amup_pl <= 40.0) THEN
@@ -2245,7 +2248,8 @@ IF(amup_pl >= 20.0 .AND. &
 
   !Neon (nominally 20.2)
   coeff=8.147e-9
-  rhomass=2.205e6
+  !rhomass=2.205e6 ! Ideal value
+  rhomass=1.44e6 ! measured value
   anum = 10
   iexc = 137  
 
@@ -2401,7 +2405,8 @@ IF(amup_pl >= 20.0 .AND. &
 
   !Neon (nominally 20.2)
   coeff=8.147e-9
-  rhomass=2.205e6
+  !rhomass=2.205e6 ! Ideal value
+  rhomass=1.44e6 ! measured value
   anum = 10
   iexc = 137  
 
