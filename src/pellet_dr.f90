@@ -1529,10 +1529,10 @@ REAL(KIND=rspec), INTENT(OUT) :: &
 !-------------------------------------------------------------------------------
 !Declaration of local variables
 INTEGER, PARAMETER :: &
-  mxnx_xy=130, &
-  mxny_xy=130,  &
+  mxnx_xy=514, &
+  mxny_xy=514,  &
   mxnr_r=300, &
-  mxn_lim=200, &
+  mxn_lim=501, &
   mxn_bdry=1500
 
 REAL(KIND=rspec), PARAMETER :: &
