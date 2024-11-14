@@ -67,6 +67,41 @@ def write_profiles_from_pfile(pfile_loc, gfile_loc, efit_tree = None,
         for i in range(npts):
             f.write(str(rho[i]) + '  ' + str(ne[i]) + '  ' + str(te[i]) + '  ' + str(ti[i]) + '\n')
 
+
+# ----------------------------------------------------------------------
+
+
+def write_profiles_from_txt(folder, newfilename='pelprofs'):
+    """
+    Read a series of text files and combine into a profiles file readable by the PELLET code
+    """
+    if folder[-1] != '/':
+        folder += '/'
+
+    params = ['rho', 'ne', 'te', 'ti']
+    filenames = ['rho_tor_norm', 'electron_density', 'electron_temperature', 'D_temperature']
+    norm = [1, 1e19, 1e3, 1e3]
+
+    profiles = {}
+
+    for pi, param in enumerate(params):
+        with open(folder + filenames[pi], 'r') as f:
+            lines = f.readlines()
+
+        npts = len(lines)
+
+        profiles[param] = np.zeros(npts)
+        for i, l in enumerate(lines):
+            profiles[param][i]=float(l) / norm[pi]
+
+    with open(newfilename, 'w') as f:
+        f.write('rho  ne  te  ti\n')
+        f.write(str(npts) + '\n')
+        for i in range(npts):
+            f.write(str(profiles['rho'][i]) + '  ' + str(profiles['ne'][i]) + '  ' + str(profiles['te'][i]) +
+                    '  ' + str(profiles['ti'][i]) + '\n')
+
+
 # ----------------------------------------------------------------------
 
 
@@ -135,7 +170,7 @@ def write_profiles_from_pickle(pickled_file_loc = '/home/wilcoxr/pellets/SPARC/S
             f.write('rho  ne  te  ti\n')
             f.write(str(npts) + '\n')
             for i in range(npts):
-                f.write(str(rho[i]) + '  ' + str(ne[i]) + '  ' +
+                f.write(str(rho_tor[i]) + '  ' + str(ne[i]) + '  ' +
                         str(te[i]) + '  ' + str(ti[i]) + '\n')
 
 # ----------------------------------------------------------------------
@@ -635,6 +670,10 @@ def compare_ablation_profiles(sumfileloclist, gfile_loc, figsize_ratio = [3, 3, 
     in paper:
         sumfiles=['178555/sum_pellet178555.2815_small.dat','165415/sum_pellet165415.4000.dat']
 
+    d3d_upgrade:
+    pel.compare_ablation_profiles(['sum_pelletd3d_upgrade_neped1.0.dat','../HFS45/sum_pelletd3d_upgrade_neped1.0.dat'],
+    'g100000.0010',xlims=[0.7,1.05],ylims=[[0,15],[-0.01,3.5],[-1,35]],yticks=[[0,5,10,15],[0,1,2,3],[0,10,20,30]],no_legend=True)
+
     """
     label_ident = 'sum_pellet'
     # figsize_ratios = [2, 2, 4],
@@ -831,8 +870,8 @@ def scan_pellet_mass(top_folder, mass_scale = np.arange(0.1, 1.6, 0.1),
 # ----------------------------------------------------------------------
 
 
-def scan_pellet_velocity(top_folder, velocities = np.arange(50,201,10),
-                         pellet_executable_loc = '/Users/wilcox/Codes/Pellets/src/xpellet'):
+def scan_pellet_velocity(top_folder, velocities = np.arange(50,301,10),
+                         pellet_executable_loc = '/home/shared/bin/xpellet'):
     """
     Use the same equilibrium but scan the pellet velocity
     'top_folder' should contain a g file, a prof file, and an example nml file as templates
@@ -841,6 +880,7 @@ def scan_pellet_velocity(top_folder, velocities = np.arange(50,201,10),
 
     Inputs:
       pellet_executable_loc = '/home/wilcoxr/pellets/src/xpellet' on Iris
+       '/home/shared/bin/xpellet' on BB8
     """
     if top_folder[-1] != '/': top_folder += '/'
     os.chdir(top_folder)
@@ -851,12 +891,11 @@ def scan_pellet_velocity(top_folder, velocities = np.arange(50,201,10),
         if f[:2] == 'g1':
             equilib_fileloc = f
     
-        elif f[:5] == 'prof_':
+        elif f[:5] == 'prof_' or f[:8] == 'pelprofs':
             profile_fileloc = f
 
-    # Read the example
-    nml_orig = pnml.PelletNml(equilib_fileloc, profile_fileloc, runid = 'just read',
-                              existing_nml_fileloc = existing_nml)
+    nml = pnml.PelletNml(equilib_fileloc, profile_fileloc, runid = 'just read',
+                         existing_nml_fileloc = existing_nml)
     # v_pel_orig = nml_orig.indata['v_pel']
 
     # Make a new folder for each pellet size and run xpellet in each one
@@ -871,8 +910,8 @@ def scan_pellet_velocity(top_folder, velocities = np.arange(50,201,10),
         call(['cp', profile_fileloc, new_folder])
         os.chdir(new_folder)
     
-        nml = pnml.PelletNml(equilib_fileloc, profile_fileloc, runid = runid,
-                             existing_nml_fileloc = existing_nml)
+        # nml = pnml.PelletNml(equilib_fileloc, profile_fileloc, runid = runid,
+        #                      existing_nml_fileloc = existing_nml)
         nml.write_nml('nml_pellet.dat', input_dict = {'v_pel': v})
     
         call([pellet_executable_loc])
@@ -880,10 +919,10 @@ def scan_pellet_velocity(top_folder, velocities = np.arange(50,201,10),
 
 # ----------------------------------------------------------------------
 
-def diameter_to_spherical_radius(diameter):
+def diameter_to_spherical_radius(diameter, length):
     # Assume cylinder with same length as diameter
-    # 4/3 pi r**3 = d pi (d/2)**2
-    srad = diameter * (3.0/16)**(1.0/3)
+    # 4/3 pi r**3 = L pi (d/2)**2
+    srad = (3.0/16 * length * diameter**2)**(1.0/3)
     return srad
 
 # ----------------------------------------------------------------------

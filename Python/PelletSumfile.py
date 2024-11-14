@@ -174,8 +174,7 @@ class PelletSumfile(object):
 
     def plot_density_change(self):
         """
-        Quickly plot a single output from the Pellet code, either from the radial
-        or time-dependent grids
+        Quickly plot the radial deposition profile
         """
     
         plt.figure()
