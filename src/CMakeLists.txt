@@ -11,7 +11,7 @@ if(EXISTS "${CONFIG_DIR}/user.cmake")
     include("${CONFIG_DIR}/user.cmake")
 endif()
 
-message(STATUS "Build type: CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 
 message(STATUS "NetCDF include path is ${NETCDF_INC_PATH}")
 message(STATUS "NetCDF library path is ${NETCDF_LIB_PATH}")
