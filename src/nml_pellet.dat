@@ -1,11 +1,11 @@
  $indata
-  cn_runid      = 'D3D_VMEC_test'
-  cn_eq         = 'wout_test.txt'         
+  cn_runid      = 'CAT_geqdsk_test'
+  cn_eq         = '/Users/gz6/Documents/FREDA/tokdesigner-data/TOKDESIGNER/TUTORIAL/example1/g000001.00001'         
   cn_prof       = 'p164661.03605_784'
-  cn_device     = 'D3D'
+  cn_device     = 'CAT'
   k_equil       = 1
   k_pel         = 12          
-  k_readd       = 1          
+  k_readd       = 0          
   k_seg_p       = 0
   ncplas        = 100         
   ncsol         = 5          
@@ -13,7 +13,7 @@
   nvert         = 0          
   amu_pel       = 6.9        
   r_pel         = 0.90e-03   
-  v_pel         = 0.100e+03   
+  v_pel         = 0.100e+03 
   rseg_p(1:3,1) = 1.05       0.0       0.2
   rseg_p(1:3,2) = 2.2       0.0        -0.2
   r0            = 1.7       
