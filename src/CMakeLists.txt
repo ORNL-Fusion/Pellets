@@ -1,7 +1,17 @@
+#------------------------------------------------------------------#
+# CMakeLists for PELLET code build.
+# Shouldn't need to make any changes here!
+#------------------------------------------------------------------#
+
+# Set minimum required cmake version
 cmake_minimum_required (VERSION 2.8.12)
 
+# Project name
 project (pellet Fortran)
 
+# The extra CONFIG_DIR is for the location of the user.cmake 
+# (or default.cmake) and saves having to specify it explicitly
+# when loading.
 set(CONFIG_DIR "${CMAKE_SOURCE_DIR}/config")
 
 # The user.cmake path needs to be in reference to wherever
@@ -11,19 +21,26 @@ if(EXISTS "${CONFIG_DIR}/user.cmake")
     include("${CONFIG_DIR}/user.cmake")
 endif()
 
+# Print build type
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 
+# Print NetCDF header and library paths 
 message(STATUS "NetCDF include path is ${NETCDF_INC_PATH}")
 message(STATUS "NetCDF library path is ${NETCDF_LIB_PATH}")
 
+# Make sure to link the library and set the include path
 link_directories(${NETCDF_LIB_PATH})
 include_directories(${NETCDF_INC_PATH})
 
+# Searching for the required libraries
 find_library(NETCDF_F_LIB NAMES netcdff ${NETCDF_F_LIB_NAME} PATHS ${NETCDF_LIB_PATH})
 find_library(NETCDF_C_LIB NAMES netcdf ${NETCDF_C_LIB_NAME} PATHS ${NETCDF_LIB_PATH})
 
+# Setting the library path for both the c++ and Fortran versions 
+# of NetCDF 
 set(NETCDF_LIB ${NETCDF_F_LIB} ${NETCDF_C_LIB})
 
+# Print whether the NetCDF libraries were found.
 if(NETCDF_F_LIB AND NETCDF_C_LIB)
     message(STATUS "NetCDF Fortran library found: ${NETCDF_F_LIB}")
     message(STATUS "NetCDF C library found: ${NETCDF_C_LIB}")
@@ -31,8 +48,10 @@ else()
     message(FATAL_ERROR "Failed to find required NetCDF libraries.")
 endif()
 
+# Print for successful library linking
 message(STATUS "Linking against NetCDF libraries: ${NETCDF_LIB}")
 
+# Set module filenames
 set (pellet_sources
     pellet_mod.f90
     ajax_mod.f90
@@ -53,4 +72,5 @@ set (pellet_sources
 #    fluxav_vmec.f
 #    prldata_mod.f90
 
+# Create the executable -- now you should be good to go!
 add_executable (xpellet ${pellet_sources})

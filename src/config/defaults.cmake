@@ -4,7 +4,7 @@
 # Pretty minimal given that the code only uses NetCDF :).
 #
 # To add your personal touch, copy this file to user.cmake and  
-# make your desired modifications.
+# make your desired modifications (e.g., NetCDF file path...). 
 #------------------------------------------------------------------#
 
 # Set build type
