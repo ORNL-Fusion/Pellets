@@ -1,0 +1,198 @@
+&inpel
+!--------------------------------------------------!
+! General io 
+!--------------------------------------------------!
+!  cn_runid   :     Run id to use in output filename
+!  cn_eq      :     Name of input file for MHD equilibrium data [character]
+!                   This is only required for k_equil = 1
+!  cn_prof    :     Name of input file for plasma profiles [character]
+!                   This is only required for k_readd = 1 
+!  cn_device  :     Name of device for pellet experiment [character]
+!                   E.g., D3D, JET etc...
+!--------------------------------------------------!
+  cn_runid   = 'D3D_VMEC_test'
+  cn_eq      = 'wout_test.txt'
+  cn_prof    = 'p164661.03605_784'
+  cn_device  = 'D3D'
+!--------------------------------------------------!
+! Various options and switches
+!--------------------------------------------------!
+!  k_equil    :     Option for MHD equilibrium/geometry [-]
+!                   = 0    simple approximation to 2D plasma using AJAX
+!                          (specify r0,a0,s0,e0,e1,d1,bt0,cur,q0)
+!                   = 1    read 2D or 3D inverse coordinate data file using AJAX
+!                          (specify file name in cn_eq)
+!                   = 2    read EFIT equilibrium from geqdsk file
+!                          (specify file name in cn_eq)
+!  k_pel      :     Option for ablation model [hydrogenic 0-5, other 10-11]
+!                   = 0    NGS      : reference model
+!                                     electron distribution
+!                                     elliptical neutral shield
+!                   = 1    NGS      : original Milora model
+!                                     single electron energy
+!                                     spherical neutral shield
+!                   = 2    NGPS     : 1mm neutral layer thickness
+!                                     electron distribution
+!                   = 3    NGS      : Macaulay
+!                   = 4    NGS      : Kuteev
+!                   = 5    NGS      : Parks
+!                   = 6    NGS      : Parks, arbitrary Q
+!                   = 10   Impurity : Parks
+!                   = 11   Impurity : Kuteev
+!                   = 12   Impurity : Parks, newer 2012
+!                   = else          : fail
+!  k_readd    :     Option to read profile data set [-]
+!                   = 1    read an input text file for profiles
+!                   = else do not read data file, use input profile factors
+!  k_seg_p    :     Option for coordinates of the pellet path segment
+!                   = 1    flux coordinates (rho,theta,zeta)
+!                   = 2    Cartesian coordinates (x,y,z)
+!                   = else default cylindrical coordinates (R,phi,Z)   
+!  k_prl      :     Switch to use PRL deposition model
+!                   = 1    on
+!  k_ped      :     Switch for pedestal Te model
+!                   = 1    on 
+!                        
+!--------------------------------------------------!
+  k_equil  = 1
+  k_pel    = 12          
+  k_readd  = 1          
+  k_seg_p  = 0
+  k_prl    = 0
+  k_ped    = 1
+!--------------------------------------------------!
+! Grid
+!--------------------------------------------------!
+! ncplas      :     Number of radial cells in plasma
+! ncsol       :     Number of radial cells in SOL
+! nhorz       :     Number of horizontal chords for line densities [0-5]
+! nvert       :     Number of vertical chords for line densities [0-5]  
+!--------------------------------------------------!
+  ncplas  = 100         
+  ncsol   = 5          
+  nhorz   = 0          
+  nvert   = 0
+!--------------------------------------------------!
+! Cloudlets
+!--------------------------------------------------!
+! nprlcld     :     Number of cloudlets to be used in PRL modeling
+! iprlcld     :     ID number of cloudlet to output PRL diagnostic data
+!--------------------------------------------------!          
+  nprlcld  = 20
+  iprlcld  = 3
+!--------------------------------------------------!
+! Pellet parameters
+!--------------------------------------------------!
+! amu_pel     :     Atomic mass number of pellet atoms
+! r_pel       :     Equivalent spherical radius of pellet [m]
+! v_pel       :     Pellet velocity [m/s]
+! rseg_p(3,2) :     Coordinates defining the segment [see k_seg_p]
+!                   (:,1) is launch point
+!                   (:,2) is target point
+!--------------------------------------------------!
+  amu_pel        = 6.9        
+  r_pel          = 0.90e-03   
+  v_pel          = 0.100e+03   
+  rseg_p(1:3,1)  = 1.05      0.0       0.2
+  rseg_p(1:3,2)  = 2.2       0.0      -0.2
+!--------------------------------------------------!
+! Device and plasma parameters
+!--------------------------------------------------!
+! r0         :      Major radius of geometric center [m]
+! a0         :      Minor radius in midplane [m]
+! dsol       :      SOL thickness in midplane normalized to a0 [-]
+! s0         :      Axis shift normalized to a0 [-]
+! e0         :      Axis elongation normalized to a0 [-]
+! e1         :      Edge elongation normalized to a0 [-]
+! d1         :      Edge triangularity normalized to a0 [-]
+! bt0        :      Toroidal field at R0 [T]
+! cur        :      Toroidal plasma current [MA]
+! q0         :      Axial safety factor [-]
+!                   Required only for k_readd /= 1
+!                   te(x)=te1+(te0-te1)*(1-x**px_te)**qx_te
+! te0        :      Electron temperature on axis [kev]
+! te1        :      Electron temperature at separatrix/limiter [kev]
+! px_te      :      Electron temperature profile exponent [-]
+! qx_te      :      Electron temperature profile exponent [-]
+! rl_te      :      Electron temperature exponential decay length in SOL [m]
+!                   Required only for k_readd /= 1
+!                   den(x)=den1+(den0-den1)*(1-x**px_den)**qx_den
+! den0       :      Electron density on axis [/m**3]
+! den1       :      Electron density at separatrix/limiter [/m**3]
+! px_den     :      Electron density profile exponent [-]
+! qx_den     :      Electron density profile exponent [-]
+! rl_den     :      Electron density exponential decay length in SOL [m]
+!--------------------------------------------------!
+  r0      = 1.7       
+  a0      = 0.565      
+  dsol    = 0.01       
+  s0      = 0.04     
+  e0      = 1.20       
+  e1      = 1.80       
+  d1      = 0.30       
+  bt0     = 1.9
+  cur     = 1.0e6
+  q0      = 1.0
+  te0     = 2.0       
+  te1     = 0.10      
+  px_te   = 1.5        
+  qx_te   = 1.0        
+  rl_te   = 0.01       
+  den0    = 6.0e+19   
+  den1    = 1.5e+19   
+  px_den  = 4.5        
+  qx_den  = 0.075       
+  rl_den  = 0.01
+!--------------------------------------------------!
+! Beam parameters
+!--------------------------------------------------!
+! rvert(5)   :      Major radii of vertical chords [m]
+! zhorz(5)   :      Vertical positions of normal horizontal chords [m]
+! pb(3)      :      Power in full, half, and third beam components [w]
+!                   hb(x)=(1-x**px_hb(j))**qx_hb(j))
+! px_hb(3)   :      Fast beam ion hj(r) profile exponent
+! qx_hb(3)   :      Fast beam ion hj(r) profile exponent
+! amu_b      :      Atomic mass number of beam ions [1-3]
+! eb0        :      Neutral beam injection energy [keV]
+! amu_i      :      Atomic mass number of plasma ions [1-3]
+! dn01       :      Neutral density at separatrix/limiter [/m**3]
+! rl_dn0     :      Neutral density exp falloff in plasma [m]
+! pa         :      Power in fast alphas [w]
+!                   ha_r(x)=(1-x**px_ha)**qx_ha
+! px_ha      :      Fast alpha h(r) profile exponent
+! qx_ha      :      Fast alpha h(r) profile exponent 
+!--------------------------------------------------!     
+  rvert(1:5)  = 2.100     2.550     3.000     3.450     3.900     
+  zhorz(1:5)  = 0.000     0.250     0.500     0.750     1.000     
+  pb(1:3)     = 1.000e+06 1.000e+06 1.000e+06  
+  px_hb(1:3)  = 2.0       4.0       8.0        
+  qx_hb(1:3)  = 1.0       1.0       1.0        
+  amu_b       = 2.0        
+  eb0         = 79.0       
+  amu_i       = 2.0        
+  dn01        = 1.00e+16   
+  rl_dn0      = 0.05       
+  pa          = 1.0e+06 
+  px_ha       = 2.0   
+  qx_ha       = 2.0
+!--------------------------------------------------! 
+! PRL specific namelist variables
+!--------------------------------------------------!
+! pedte      :      Pedestal Te value
+! pedne      :      Pedestal ne value
+! pedwid     :      Pedestal Te width
+! fpelprl    :      Fraction of pellet mass unaffected by PRL drift model
+! prlinjang  :      PRL injection angle
+! prlq0      :      PRL q0 value
+! prlqa      :      PRL qa value
+! prlqf      :      PRL q profile exponent q(r) = (qa-q0) + q0*(1-(r/a)^qf)
+!--------------------------------------------------!       
+  pedte      = 0.4
+  pedwid     = 0.06
+  fpelprl    = 0.9
+  prlinjang  = 3.1415
+  prlq0      = 1.0
+  prlqa      = 4.0
+  prlqf      = 1.5
+!--------------------------------------------------!
+/
