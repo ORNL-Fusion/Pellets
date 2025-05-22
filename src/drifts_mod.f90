@@ -1,15 +1,15 @@
 MODULE DRIFTS_MOD
-!-------------------------------------------------------------------------------
-! DRIFTS_MOD is an F90 module of routines that calculates the change in 
-! pellet penetraion depth based on three drift scaling laws.	
-!
-!References:
-!
-!  Parks 2000
-!  Baylor 2007
-!  Koechl
-!  
-!-------------------------------------------------------------------------------
+!!-------------------------------------------------------------------------------
+!! DRIFTS_MOD is an F90 module of routines that calculates the change in 
+!! pellet penetraion depth based on three drift scaling laws.	
+!!
+!! References:
+!!
+!!  Parks 2000
+!!  Baylor 2007
+!!  Koechl
+!!  
+!!-------------------------------------------------------------------------------
 
 USE SPEC_KIND_MOD
 IMPLICIT NONE
