@@ -1,5 +1,11 @@
 &inpel
 !--------------------------------------------------!
+!!!!! As of 22-MAY-25: please copy this to rename as 
+!!!!! "nml_pellet.dat" when you're ready to use 
+!!!!! as this is the filename format the code 
+!!!!! still expects. 
+!--------------------------------------------------!
+!--------------------------------------------------!
 ! General io 
 !--------------------------------------------------!
 !  cn_runid   :     Run id to use in output filename
