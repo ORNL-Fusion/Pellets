@@ -8,7 +8,7 @@
 #------------------------------------------------------------------#
 
 # Set build type
-option(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type: Debug, Release, etc...")
+set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type: Debug, Release, etc...")
 
 # Check build type and set flags accordingly 
 if(CMAKE_BUILD_TYPE MATCHES "[Dd]ebug")
