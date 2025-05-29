@@ -16,7 +16,8 @@ IMPLICIT NONE
 
 CONTAINS
 
-SUBROUTINE PARKS_DRIFT(r_pel)
+SUBROUTINE PARKS_DRIFT(amu_pel,r_pel,den0,te0,r0,bt0,M0 &
+                       t0)
 
 ! What needs to be included as input?
 ! DEFINED IN PAPER : DEFINED IN PELLET : 
@@ -30,7 +31,8 @@ SUBROUTINE PARKS_DRIFT(r_pel)
 ! 
 
 REAL(KIND=rspec), INTENT(IN) :: &
-  r_pel
+  amu_pel,                       & !! pellet mass in amu <br />
+  r_pel                            !! pellet radius lb 
 
 END SUBROUTINE PARKS_DRIFT
 
