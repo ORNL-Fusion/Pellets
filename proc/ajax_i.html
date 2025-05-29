@@ -1,0 +1,765 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Documentation for PELLETS">
+    <meta name="author" content="" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>AJAX_I &ndash; PELLETS</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">PELLETS </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/namelists.html">Namelists</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>AJAX_I
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 2.0% of total for procedures.">89 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/ajax_mod.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/ajax_mod.f90.html'>ajax_mod.f90</a></li>
+                <li class="breadcrumb-item"><a href='../module/ajax_mod.html'>AJAX_MOD</a></li>
+            <li class="breadcrumb-item active" aria-current="page">AJAX_I</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>public  subroutine AJAX_I(nrho_r, rho_r, iflag, message, CUR_I_R, CUR_F_R, CUR_IMN_R, CUR_IMX_R, CUR_FMN_R, CUR_FMX_R)  
+</h2>
+    
+
+    <p>AJAX_I gets the enclosed toroidal and external poloidal currents for a set of
+  flux surfaces from the covariant components of B, as well as maximum and
+  minimum values for use as a diagnostic on the accuracy of the stream function</p>
+<p>References:
+  W.A.Houlberg, F90 free format 8/2004</p>
+<hr>
+<p>Declaration of input variables
+Allocate covariant B field array</p>
+<hr>
+<h2>Perform integrals of covariant B components on each surface</h2>
+<p>Over radial nodes</p>
+<p>Over toroidal nodes</p>
+<p>Over poloidal nodes</p>
+<p>Get cylindrical coordinates and metrics
+Check messages
+Get covariant B components
+Check messages
+Over poloidal nodes</p>
+<p>Over toroidal nodes</p>
+<p>Toroidal current
+Over toroidal nodes</p>
+<p>Over toroidal nodes</p>
+<p>Poloidal current
+Over poloidal nodes</p>
+<p>Over toroidal nodes</p>
+<p>Over radial nodes</p>
+<p>Check whether axial values are requested
+Use value of second node</p>
+<hr>
+<h2>Cleanup and exit</h2>
+<p>Deallocate arrays</p>
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nrho_r~3"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nrho_r</strong></td>
+            <td>
+                <p>no. of radial nodes [-]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rho_r~5"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>rho_r</strong>(:)</td>
+            <td>
+                <p>radial nodes [rho]</p>
+<p>Declaration of output variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-iflag~9"></span>
+              integer,
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>iflag</strong></td>
+            <td>
+                <p>error and warning flag [-]
+=-1 warning
+=0 none
+=1 error</p>
+<p>Declaration of optional output variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-message~9"></span>
+              character(len=*),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>message</strong></td>
+            <td>
+                <p>warning or error message [character]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cur_i_r"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>CUR_I_R</strong>(:)</td>
+            <td>
+                <p>enclosed toroidal current [A]
+external poloidal current [A]
+minimum toroidal current on AJAX toroidal grid [A]
+maximum toroidal current on AJAX toroidal grid [A]
+minimum poloidal current on AJAX poloidal grid [A]
+maximum poloidal current on AJAX poloidal grid [A]</p>
+<hr>
+<p>Declaration of local variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cur_f_r"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>CUR_F_R</strong>(:)</td>
+            <td>
+                <p>enclosed toroidal current [A]
+external poloidal current [A]
+minimum toroidal current on AJAX toroidal grid [A]
+maximum toroidal current on AJAX toroidal grid [A]
+minimum poloidal current on AJAX poloidal grid [A]
+maximum poloidal current on AJAX poloidal grid [A]</p>
+<hr>
+<p>Declaration of local variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cur_imn_r"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>CUR_IMN_R</strong>(:)</td>
+            <td>
+                <p>enclosed toroidal current [A]
+external poloidal current [A]
+minimum toroidal current on AJAX toroidal grid [A]
+maximum toroidal current on AJAX toroidal grid [A]
+minimum poloidal current on AJAX poloidal grid [A]
+maximum poloidal current on AJAX poloidal grid [A]</p>
+<hr>
+<p>Declaration of local variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cur_imx_r"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>CUR_IMX_R</strong>(:)</td>
+            <td>
+                <p>enclosed toroidal current [A]
+external poloidal current [A]
+minimum toroidal current on AJAX toroidal grid [A]
+maximum toroidal current on AJAX toroidal grid [A]
+minimum poloidal current on AJAX poloidal grid [A]
+maximum poloidal current on AJAX poloidal grid [A]</p>
+<hr>
+<p>Declaration of local variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cur_fmn_r"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>CUR_FMN_R</strong>(:)</td>
+            <td>
+                <p>enclosed toroidal current [A]
+external poloidal current [A]
+minimum toroidal current on AJAX toroidal grid [A]
+maximum toroidal current on AJAX toroidal grid [A]
+minimum poloidal current on AJAX poloidal grid [A]
+maximum poloidal current on AJAX poloidal grid [A]</p>
+<hr>
+<p>Declaration of local variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-cur_fmx_r"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>CUR_FMX_R</strong>(:)</td>
+            <td>
+                <p>enclosed toroidal current [A]
+external poloidal current [A]
+minimum toroidal current on AJAX toroidal grid [A]
+maximum toroidal current on AJAX toroidal grid [A]
+minimum poloidal current on AJAX poloidal grid [A]
+maximum poloidal current on AJAX poloidal grid [A]</p>
+<hr>
+<p>Declaration of local variables</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 12.2.1 (20241206.2353)
+ -->
+<!-- Title: proc~~ajax_i~~CallsGraph Pages: 1 -->
+<svg id="procajax_iCallsGraph" width="445pt" height="111pt"
+ viewBox="0.00 0.00 445.31 110.77" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~ajax_i~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 106.77)">
+<title>proc~~ajax_i~~CallsGraph</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-106.77 441.31,-106.77 441.31,4 -4,4"/>
+<!-- proc~ajax_i -->
+<g id="proc~~ajax_i~~CallsGraph_node1" class="node">
+<title>proc~ajax_i</title>
+<polygon fill="none" stroke="black" points="54,-42.77 0,-42.77 0,-20 54,-20 54,-42.77"/>
+<text text-anchor="middle" x="27" y="-27.04" font-family="Helvetica,sans-Serif" font-size="10.50">AJAX_I</text>
+</g>
+<!-- proc~ajax_b -->
+<g id="proc~~ajax_i~~CallsGraph_node2" class="node">
+<title>proc~ajax_b</title>
+<g id="a_proc~~ajax_i~~CallsGraph_node2"><a xlink:href="../proc/ajax_b.html" xlink:title="AJAX_B">
+<polygon fill="#d9534f" stroke="#d9534f" points="161.38,-63.77 107.38,-63.77 107.38,-41 161.38,-41 161.38,-63.77"/>
+<text text-anchor="middle" x="134.38" y="-48.04" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">AJAX_B</text>
+</a>
+</g>
+</g>
+<!-- proc~ajax_i&#45;&gt;proc~ajax_b -->
+<g id="proc~~ajax_i~~CallsGraph_edge1" class="edge">
+<title>proc~ajax_i&#45;&gt;proc~ajax_b</title>
+<path fill="none" stroke="#000000" d="M54.32,-36.63C66.9,-39.14 82.17,-42.18 95.93,-44.92"/>
+<polygon fill="#000000" stroke="#000000" points="95.06,-48.32 105.55,-46.84 96.43,-41.45 95.06,-48.32"/>
+</g>
+<!-- proc~ajax_flx2cyl -->
+<g id="proc~~ajax_i~~CallsGraph_node3" class="node">
+<title>proc~ajax_flx2cyl</title>
+<g id="a_proc~~ajax_i~~CallsGraph_node3"><a xlink:href="../proc/ajax_flx2cyl.html" xlink:title="AJAX_FLX2CYL">
+<polygon fill="#d9534f" stroke="#d9534f" points="178.77,-22.77 90,-22.77 90,0 178.77,0 178.77,-22.77"/>
+<text text-anchor="middle" x="134.38" y="-7.04" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">AJAX_FLX2CYL</text>
+</a>
+</g>
+</g>
+<!-- proc~ajax_i&#45;&gt;proc~ajax_flx2cyl -->
+<g id="proc~~ajax_i~~CallsGraph_edge2" class="edge">
+<title>proc~ajax_i&#45;&gt;proc~ajax_flx2cyl</title>
+<path fill="none" stroke="#000000" d="M54.32,-26.39C61.78,-24.97 70.19,-23.38 78.67,-21.77"/>
+<polygon fill="#000000" stroke="#000000" points="79.13,-25.24 88.3,-19.94 77.82,-18.37 79.13,-25.24"/>
+</g>
+<!-- proc~ajax_lambda -->
+<g id="proc~~ajax_i~~CallsGraph_node4" class="node">
+<title>proc~ajax_lambda</title>
+<g id="a_proc~~ajax_i~~CallsGraph_node4"><a xlink:href="../proc/ajax_lambda.html" xlink:title="AJAX_LAMBDA">
+<polygon fill="#d9534f" stroke="#d9534f" points="304.66,-61.77 218.89,-61.77 218.89,-39 304.66,-39 304.66,-61.77"/>
+<text text-anchor="middle" x="261.78" y="-46.04" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">AJAX_LAMBDA</text>
+</a>
+</g>
+</g>
+<!-- proc~ajax_b&#45;&gt;proc~ajax_lambda -->
+<g id="proc~~ajax_i~~CallsGraph_edge3" class="edge">
+<title>proc~ajax_b&#45;&gt;proc~ajax_lambda</title>
+<path fill="none" stroke="#000000" d="M161.67,-51.97C174.96,-51.75 191.6,-51.49 207.42,-51.24"/>
+<polygon fill="#000000" stroke="#000000" points="207.28,-54.74 217.22,-51.08 207.17,-47.74 207.28,-54.74"/>
+</g>
+<!-- proc~ajax_magflux -->
+<g id="proc~~ajax_i~~CallsGraph_node5" class="node">
+<title>proc~ajax_magflux</title>
+<g id="a_proc~~ajax_i~~CallsGraph_node5"><a xlink:href="../proc/ajax_magflux.html" xlink:title="AJAX_MAGFLUX">
+<polygon fill="#d9534f" stroke="#d9534f" points="308.79,-102.77 214.77,-102.77 214.77,-80 308.79,-80 308.79,-102.77"/>
+<text text-anchor="middle" x="261.78" y="-87.04" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">AJAX_MAGFLUX</text>
+</a>
+</g>
+</g>
+<!-- proc~ajax_b&#45;&gt;proc~ajax_magflux -->
+<g id="proc~~ajax_i~~CallsGraph_edge4" class="edge">
+<title>proc~ajax_b&#45;&gt;proc~ajax_magflux</title>
+<path fill="none" stroke="#000000" d="M161.67,-60.56C176.16,-65.07 194.63,-70.81 211.68,-76.11"/>
+<polygon fill="#000000" stroke="#000000" points="210.6,-79.44 221.18,-79.07 212.67,-72.76 210.6,-79.44"/>
+</g>
+<!-- proc~spline1_eval -->
+<g id="proc~~ajax_i~~CallsGraph_node6" class="node">
+<title>proc~spline1_eval</title>
+<g id="a_proc~~ajax_i~~CallsGraph_node6"><a xlink:href="../proc/spline1_eval.html" xlink:title="SPLINE1_EVAL">
+<polygon fill="#d9534f" stroke="#d9534f" points="434.31,-61.77 347.79,-61.77 347.79,-39 434.31,-39 434.31,-61.77"/>
+<text text-anchor="middle" x="391.05" y="-46.04" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">SPLINE1_EVAL</text>
+</a>
+</g>
+</g>
+<!-- proc~ajax_flx2cyl&#45;&gt;proc~spline1_eval -->
+<g id="proc~~ajax_i~~CallsGraph_edge5" class="edge">
+<title>proc~ajax_flx2cyl&#45;&gt;proc~spline1_eval</title>
+<path fill="none" stroke="#000000" d="M179.08,-14.56C214.28,-17.51 264.95,-22.62 308.79,-30.39 317.84,-31.99 327.38,-34.02 336.62,-36.17"/>
+<polygon fill="#000000" stroke="#000000" points="335.67,-39.54 346.21,-38.48 337.31,-32.74 335.67,-39.54"/>
+</g>
+<!-- proc~ajax_lambda&#45;&gt;proc~spline1_eval -->
+<g id="proc~~ajax_i~~CallsGraph_edge6" class="edge">
+<title>proc~ajax_lambda&#45;&gt;proc~spline1_eval</title>
+<path fill="none" stroke="#000000" d="M305.16,-50.39C315.04,-50.39 325.69,-50.39 335.99,-50.39"/>
+<polygon fill="#000000" stroke="#000000" points="335.91,-53.89 345.91,-50.39 335.91,-46.89 335.91,-53.89"/>
+</g>
+<!-- proc~ajax_magflux&#45;&gt;proc~spline1_eval -->
+<g id="proc~~ajax_i~~CallsGraph_edge7" class="edge">
+<title>proc~ajax_magflux&#45;&gt;proc~spline1_eval</title>
+<path fill="none" stroke="#000000" d="M299.59,-79.53C313.05,-75.19 328.46,-70.23 342.71,-65.64"/>
+<polygon fill="#000000" stroke="#000000" points="343.44,-69.08 351.88,-62.68 341.29,-62.42 343.44,-69.08"/>
+</g>
+<!-- proc~spline1_integ -->
+<g id="proc~~ajax_i~~CallsGraph_node7" class="node">
+<title>proc~spline1_integ</title>
+<g id="a_proc~~ajax_i~~CallsGraph_node7"><a xlink:href="../proc/spline1_integ.html" xlink:title="SPLINE1_INTEG">
+<polygon fill="#d9534f" stroke="#d9534f" points="437.31,-102.77 344.79,-102.77 344.79,-80 437.31,-80 437.31,-102.77"/>
+<text text-anchor="middle" x="391.05" y="-87.04" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">SPLINE1_INTEG</text>
+</a>
+</g>
+</g>
+<!-- proc~ajax_magflux&#45;&gt;proc~spline1_integ -->
+<g id="proc~~ajax_i~~CallsGraph_edge8" class="edge">
+<title>proc~ajax_magflux&#45;&gt;proc~spline1_integ</title>
+<path fill="none" stroke="#000000" d="M309.09,-91.39C316.91,-91.39 325.12,-91.39 333.18,-91.39"/>
+<polygon fill="#000000" stroke="#000000" points="332.9,-94.89 342.9,-91.39 332.9,-87.89 332.9,-94.89"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 12.2.1 (20241206.2353)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 28.43" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.923937 0.923937) rotate(0) translate(4 26.77)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-26.77 689.77,-26.77 689.77,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="63.27,-22.77 0,-22.77 0,0 63.27,0 63.27,-22.77"/>
+<text text-anchor="middle" x="31.64" y="-7.04" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="135.63,-22.77 81.64,-22.77 81.64,0 135.63,0 135.63,-22.77"/>
+<text text-anchor="middle" x="108.64" y="-7.04" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="207.63,-22.77 153.63,-22.77 153.63,0 207.63,0 207.63,-22.77"/>
+<text text-anchor="middle" x="180.63" y="-7.04" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="347.14,-22.77 226.12,-22.77 226.12,0 347.14,0 347.14,-22.77"/>
+<text text-anchor="middle" x="286.63" y="-7.04" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="499.89,-22.77 365.38,-22.77 365.38,0 499.89,0 499.89,-22.77"/>
+<text text-anchor="middle" x="432.63" y="-7.04" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="571.63,-22.77 517.63,-22.77 517.63,0 571.63,0 571.63,-22.77"/>
+<text text-anchor="middle" x="544.63" y="-7.04" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="685.77,-22.77 589.5,-22.77 589.5,0 685.77,0 685.77,-22.77"/>
+<text text-anchor="middle" x="637.63" y="-7.04" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 12.2.1 (20241206.2353)
+ -->
+<!-- Title: proc~~ajax_i~~CalledByGraph Pages: 1 -->
+<svg id="procajax_iCalledByGraph" width="170pt" height="31pt"
+ viewBox="0.00 0.00 169.52 30.77" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~ajax_i~~CalledByGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 26.77)">
+<title>proc~~ajax_i~~CalledByGraph</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-26.77 165.52,-26.77 165.52,4 -4,4"/>
+<!-- proc~ajax_i -->
+<g id="proc~~ajax_i~~CalledByGraph_node1" class="node">
+<title>proc~ajax_i</title>
+<polygon fill="none" stroke="black" points="161.52,-22.77 107.52,-22.77 107.52,0 161.52,0 161.52,-22.77"/>
+<text text-anchor="middle" x="134.52" y="-7.04" font-family="Helvetica,sans-Serif" font-size="10.50">AJAX_I</text>
+</g>
+<!-- program~pellet_dr -->
+<g id="proc~~ajax_i~~CalledByGraph_node2" class="node">
+<title>program~pellet_dr</title>
+<g id="a_proc~~ajax_i~~CalledByGraph_node2"><a xlink:href="../program/pellet_dr.html" xlink:title="PELLET_DR">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="71.52,-22.77 0,-22.77 0,0 71.52,0 71.52,-22.77"/>
+<text text-anchor="middle" x="35.76" y="-7.04" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">PELLET_DR</text>
+</a>
+</g>
+</g>
+<!-- program~pellet_dr&#45;&gt;proc~ajax_i -->
+<g id="proc~~ajax_i~~CalledByGraph_edge1" class="edge">
+<title>program~pellet_dr&#45;&gt;proc~ajax_i</title>
+<path fill="none" stroke="#000000" d="M71.97,-11.39C79.72,-11.39 87.96,-11.39 95.8,-11.39"/>
+<polygon fill="#000000" stroke="#000000" points="95.78,-14.89 105.78,-11.39 95.78,-7.89 95.78,-14.89"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 12.2.1 (20241206.2353)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 28.43" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.923937 0.923937) rotate(0) translate(4 26.77)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-26.77 689.77,-26.77 689.77,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="63.27,-22.77 0,-22.77 0,0 63.27,0 63.27,-22.77"/>
+<text text-anchor="middle" x="31.64" y="-7.04" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="135.63,-22.77 81.64,-22.77 81.64,0 135.63,0 135.63,-22.77"/>
+<text text-anchor="middle" x="108.64" y="-7.04" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="207.63,-22.77 153.63,-22.77 153.63,0 207.63,0 207.63,-22.77"/>
+<text text-anchor="middle" x="180.63" y="-7.04" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="347.14,-22.77 226.12,-22.77 226.12,0 347.14,0 347.14,-22.77"/>
+<text text-anchor="middle" x="286.63" y="-7.04" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="499.89,-22.77 365.38,-22.77 365.38,0 499.89,0 499.89,-22.77"/>
+<text text-anchor="middle" x="432.63" y="-7.04" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="571.63,-22.77 517.63,-22.77 517.63,0 571.63,0 571.63,-22.77"/>
+<text text-anchor="middle" x="544.63" y="-7.04" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="685.77,-22.77 589.5,-22.77 589.5,0 685.77,0 685.77,-22.77"/>
+<text text-anchor="middle" x="637.63" y="-7.04" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    
+    
+
+    
+    
+
+
+
+    
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              PELLETS
+              &copy; 2025 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

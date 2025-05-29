@@ -1,0 +1,572 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Documentation for PELLETS">
+    <meta name="author" content="" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>spec_kind_mod.f90 &ndash; PELLETS</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">PELLETS </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/namelists.html">Namelists</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>spec_kind_mod.f90
+      <small>Source File</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.0% of total for source files.">3 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/spec_kind_mod.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+            <li class="breadcrumb-item active" aria-current="page">spec_kind_mod.f90</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+        <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#mods-0"
+         aria-expanded="false" aria-controls="mods-0">
+         <h4 class="card-header bg-primary text-white">Modules</h4>
+      </a>
+      <div id="mods-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/spec_kind_mod.html">SPEC_KIND_MOD</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../sourcefile/spec_kind_mod.f90.html#src">spec_kind_mod.f90</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    <div class="col-md-9" id='text'>
+      
+      <br>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Files dependent on this one</h3>
+          </div>
+          <div class="card-body">
+            <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 12.2.1 (20241206.2353)
+ -->
+<!-- Title: sourcefile~~spec_kind_mod.f90~~AfferentGraph Pages: 1 -->
+<svg id="sourcefilespec_kind_modf90AfferentGraph" width="584pt" height="517pt"
+ viewBox="0.00 0.00 583.85 517.21" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 513.21)">
+<title>sourcefile~~spec_kind_mod.f90~~AfferentGraph</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-513.21 579.85,-513.21 579.85,4 -4,4"/>
+<!-- sourcefile~spec_kind_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_node1" class="node">
+<title>sourcefile~spec_kind_mod.f90</title>
+<polygon fill="none" stroke="black" points="104.52,-243.34 0,-243.34 0,-220.57 104.52,-220.57 104.52,-243.34"/>
+<text text-anchor="middle" x="52.26" y="-227.6" font-family="Helvetica,sans-Serif" font-size="10.50">spec_kind_mod.f90</text>
+</g>
+<!-- sourcefile~ajax_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_node2" class="node">
+<title>sourcefile~ajax_mod.f90</title>
+<g id="a_sourcefile~~spec_kind_mod.f90~~AfferentGraph_node2"><a xlink:href="../sourcefile/ajax_mod.f90.html" xlink:title="ajax_mod.f90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="349.56,-163.34 273.54,-163.34 273.54,-140.57 349.56,-140.57 349.56,-163.34"/>
+<text text-anchor="middle" x="311.55" y="-147.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ajax_mod.f90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~ajax_mod.f90&#45;&gt;sourcefile~spec_kind_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_edge1" class="edge">
+<title>sourcefile~ajax_mod.f90&#45;&gt;sourcefile~spec_kind_mod.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M273.17,-150.9C237.87,-151.1 184.01,-154.55 140.52,-170.95 115.42,-180.42 90.74,-198.76 74.06,-212.87"/>
+<polygon fill="#000000" stroke="#000000" points="72.05,-209.98 66.81,-219.19 76.65,-215.25 72.05,-209.98"/>
+</g>
+<!-- sourcefile~linear1_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_node4" class="node">
+<title>sourcefile~linear1_mod.f90</title>
+<g id="a_sourcefile~~spec_kind_mod.f90~~AfferentGraph_node4"><a xlink:href="../sourcefile/linear1_mod.f90.html" xlink:title="linear1_mod.f90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="231.91,-124.34 143.14,-124.34 143.14,-101.57 231.91,-101.57 231.91,-124.34"/>
+<text text-anchor="middle" x="187.53" y="-108.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">linear1_mod.f90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~ajax_mod.f90&#45;&gt;sourcefile~linear1_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_edge18" class="edge">
+<title>sourcefile~ajax_mod.f90&#45;&gt;sourcefile~linear1_mod.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M273.61,-140.15C261.78,-136.37 248.52,-132.13 236.05,-128.14"/>
+<polygon fill="#000000" stroke="#000000" points="237.38,-124.89 226.79,-125.18 235.25,-131.56 237.38,-124.89"/>
+</g>
+<!-- sourcefile~spline1_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_node12" class="node">
+<title>sourcefile~spline1_mod.f90</title>
+<g id="a_sourcefile~~spec_kind_mod.f90~~AfferentGraph_node12"><a xlink:href="../sourcefile/spline1_mod.f90.html" xlink:title="spline1_mod.f90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="232.66,-284.34 142.39,-284.34 142.39,-261.57 232.66,-261.57 232.66,-284.34"/>
+<text text-anchor="middle" x="187.53" y="-268.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">spline1_mod.f90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~ajax_mod.f90&#45;&gt;sourcefile~spline1_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_edge23" class="edge">
+<title>sourcefile~ajax_mod.f90&#45;&gt;sourcefile~spline1_mod.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M304.27,-163.63C292.82,-183.98 266.73,-226.21 234.54,-251.95 233.03,-253.16 231.44,-254.31 229.8,-255.42"/>
+<polygon fill="#000000" stroke="#000000" points="228.13,-252.34 221.25,-260.4 231.65,-258.39 228.13,-252.34"/>
+</g>
+<!-- sourcefile~drifts_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_node3" class="node">
+<title>sourcefile~drifts_mod.f90</title>
+<g id="a_sourcefile~~spec_kind_mod.f90~~AfferentGraph_node3"><a xlink:href="../sourcefile/drifts_mod.f90.html" xlink:title="drifts_mod.f90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="227.41,-440.34 147.64,-440.34 147.64,-417.57 227.41,-417.57 227.41,-440.34"/>
+<text text-anchor="middle" x="187.53" y="-424.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">drifts_mod.f90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~drifts_mod.f90&#45;&gt;sourcefile~spec_kind_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_edge2" class="edge">
+<title>sourcefile~drifts_mod.f90&#45;&gt;sourcefile~spec_kind_mod.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M158.38,-417.15C151.98,-413.57 145.59,-409.17 140.52,-403.95 97.32,-359.52 70.98,-289.43 59.69,-254.01"/>
+<polygon fill="#000000" stroke="#000000" points="63.17,-253.4 56.89,-244.86 56.47,-255.45 63.17,-253.4"/>
+</g>
+<!-- sourcefile~linear1_mod.f90&#45;&gt;sourcefile~spec_kind_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_edge3" class="edge">
+<title>sourcefile~linear1_mod.f90&#45;&gt;sourcefile~spec_kind_mod.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M161.26,-124.78C154.25,-128.56 146.84,-133.05 140.52,-137.95 112.43,-159.76 85.43,-190.94 69.09,-211.32"/>
+<polygon fill="#000000" stroke="#000000" points="66.54,-208.89 63.1,-218.91 72.04,-213.23 66.54,-208.89"/>
+</g>
+<!-- sourcefile~mirth_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_node5" class="node">
+<title>sourcefile~mirth_mod.f90</title>
+<g id="a_sourcefile~~spec_kind_mod.f90~~AfferentGraph_node5"><a xlink:href="../sourcefile/mirth_mod.f90.html" xlink:title="mirth_mod.f90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="351.81,-46.34 271.29,-46.34 271.29,-23.57 351.81,-23.57 351.81,-46.34"/>
+<text text-anchor="middle" x="311.55" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">mirth_mod.f90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~mirth_mod.f90&#45;&gt;sourcefile~spec_kind_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_edge4" class="edge">
+<title>sourcefile~mirth_mod.f90&#45;&gt;sourcefile~spec_kind_mod.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M287.09,-23.18C252,-7.43 185.22,15.25 140.52,-14.95 74.71,-59.42 58.52,-162.63 54.55,-208.85"/>
+<polygon fill="#000000" stroke="#000000" points="51.06,-208.54 53.83,-218.77 58.04,-209.05 51.06,-208.54"/>
+</g>
+<!-- sourcefile~x_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_node15" class="node">
+<title>sourcefile~x_mod.f90</title>
+<g id="a_sourcefile~~spec_kind_mod.f90~~AfferentGraph_node15"><a xlink:href="../sourcefile/x_mod.f90.html" xlink:title="x_mod.f90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="218.41,-46.34 156.64,-46.34 156.64,-23.57 218.41,-23.57 218.41,-46.34"/>
+<text text-anchor="middle" x="187.53" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">x_mod.f90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~mirth_mod.f90&#45;&gt;sourcefile~x_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_edge26" class="edge">
+<title>sourcefile~mirth_mod.f90&#45;&gt;sourcefile~x_mod.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M270.93,-34.95C257.8,-34.95 243.15,-34.95 229.89,-34.95"/>
+<polygon fill="#000000" stroke="#000000" points="230.18,-31.45 220.18,-34.95 230.18,-38.45 230.18,-31.45"/>
+</g>
+<!-- sourcefile~pellet_dr.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_node6" class="node">
+<title>sourcefile~pellet_dr.f90</title>
+<g id="a_sourcefile~~spec_kind_mod.f90~~AfferentGraph_node6"><a xlink:href="../sourcefile/pellet_dr.f90.html" xlink:title="pellet_dr.f90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="575.85,-124.34 505.83,-124.34 505.83,-101.57 575.85,-101.57 575.85,-124.34"/>
+<text text-anchor="middle" x="540.84" y="-108.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">pellet_dr.f90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~pellet_dr.f90&#45;&gt;sourcefile~spec_kind_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_edge5" class="edge">
+<title>sourcefile~pellet_dr.f90&#45;&gt;sourcefile~spec_kind_mod.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M428.19,-467.95C314.13,-526.33 244.27,-524.15 140.52,-448.95 76.36,-402.45 59.31,-300.74 54.83,-255.02"/>
+<polygon fill="#000000" stroke="#000000" points="58.33,-254.88 54,-245.21 51.36,-255.47 58.33,-254.88"/>
+</g>
+<!-- sourcefile~pellet_dr.f90&#45;&gt;sourcefile~ajax_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_edge15" class="edge">
+<title>sourcefile~pellet_dr.f90&#45;&gt;sourcefile~ajax_mod.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M428.19,-112.95C399.7,-115.3 369.12,-126.01 346.57,-135.61"/>
+<polygon fill="#000000" stroke="#000000" points="345.3,-132.34 337.57,-139.58 348.13,-138.74 345.3,-132.34"/>
+</g>
+<!-- sourcefile~pellet_dr.f90&#45;&gt;sourcefile~linear1_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_edge19" class="edge">
+<title>sourcefile~pellet_dr.f90&#45;&gt;sourcefile~linear1_mod.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M428.19,-112.95C365.04,-118.15 292.21,-117.17 243.57,-115.51"/>
+<polygon fill="#000000" stroke="#000000" points="243.98,-112.03 233.86,-115.16 243.73,-119.02 243.98,-112.03"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M505.69,-111.38C484.02,-110.78 455.41,-110.69 430.19,-112.95"/>
+</g>
+<!-- sourcefile~pellet_dr.f90&#45;&gt;sourcefile~mirth_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_edge20" class="edge">
+<title>sourcefile~pellet_dr.f90&#45;&gt;sourcefile~mirth_mod.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M529.84,-101.1C517.35,-87.21 494.61,-64.73 469.83,-53.95 436.25,-39.35 395.05,-34.8 363.25,-33.79"/>
+<polygon fill="#000000" stroke="#000000" points="363.57,-30.3 353.5,-33.6 363.43,-37.29 363.57,-30.3"/>
+</g>
+<!-- sourcefile~pellet_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_node7" class="node">
+<title>sourcefile~pellet_mod.f90</title>
+<g id="a_sourcefile~~spec_kind_mod.f90~~AfferentGraph_node7"><a xlink:href="../sourcefile/pellet_mod.f90.html" xlink:title="pellet_mod.f90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="352.56,-401.34 270.54,-401.34 270.54,-378.57 352.56,-378.57 352.56,-401.34"/>
+<text text-anchor="middle" x="311.55" y="-385.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">pellet_mod.f90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~pellet_dr.f90&#45;&gt;sourcefile~pellet_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_edge21" class="edge">
+<title>sourcefile~pellet_dr.f90&#45;&gt;sourcefile~pellet_mod.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M428.19,-467.95C388.88,-488.08 346.88,-439.94 325.99,-410.59"/>
+<polygon fill="#000000" stroke="#000000" points="329.14,-409 320.6,-402.73 323.36,-412.95 329.14,-409"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M538.4,-124.68C531.01,-182.39 495.23,-434.68 430.19,-467.95"/>
+</g>
+<!-- sourcefile~track_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_node13" class="node">
+<title>sourcefile~track_mod.f90</title>
+<g id="a_sourcefile~~spec_kind_mod.f90~~AfferentGraph_node13"><a xlink:href="../sourcefile/track_mod.f90.html" xlink:title="track_mod.f90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="469.08,-85.34 389.31,-85.34 389.31,-62.57 469.08,-62.57 469.08,-85.34"/>
+<text text-anchor="middle" x="429.19" y="-69.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">track_mod.f90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~pellet_dr.f90&#45;&gt;sourcefile~track_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_edge24" class="edge">
+<title>sourcefile~pellet_dr.f90&#45;&gt;sourcefile~track_mod.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M506.65,-101.15C496.34,-97.48 484.82,-93.38 473.91,-89.5"/>
+<polygon fill="#000000" stroke="#000000" points="475.3,-86.28 464.7,-86.23 472.95,-92.88 475.3,-86.28"/>
+</g>
+<!-- sourcefile~write_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_node14" class="node">
+<title>sourcefile~write_mod.f90</title>
+<g id="a_sourcefile~~spec_kind_mod.f90~~AfferentGraph_node14"><a xlink:href="../sourcefile/write_mod.f90.html" xlink:title="write_mod.f90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="468.7,-323.34 389.68,-323.34 389.68,-300.57 468.7,-300.57 468.7,-323.34"/>
+<text text-anchor="middle" x="429.19" y="-307.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_mod.f90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~pellet_dr.f90&#45;&gt;sourcefile~write_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_edge25" class="edge">
+<title>sourcefile~pellet_dr.f90&#45;&gt;sourcefile~write_mod.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M533.31,-124.81C515.41,-157.3 465.35,-248.15 442.21,-290.15"/>
+<polygon fill="#000000" stroke="#000000" points="439.18,-288.39 437.42,-298.84 445.31,-291.77 439.18,-288.39"/>
+</g>
+<!-- sourcefile~pellet_mod.f90&#45;&gt;sourcefile~spec_kind_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_edge6" class="edge">
+<title>sourcefile~pellet_mod.f90&#45;&gt;sourcefile~spec_kind_mod.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M270.24,-394.85C233.62,-397.24 179.51,-395.44 140.52,-370.95 97.3,-343.81 71.84,-286.6 60.45,-254.69"/>
+<polygon fill="#000000" stroke="#000000" points="63.77,-253.59 57.25,-245.25 57.14,-255.84 63.77,-253.59"/>
+</g>
+<!-- sourcefile~prl_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_node8" class="node">
+<title>sourcefile~prl_mod.f90</title>
+<g id="a_sourcefile~~spec_kind_mod.f90~~AfferentGraph_node8"><a xlink:href="../sourcefile/prl_mod.f90.html" xlink:title="prl_mod.f90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="221.79,-362.34 153.27,-362.34 153.27,-339.57 221.79,-339.57 221.79,-362.34"/>
+<text text-anchor="middle" x="187.53" y="-346.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">prl_mod.f90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~pellet_mod.f90&#45;&gt;sourcefile~prl_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_edge22" class="edge">
+<title>sourcefile~pellet_mod.f90&#45;&gt;sourcefile~prl_mod.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M273.61,-378.15C260.79,-374.05 246.27,-369.41 232.91,-365.14"/>
+<polygon fill="#000000" stroke="#000000" points="234.06,-361.83 223.46,-362.12 231.92,-368.5 234.06,-361.83"/>
+</g>
+<!-- sourcefile~prl_mod.f90&#45;&gt;sourcefile~spec_kind_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_edge7" class="edge">
+<title>sourcefile~prl_mod.f90&#45;&gt;sourcefile~spec_kind_mod.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M161.26,-339.12C154.25,-335.35 146.84,-330.86 140.52,-325.95 112.43,-304.15 85.43,-272.96 69.09,-252.59"/>
+<polygon fill="#000000" stroke="#000000" points="72.04,-250.68 63.1,-244.99 66.54,-255.02 72.04,-250.68"/>
+</g>
+<!-- sourcefile~prl_mod_intel.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_node9" class="node">
+<title>sourcefile~prl_mod_intel.f90</title>
+<g id="a_sourcefile~~spec_kind_mod.f90~~AfferentGraph_node9"><a xlink:href="../sourcefile/prl_mod_intel.f90.html" xlink:title="prl_mod_intel.f90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="234.54,-243.34 140.52,-243.34 140.52,-220.57 234.54,-220.57 234.54,-243.34"/>
+<text text-anchor="middle" x="187.53" y="-227.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">prl_mod_intel.f90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~prl_mod_intel.f90&#45;&gt;sourcefile~spec_kind_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_edge8" class="edge">
+<title>sourcefile~prl_mod_intel.f90&#45;&gt;sourcefile~spec_kind_mod.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M140.29,-231.95C132.53,-231.95 124.35,-231.95 116.25,-231.95"/>
+<polygon fill="#000000" stroke="#000000" points="116.4,-228.45 106.4,-231.95 116.4,-235.45 116.4,-228.45"/>
+</g>
+<!-- sourcefile~prldata_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_node10" class="node">
+<title>sourcefile~prldata_mod.f90</title>
+<g id="a_sourcefile~~spec_kind_mod.f90~~AfferentGraph_node10"><a xlink:href="../sourcefile/prldata_mod.f90.html" xlink:title="prldata_mod.f90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="232.29,-202.34 142.77,-202.34 142.77,-179.57 232.29,-179.57 232.29,-202.34"/>
+<text text-anchor="middle" x="187.53" y="-186.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">prldata_mod.f90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~prldata_mod.f90&#45;&gt;sourcefile~spec_kind_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_edge9" class="edge">
+<title>sourcefile~prldata_mod.f90&#45;&gt;sourcefile~spec_kind_mod.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M147.98,-202.81C133.76,-207.19 117.44,-212.21 102.4,-216.84"/>
+<polygon fill="#000000" stroke="#000000" points="101.7,-213.39 93.17,-219.68 103.75,-220.08 101.7,-213.39"/>
+</g>
+<!-- sourcefile~setup_ajax.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_node11" class="node">
+<title>sourcefile~setup_ajax.f90</title>
+<g id="a_sourcefile~~spec_kind_mod.f90~~AfferentGraph_node11"><a xlink:href="../sourcefile/setup_ajax.f90.html" xlink:title="setup_ajax.f90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="469.83,-223.34 388.56,-223.34 388.56,-200.57 469.83,-200.57 469.83,-223.34"/>
+<text text-anchor="middle" x="429.19" y="-207.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">setup_ajax.f90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~setup_ajax.f90&#45;&gt;sourcefile~spec_kind_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_edge10" class="edge">
+<title>sourcefile~setup_ajax.f90&#45;&gt;sourcefile~spec_kind_mod.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M420.76,-223.78C404.65,-247.93 363.79,-301.52 312.55,-311.95"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M310.55,-311.95C236.04,-327.13 211.67,-319.79 140.52,-292.95 115.42,-283.49 90.74,-265.15 74.06,-251.04"/>
+<polygon fill="#000000" stroke="#000000" points="76.65,-248.65 66.81,-244.72 72.05,-253.93 76.65,-248.65"/>
+</g>
+<!-- sourcefile~setup_ajax.f90&#45;&gt;sourcefile~ajax_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_edge16" class="edge">
+<title>sourcefile~setup_ajax.f90&#45;&gt;sourcefile~ajax_mod.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M405.35,-200.1C388.24,-191.22 364.59,-178.96 345.45,-169.02"/>
+<polygon fill="#000000" stroke="#000000" points="347.18,-165.98 336.69,-164.48 343.96,-172.19 347.18,-165.98"/>
+</g>
+<!-- sourcefile~spline1_mod.f90&#45;&gt;sourcefile~spec_kind_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_edge11" class="edge">
+<title>sourcefile~spline1_mod.f90&#45;&gt;sourcefile~spec_kind_mod.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M147.98,-261.1C133.76,-256.72 117.44,-251.7 102.4,-247.07"/>
+<polygon fill="#000000" stroke="#000000" points="103.75,-243.83 93.17,-244.23 101.7,-250.52 103.75,-243.83"/>
+</g>
+<!-- sourcefile~track_mod.f90&#45;&gt;sourcefile~spec_kind_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_edge12" class="edge">
+<title>sourcefile~track_mod.f90&#45;&gt;sourcefile~spec_kind_mod.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M389.11,-66.02C330.53,-56.31 218.53,-46.4 140.52,-92.95 96.48,-119.24 71.23,-177.28 60.12,-209.43"/>
+<polygon fill="#000000" stroke="#000000" points="56.8,-208.33 57.02,-218.92 63.45,-210.5 56.8,-208.33"/>
+</g>
+<!-- sourcefile~track_mod.f90&#45;&gt;sourcefile~ajax_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_edge17" class="edge">
+<title>sourcefile~track_mod.f90&#45;&gt;sourcefile~ajax_mod.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M409.13,-85.73C402.57,-89.85 395.2,-94.55 388.56,-98.95 371.52,-110.26 352.65,-123.41 337.98,-133.78"/>
+<polygon fill="#000000" stroke="#000000" points="336.37,-130.64 330.24,-139.28 340.42,-136.34 336.37,-130.64"/>
+</g>
+<!-- sourcefile~write_mod.f90&#45;&gt;sourcefile~spec_kind_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_edge13" class="edge">
+<title>sourcefile~write_mod.f90&#45;&gt;sourcefile~spec_kind_mod.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M389.34,-308.56C366.76,-307.42 337.85,-307.42 312.55,-311.95"/>
+</g>
+<!-- sourcefile~x_mod.f90&#45;&gt;sourcefile~spec_kind_mod.f90 -->
+<g id="sourcefile~~spec_kind_mod.f90~~AfferentGraph_edge14" class="edge">
+<title>sourcefile~x_mod.f90&#45;&gt;sourcefile~spec_kind_mod.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M158.38,-46.76C151.98,-50.34 145.59,-54.74 140.52,-59.95 97.32,-104.39 70.98,-174.47 59.69,-209.9"/>
+<polygon fill="#000000" stroke="#000000" points="56.47,-208.46 56.89,-219.05 63.17,-210.51 56.47,-208.46"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#AfferentGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="AfferentGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 12.2.1 (20241206.2353)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="188pt" height="31pt"
+ viewBox="0.00 0.00 187.89 30.77" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 26.77)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-26.77 183.89,-26.77 183.89,4 -4,4"/>
+<!-- Source File -->
+<g id="node1" class="node">
+<title>Source File</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="65.52,-22.77 0,-22.77 0,0 65.52,0 65.52,-22.77"/>
+<text text-anchor="middle" x="32.76" y="-7.04" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Source File</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node2" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="179.89,-22.77 83.62,-22.77 83.62,0 179.89,0 179.89,-22.77"/>
+<text text-anchor="middle" x="131.76" y="-7.04" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a file to a file which it depends on. A file
+is dependent upon another if the latter must be compiled before the former
+can be.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
+          </div>
+        </div>
+<br>
+      <section>
+        <h2><span class="anchor" id="src"></span>Source Code</h2>
+        <div class="hl codehilite"><pre><span></span><a id="ln-1" name="ln-1" href="#ln-1"></a><span class="k">MODULE </span><span class="n">SPEC_KIND_MOD</span>
+<a id="ln-2" name="ln-2" href="#ln-2"></a><span class="c">!-------------------------------------------------------------------------------</span>
+<a id="ln-3" name="ln-3" href="#ln-3"></a><span class="c">!For REAL variables:</span>
+<a id="ln-4" name="ln-4" href="#ln-4"></a><span class="c">!  Use p=6, r=35   for single precision on 32 bit machine</span>
+<a id="ln-5" name="ln-5" href="#ln-5"></a><span class="c">!  Use p=12,r=100  for double precision on 32 bit machine</span>
+<a id="ln-6" name="ln-6" href="#ln-6"></a><span class="c">!                  for single precision on 64 bit machine</span>
+<a id="ln-7" name="ln-7" href="#ln-7"></a><span class="c">!Parameters for SELECTED_REAL_KIND:</span>
+<a id="ln-8" name="ln-8" href="#ln-8"></a><span class="c">!  p                   -number of digits</span>
+<a id="ln-9" name="ln-9" href="#ln-9"></a><span class="c">!  r                   -range of exponent from -r to r</span>
+<a id="ln-10" name="ln-10" href="#ln-10"></a><span class="c">!-------------------------------------------------------------------------------</span>
+<a id="ln-11" name="ln-11" href="#ln-11"></a><span class="kt">INTEGER</span><span class="p">,</span><span class="w"> </span><span class="k">PARAMETER</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-12" name="ln-12" href="#ln-12"></a><span class="w">  </span><span class="n">rspec</span><span class="o">=</span><span class="nb">SELECTED_REAL_KIND</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span><span class="n">r</span><span class="o">=</span><span class="mi">35</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-13" name="ln-13" href="#ln-13"></a><span class="w">  </span><span class="n">ispec</span><span class="o">=</span><span class="nb">SELECTED_INT_KIND</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<a id="ln-14" name="ln-14" href="#ln-14"></a>
+<a id="ln-15" name="ln-15" href="#ln-15"></a><span class="k">END MODULE </span><span class="n">SPEC_KIND_MOD</span>
+</pre></div>
+
+      </section>
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              PELLETS
+              &copy; 2025 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>
