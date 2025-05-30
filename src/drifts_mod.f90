@@ -249,7 +249,6 @@ real(kind=rspec), intent(out) :: &
   DelR 
 
 
-
 END SUBROUTINE
 
 END MODULE DRIFTS_MOD
