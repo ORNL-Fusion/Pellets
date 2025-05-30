@@ -66,6 +66,7 @@ set (pellet_sources
     track_mod.f90
     write_mod.f90
     x_mod.f90
+    drifts_mod.f90
 )
 
 # Extra files not used immediately
