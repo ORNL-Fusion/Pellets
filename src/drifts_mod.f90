@@ -137,8 +137,6 @@ real(kind=rspec), intent(out) :: &
   beta_ratio,                    &
 !> kap_c == r_perp/r_p
   kap_c,                         &
-  lnLam_en,                      &
-  lnLam_ee,                      &
 !> toroidal drive integral
   Psi_int,                       &
 !> final penetration depth
