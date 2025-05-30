@@ -1,9 +1,9 @@
  $indata
-  cn_runid      = 'CAT_geqdsk_test'
-  cn_eq         = '/Users/gz6/Documents/FREDA/tokdesigner-data/TOKDESIGNER/TUTORIAL/example1/g000001.00001'         
+  cn_runid      = 'DIII-D_geqdsk_test'
+  cn_eq         = './g200201.00000'         
   cn_prof       = 'p164661.03605_784'
-  cn_device     = 'CAT'
-  k_equil       = 1
+  cn_device     = 'DIII-D'
+  k_equil       = 2
   k_pel         = 12          
   k_readd       = 0          
   k_seg_p       = 0
