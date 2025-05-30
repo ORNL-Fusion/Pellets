@@ -1,0 +1,15 @@
+# Ignore fortran build files
+./src/*.mod
+./src/xpellet
+
+# Ignore CMake/make files
+./src/CMakeFiles
+./src/CMakeCache.txt
+./src/Makefile
+./src/config/user.cmake
+./src/cmake_install.cmake
+
+# Ignore output files
+./src/*.dat
+./src/*.txt
+
