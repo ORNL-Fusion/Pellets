@@ -130,7 +130,7 @@ REAL(KIND=rspec) :: &
   cA_inf,kap_c,        &
   beta_ratio,          &
   Sigma_0,c_0_bar,     &
-  Psi_int,             &
+  Psi_int,             &  
   DelR,                &
   prlqf                  !PRL q profile exponent q(r) = (qa-q0) + q0*(1-(r/a)^qf)
 !
