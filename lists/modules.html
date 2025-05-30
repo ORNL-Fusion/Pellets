@@ -1,0 +1,280 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Documentation for PELLETS">
+    <meta name="author" content="" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>All Modules &ndash; PELLETS
+</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">PELLETS </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/namelists.html">Namelists</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../program/pellet_dr.html">Program</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12" id='text'>
+			 <h1>Modules</h1>
+			 <table class="table">
+			 <thead><tr><th>Module</th><th>Source File</th><th>Description</th></tr></thead>
+			 <tbody>
+			   <tr class="active">
+                 <td><a href='../module/ajax_mod.html'>AJAX_MOD</a></td>
+                 <td><a href='../sourcefile/ajax_mod.f90.html'>ajax_mod.f90</a></td>
+                 <td><p>!!-------------------------------------------------------------------------------
+!!AJAX-(Take your pick)
+!!    -Algebraic Jacobians for Advanced eXperiments
+!!    -The son of Telamon of Salamis and a warrior of great stature and prowess
+!!     who fought against Troy
+!!    -The son of Ileus of Locris and a warrior of small stature and arrogant
+!!     character who fought against Troy
+!!    -Brand name of a cleaning agent
+!!
+!!AJAX_MOD is an F90 module of routines that serve as an interface between a
+!!  transport code and MHD equilibrium solutions.
+!!
+!!References:
+!!
+!!  W.A.Houlberg, F90 free format 8/2004
+!!
+!!Contains PUBLIC routines:
+!!
+!!  Input:
+!!
+!!    AJAX_LOAD_RZBDY   -loads approx to 2D MHD equilibria from boundary values
+!!    AJAX_LOAD_RZLAM   -loads 2D/3D MHD equilibria in inverse coordinate form
+!!    AJAX_LOAD_MAGFLUX -loads magnetic flux data
+!!
+!!  Coordinate conversions:
+!!
+!!    AJAX_CAR2CYL      -converts from Cartesian to cylindrical coordinates
+!!    AJAX_CYL2CAR      -converts from cylindrical to Cartesian coordinates
+!!    AJAX_CYL2FLX      -converts from cylindrical to flux coordinates
+!!    AJAX_FLX2CYL      -converts from flux to cylindrical coordinates
+!!
+!!  Local magnetics:
+!!
+!!    AJAX_B            -gets components of B in various forms
+!!    AJAX_LAMBDA       -gets stream function and its derivatives
+!!
+!!  Flux surface quantities:
+!!
+!!    AJAX_FLUXAV_B     -gets flux surface quantities that depend on B
+!!    AJAX_FLUXAV_G     -gets flux surface quantities that depend on geometry
+!!    AJAX_I            -gets enclosed toroidal and external poloidal currents
+!!                       and maximum and minimum values
+!!    AJAX_MAGFLUX      -gets poloidal and toroidal magnetic fluxes
+!!    AJAX_SHAPE        -gets shift, elongation, triangularity, Rmax, Rmin, etc
+!!
+!!  Miscellaneous:
+!!
+!!    AJAX_GLOBALS      -gets global characteristics of the data
+!!    AJAX_MINMAX_RZ    -gets maximum or minimum of R or Z
+!!
+!!Comments:
+!!
+!!  This module is designed for use in a transport code that calculates MHD
+!!    equilibria (flux surface geometry) at infrequent intervals and updates the
+!!    the magnetic flux (e.g., safety factor or rotational transform) more
+!!    frequently (e.g., every time step) in a Grad-Hogan approach:
+!!    1) After a new equilibrium (geometry and magnetic flux) call:
+!!       AJAX_LOAD_RZLAM or AJAX_LOAD_RZBDY
+!!       AJAX_LOAD_MAGFLUX
+!!    2) After each additional timestep (magnetic flux) call:
+!!       AJAX_LOAD_MAGFLUX
+!!
+!!  The flux surface averaging routines are split to provide efficient
+!!    evaluation:
+!!    1) After a new equilibrium (geometry dependent) call:
+!!       AJAX_FLUXAV_G
+!!       AJAX_SHAPE
+!!    2) After each timestep (geometry and magnetic flux dependent) call:
+!!       AJAX_FLUXAV_B
+!!
+!!  There is extensive use of optional arguments to:
+!!    1) Provide flexibility of input variables
+!!    2) Give the user control over the fineness of the internal grids
+!!
+!!  The modernization of the code structure into an F90 module takes advantage of
+!!    some of the more attractive features of F90:
+!!    -use of KIND for precision declarations
+!!    -optional arguments for I/O
+!!    -generic names for all intrinsic functions
+!!    -compilation using either free or fixed form
+!!    -no common blocks or other deprecated Fortran features
+!!    -dynamic and automatic alocation of variables
+!!    -array syntax for vector operations
+!!-------------------------------------------------------------------------------
+!!-------------------------------------------------------------------------------
+!!Private procedures
+!!-------------------------------------------------------------------------------
+!!initializes or resets private data and its allocations
+!!  called from AJAX_LOAD_RZLAM
+!!initializes magnetic field arrays
+!!  called from AJAX_FLUXAV_B
+!!initializes geometry arrays
+!!  called from AJAX_FLUXAV_B
+!!  called from AJAX_FLUXAV_G
+!!calculates the magnetic stream function from R,Z data
+!!  version is only valid for axisymmetric plasmas
+!!  called from AJAX_LOAD_RZLAM
+!!loads the magnetic stream function
+!!  called from AJAX_LOAD_RZLAM</p><a href="../module/ajax_mod.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+<!--active-->			   <tr class="">
+                 <td><a href='../module/drifts_mod.html'>DRIFTS_MOD</a></td>
+                 <td><a href='../sourcefile/drifts_mod.f90.html'>drifts_mod.f90</a></td>
+                 <td><p>DRIFTS_MOD is an F90 module of routines that calculates the change in 
+ pellet penetraion depth based on three drift scaling laws. </p><a href="../module/drifts_mod.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+<!---->			   <tr class="active">
+                 <td><a href='../module/linear1_mod.html'>LINEAR1_MOD</a></td>
+                 <td><a href='../sourcefile/linear1_mod.f90.html'>linear1_mod.f90</a></td>
+                 <td></td>
+               </tr>
+<!--active-->			   <tr class="">
+                 <td><a href='../module/mirth_mod.html'>MIRTH_MOD</a></td>
+                 <td><a href='../sourcefile/mirth_mod.f90.html'>mirth_mod.f90</a></td>
+                 <td></td>
+               </tr>
+<!---->			   <tr class="active">
+                 <td><a href='../module/pellet_mod.html'>PELLET_MOD</a></td>
+                 <td><a href='../sourcefile/pellet_mod.f90.html'>pellet_mod.f90</a></td>
+                 <td><p>PELLET_MOD is an F90 module of routines that calculates the ablation of solid
+  hydrogenic or impurity pellets in a plasma</p><a href="../module/pellet_mod.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+<!--active-->			   <tr class="">
+                 <td><a href='../module/prl_mod~2.html'>PRL_MOD</a></td>
+                 <td><a href='../sourcefile/prl_mod_intel.f90.html'>prl_mod_intel.f90</a></td>
+                 <td></td>
+               </tr>
+<!---->			   <tr class="active">
+                 <td><a href='../module/prl_mod.html'>PRL_MOD</a></td>
+                 <td><a href='../sourcefile/prl_mod.f90.html'>prl_mod.f90</a></td>
+                 <td></td>
+               </tr>
+<!--active-->			   <tr class="">
+                 <td><a href='../module/prldata_mod.html'>PRLDATA_MOD</a></td>
+                 <td><a href='../sourcefile/prldata_mod.f90.html'>prldata_mod.f90</a></td>
+                 <td></td>
+               </tr>
+<!---->			   <tr class="active">
+                 <td><a href='../module/spec_kind_mod.html'>SPEC_KIND_MOD</a></td>
+                 <td><a href='../sourcefile/spec_kind_mod.f90.html'>spec_kind_mod.f90</a></td>
+                 <td></td>
+               </tr>
+<!--active-->			   <tr class="">
+                 <td><a href='../module/spline1_mod.html'>SPLINE1_MOD</a></td>
+                 <td><a href='../sourcefile/spline1_mod.f90.html'>spline1_mod.f90</a></td>
+                 <td></td>
+               </tr>
+<!---->			   <tr class="active">
+                 <td><a href='../module/track_mod.html'>TRACK_MOD</a></td>
+                 <td><a href='../sourcefile/track_mod.f90.html'>track_mod.f90</a></td>
+                 <td></td>
+               </tr>
+<!--active-->			   <tr class="">
+                 <td><a href='../module/write_mod.html'>WRITE_MOD</a></td>
+                 <td><a href='../sourcefile/write_mod.f90.html'>write_mod.f90</a></td>
+                 <td></td>
+               </tr>
+<!---->			   <tr class="active">
+                 <td><a href='../module/x_mod.html'>X_MOD</a></td>
+                 <td><a href='../sourcefile/x_mod.f90.html'>x_mod.f90</a></td>
+                 <td></td>
+               </tr>
+<!--active-->			 </tbody></table>
+             
+        </div>
+      </div>
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              PELLETS
+              &copy; 2025 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

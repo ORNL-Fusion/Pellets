@@ -1,0 +1,1221 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Documentation for PELLETS">
+    <meta name="author" content="" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>PELLET &ndash; PELLETS</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">PELLETS </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/namelists.html">Namelists</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../program/pellet_dr.html">Program</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>PELLET
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 5.3% of total for procedures.">236 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/pellet_mod.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/pellet_mod.f90.html'>pellet_mod.f90</a></li>
+                <li class="breadcrumb-item"><a href='../module/pellet_mod.html'>PELLET_MOD</a></li>
+            <li class="breadcrumb-item active" aria-current="page">PELLET</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>public  subroutine PELLET(k_pel, amupel, rpel, vpel, n_r, dvol_r, den0_r, te0_r, n_p, map_p, s_p, pden_r, iflag, message, NF, NE_F, IZ_F, AMU_F, E_EF, VC_RF, DEN_REF, PEL_IONS, T_P, RPEL1_P, SRC_P, DEN0_P, DEN1_P, TE0_P, TE1_P, R0, A0, BT0, NCSOL, K_PRL, NPRLCLD, IPRLCLD, FPELPRL, PRLINJANG, PRLQ_R, PRLDEP)  
+</h2>
+    
+
+    <p>PELLET calculates the ablation profile for solid pellets injected into a plasma</p>
+<p>References:
+  W.A.Houlberg, S.L.Milora, S.E.Attenberger, Nucl Fusion 28 (1988) 595
+  S.L.Milora, ORNL/TM-8616 (1983)
+  W.A.Houlberg, M.A.Iskra, H.C.Howe, S.E.Attenberger, ORNL/TM-6549 (1979)
+  W.A.Houlberg, L.R.Baylor 6/2004
+  W.A.Houlberg, F90 free format 8/2004
+  L.R. Baylor, Added linkages to PRL model routine, Parks,Baylor, submitted 2004 </p>
+<hr>
+<p>Declaration of input variables
+Hydrogenic molecular density
+ Hydrogenic 
+ Assume hydrogenic ionization energy</p>
+<p>Check if impurity and adjust denm_pl - divide by 2 since not molecules like H2 <strong>*</strong>)
+Neon (nominally 20.2)
+Argon (nominally 39.9)
+Krypton (nominally 83.8)
+Xenon (nominally 131.0)
+Lithium (nominally 6.9)
+keV</p>
+<p>Carbon(nominally 12.0)
+keV</p>
+<p>Be (nominally 9.0)
+keV</p>
+<p>Internal data differing from default
+hydrogenic NGS model: e distribution, elliptical neutral shield
+Milora hydrogenic NGS model: single e energy, spherical neutral shield
+hydrogenic NGPS model: e distribution, 1mm neutral layer thickness
+Macaulay hydrogenic NGS
+Kuteev hydrogenic NGS
+Parks hydrogenic NGS
+Parks hydrogenic NGS-Q
+Parks impurity model
+Parks impurity model 2012
+Kuteev impurity model
+Sergeev impurity model 2006
+Parks impurity model 2016
+Fast ions
+Zero output arrays
+Set private pellet parameters for normalizations
+Initialize parameters at beginning of pellet trajectory
+ PRL cloudlet counter
+Optional output</p>
+<hr>
+<h2>Follow the pellet path and determine the ablation rate</h2>
+<p>Flag to indicate whether pellet has entered plasma
+Flag to indicate whether pellet has entered and exited plasma
+Pellet has not entered plasma yet
+Increment parameters for path outside plasma
+Pellet is inside plasma and never exited
+Set optional output parameters along path
+  Lets total up the electrons put in plasma as a check</p>
+<p>Call PRL drift model</p>
+<p>Check to see if cloudlet mass has been ablated away since last cloudlet</p>
+<p>Check for remaining pellet size to do drift calc
+ Increment cloud counters
+ Do PRL calculation
+Profile generation
+ convert to eV
+ convert to cm^-3
+Profile generation</p>
+<p>rho_p = 1.0-fi/nfloat
+rho_p = lc(l)/fncp
+ cm from m
+ cm from m
+ cm from m
+ cm/s from m/s</p>
+<p>diagnostic output flag
+Save PRL deposition profile and adjust Te profile
+Num pellet particles</p>
+<p>nea(i) = (fnumpart/neasum)*nea(i)/dvol(i)
+Convert to density
+ Determine dep profile</p>
+<p>Adiabatic approximation
+te(i) = te(i)*den(i)/(den(i) + nea(i))
+den(i) = den(i) + nea(i)</p>
+<p>Pellet has been in the plasma but is now outside
+present</p>
+<p>rp&gt;1e-6</p>
+<p>PRL deposition profile</p>
+<p>Done with PRL - determine prldep
+ Determine dep profile
+      if (kprl.gt.0) then  !! New output of PRL dep calculation
+         write(nerr,<em>) ' '
+         write(nerr,</em>) ' PRL output for num clouds = ', icld
+         do i=1,nc
+           dennew=den(i)+prldep(i)
+           write(nerr,1230) i,den(i),dennew,dvol(i),prldep(i)
+         enddo
+      endif</p>
+<hr>
+<h2>Cleanup and exit</h2>
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-k_pel~2"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>k_pel</strong></td>
+            <td>
+                <p>ablation model [hydrogenic 0-5, impurity 10-11]
+=0 ref NGS MODEL, e distr, ellipt shield
+=1 Milora NGS model, single e energy, spher shield
+=2 NGPS model, e distr, 1mm neutral layer
+=3 Macaulay hydrogenic model
+=4 Kuteev hydrogenic model
+=5 Parks hydrogenic model
+=6 Parks hydrogenic model arbitrary Q
+=10 Parks impurity model
+=12 Parks impurity model 2012
+=11 Kuteev impurity model
+=else failure
+number of radial plasma cells [-]
+number of segments along pellet path [-]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-amupel"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>amupel</strong></td>
+            <td>
+                <p>atomic mass number of pellet atoms [-]
+used for either hydrogenic or impurity pellets
+initial pellet spherical radius [m]
+pellet velocity [m/s]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rpel~2"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>rpel</strong></td>
+            <td>
+                <p>atomic mass number of pellet atoms [-]
+used for either hydrogenic or impurity pellets
+initial pellet spherical radius [m]
+pellet velocity [m/s]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-vpel~2"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>vpel</strong></td>
+            <td>
+                <p>atomic mass number of pellet atoms [-]
+used for either hydrogenic or impurity pellets
+initial pellet spherical radius [m]
+pellet velocity [m/s]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-n_r~5"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n_r</strong></td>
+            <td>
+                <p>ablation model [hydrogenic 0-5, impurity 10-11]
+=0 ref NGS MODEL, e distr, ellipt shield
+=1 Milora NGS model, single e energy, spher shield
+=2 NGPS model, e distr, 1mm neutral layer
+=3 Macaulay hydrogenic model
+=4 Kuteev hydrogenic model
+=5 Parks hydrogenic model
+=6 Parks hydrogenic model arbitrary Q
+=10 Parks impurity model
+=12 Parks impurity model 2012
+=11 Kuteev impurity model
+=else failure
+number of radial plasma cells [-]
+number of segments along pellet path [-]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dvol_r~2"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>dvol_r</strong>(:)</td>
+            <td>
+                <p>volume of plasma cell i [m<strong>3]
+initial electron density in radial cells [/m</strong>3]
+initial electron temperature in radial cells [keV]
+distance to the beginning of path segment [m]
+s_p(1) is the entry point and can be non-zero</p>
+<p>Declaration of optional input variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-den0_r"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>den0_r</strong>(:)</td>
+            <td>
+                <p>volume of plasma cell i [m<strong>3]
+initial electron density in radial cells [/m</strong>3]
+initial electron temperature in radial cells [keV]
+distance to the beginning of path segment [m]
+s_p(1) is the entry point and can be non-zero</p>
+<p>Declaration of optional input variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-te0_r"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>te0_r</strong>(:)</td>
+            <td>
+                <p>volume of plasma cell i [m<strong>3]
+initial electron density in radial cells [/m</strong>3]
+initial electron temperature in radial cells [keV]
+distance to the beginning of path segment [m]
+s_p(1) is the entry point and can be non-zero</p>
+<p>Declaration of optional input variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-n_p~2"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n_p</strong></td>
+            <td>
+                <p>ablation model [hydrogenic 0-5, impurity 10-11]
+=0 ref NGS MODEL, e distr, ellipt shield
+=1 Milora NGS model, single e energy, spher shield
+=2 NGPS model, e distr, 1mm neutral layer
+=3 Macaulay hydrogenic model
+=4 Kuteev hydrogenic model
+=5 Parks hydrogenic model
+=6 Parks hydrogenic model arbitrary Q
+=10 Parks impurity model
+=12 Parks impurity model 2012
+=11 Kuteev impurity model
+=else failure
+number of radial plasma cells [-]
+number of segments along pellet path [-]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-map_p"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>map_p</strong>(:)</td>
+            <td>
+                <p>plasma cell for each path segment [-]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-s_p~2"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>s_p</strong>(:)</td>
+            <td>
+                <p>volume of plasma cell i [m<strong>3]
+initial electron density in radial cells [/m</strong>3]
+initial electron temperature in radial cells [keV]
+distance to the beginning of path segment [m]
+s_p(1) is the entry point and can be non-zero</p>
+<p>Declaration of optional input variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-pden_r~2"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>pden_r</strong>(:)</td>
+            <td>
+                <p>increase in plasma density in radial cells [/m**3]</p>
+<p>Declaration of optional output variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-iflag~11"></span>
+              integer,
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>iflag</strong></td>
+            <td>
+                <p>error and warning flag [-]
+=-1 warning
+=0 no warnings or errors
+=1 error</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-message~11"></span>
+              character(len=*),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>message</strong></td>
+            <td>
+                <p>warning or error message [character]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nf"></span>
+              integer,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>NF</strong></td>
+            <td>
+                <p>number of fast ion species (H,D,T,He3,He4) [-]
+number of energy groups for fast ions [-]
+charge of fast ions (1,2) [-]
+Number of SOL grid points in n_r   [-]
+flag for PRL model calculation
+Number of PRL cloudlets from pellet [-]
+ID number of PRL cloudlet for diag output [-]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ne_f"></span>
+              integer,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>NE_F</strong>(:)</td>
+            <td>
+                <p>number of fast ion species (H,D,T,He3,He4) [-]
+number of energy groups for fast ions [-]
+charge of fast ions (1,2) [-]
+Number of SOL grid points in n_r   [-]
+flag for PRL model calculation
+Number of PRL cloudlets from pellet [-]
+ID number of PRL cloudlet for diag output [-]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-iz_f"></span>
+              integer,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>IZ_F</strong>(:)</td>
+            <td>
+                <p>number of fast ion species (H,D,T,He3,He4) [-]
+number of energy groups for fast ions [-]
+charge of fast ions (1,2) [-]
+Number of SOL grid points in n_r   [-]
+flag for PRL model calculation
+Number of PRL cloudlets from pellet [-]
+ID number of PRL cloudlet for diag output [-]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-amu_f"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>AMU_F</strong>(:)</td>
+            <td>
+                <p>atomic mass number of fast ions [-]
+energy group boundaries for fast ions [keV]
+E_EF(1,NF)= the birth energy
+E_EF(NE_F+1,NF)= energy where becomes thermal
+E_EF(j,NF) &gt; E_EF(j+1,NF)
+critical velocity profile for fast ions [m/s]
+density profile of fast ion per energy group [1/m**3]
+Major radius [m]
+Minor radius [m]
+Magnetic field on axis used by PRL [T]
+PRL fraction of pellet mass to drift [-]
+PRL injection angle (LFS=0, HFS=pi) [radians]
+q profile for PRL model [-]</p>
+<p>Declaration of output variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-e_ef"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>E_EF</strong>(:,:)</td>
+            <td>
+                <p>atomic mass number of fast ions [-]
+energy group boundaries for fast ions [keV]
+E_EF(1,NF)= the birth energy
+E_EF(NE_F+1,NF)= energy where becomes thermal
+E_EF(j,NF) &gt; E_EF(j+1,NF)
+critical velocity profile for fast ions [m/s]
+density profile of fast ion per energy group [1/m**3]
+Major radius [m]
+Minor radius [m]
+Magnetic field on axis used by PRL [T]
+PRL fraction of pellet mass to drift [-]
+PRL injection angle (LFS=0, HFS=pi) [radians]
+q profile for PRL model [-]</p>
+<p>Declaration of output variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-vc_rf"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>VC_RF</strong>(:,:)</td>
+            <td>
+                <p>atomic mass number of fast ions [-]
+energy group boundaries for fast ions [keV]
+E_EF(1,NF)= the birth energy
+E_EF(NE_F+1,NF)= energy where becomes thermal
+E_EF(j,NF) &gt; E_EF(j+1,NF)
+critical velocity profile for fast ions [m/s]
+density profile of fast ion per energy group [1/m**3]
+Major radius [m]
+Minor radius [m]
+Magnetic field on axis used by PRL [T]
+PRL fraction of pellet mass to drift [-]
+PRL injection angle (LFS=0, HFS=pi) [radians]
+q profile for PRL model [-]</p>
+<p>Declaration of output variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-den_ref"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>DEN_REF</strong>(:,:,:)</td>
+            <td>
+                <p>atomic mass number of fast ions [-]
+energy group boundaries for fast ions [keV]
+E_EF(1,NF)= the birth energy
+E_EF(NE_F+1,NF)= energy where becomes thermal
+E_EF(j,NF) &gt; E_EF(j+1,NF)
+critical velocity profile for fast ions [m/s]
+density profile of fast ion per energy group [1/m**3]
+Major radius [m]
+Minor radius [m]
+Magnetic field on axis used by PRL [T]
+PRL fraction of pellet mass to drift [-]
+PRL injection angle (LFS=0, HFS=pi) [radians]
+q profile for PRL model [-]</p>
+<p>Declaration of output variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-pel_ions"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>PEL_IONS</strong></td>
+            <td>
+                <p>number of ions in pellet [-]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-t_p"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>T_P</strong>(:)</td>
+            <td>
+                <p>time of pellet entry to path cells [s]
+pellet effective radius at exit from path cells [m]
+source rate in path cells [/s]
+electron density at entrance to path cells [keV]
+electron density at exit from path cells [keV]
+electron temperature at entrance to path cells [keV]
+electron temperature at exit from path cells [keV]
+resulting density deposition from PRL [/m**3]</p>
+<hr>
+<p>Declartation of local variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rpel1_p"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>RPEL1_P</strong>(:)</td>
+            <td>
+                <p>time of pellet entry to path cells [s]
+pellet effective radius at exit from path cells [m]
+source rate in path cells [/s]
+electron density at entrance to path cells [keV]
+electron density at exit from path cells [keV]
+electron temperature at entrance to path cells [keV]
+electron temperature at exit from path cells [keV]
+resulting density deposition from PRL [/m**3]</p>
+<hr>
+<p>Declartation of local variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-src_p"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>SRC_P</strong>(:)</td>
+            <td>
+                <p>time of pellet entry to path cells [s]
+pellet effective radius at exit from path cells [m]
+source rate in path cells [/s]
+electron density at entrance to path cells [keV]
+electron density at exit from path cells [keV]
+electron temperature at entrance to path cells [keV]
+electron temperature at exit from path cells [keV]
+resulting density deposition from PRL [/m**3]</p>
+<hr>
+<p>Declartation of local variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-den0_p"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>DEN0_P</strong>(:)</td>
+            <td>
+                <p>time of pellet entry to path cells [s]
+pellet effective radius at exit from path cells [m]
+source rate in path cells [/s]
+electron density at entrance to path cells [keV]
+electron density at exit from path cells [keV]
+electron temperature at entrance to path cells [keV]
+electron temperature at exit from path cells [keV]
+resulting density deposition from PRL [/m**3]</p>
+<hr>
+<p>Declartation of local variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-den1_p"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>DEN1_P</strong>(:)</td>
+            <td>
+                <p>time of pellet entry to path cells [s]
+pellet effective radius at exit from path cells [m]
+source rate in path cells [/s]
+electron density at entrance to path cells [keV]
+electron density at exit from path cells [keV]
+electron temperature at entrance to path cells [keV]
+electron temperature at exit from path cells [keV]
+resulting density deposition from PRL [/m**3]</p>
+<hr>
+<p>Declartation of local variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-te0_p"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>TE0_P</strong>(:)</td>
+            <td>
+                <p>time of pellet entry to path cells [s]
+pellet effective radius at exit from path cells [m]
+source rate in path cells [/s]
+electron density at entrance to path cells [keV]
+electron density at exit from path cells [keV]
+electron temperature at entrance to path cells [keV]
+electron temperature at exit from path cells [keV]
+resulting density deposition from PRL [/m**3]</p>
+<hr>
+<p>Declartation of local variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-te1_p"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>TE1_P</strong>(:)</td>
+            <td>
+                <p>time of pellet entry to path cells [s]
+pellet effective radius at exit from path cells [m]
+source rate in path cells [/s]
+electron density at entrance to path cells [keV]
+electron density at exit from path cells [keV]
+electron temperature at entrance to path cells [keV]
+electron temperature at exit from path cells [keV]
+resulting density deposition from PRL [/m**3]</p>
+<hr>
+<p>Declartation of local variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-r0"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>R0</strong></td>
+            <td>
+                <p>atomic mass number of fast ions [-]
+energy group boundaries for fast ions [keV]
+E_EF(1,NF)= the birth energy
+E_EF(NE_F+1,NF)= energy where becomes thermal
+E_EF(j,NF) &gt; E_EF(j+1,NF)
+critical velocity profile for fast ions [m/s]
+density profile of fast ion per energy group [1/m**3]
+Major radius [m]
+Minor radius [m]
+Magnetic field on axis used by PRL [T]
+PRL fraction of pellet mass to drift [-]
+PRL injection angle (LFS=0, HFS=pi) [radians]
+q profile for PRL model [-]</p>
+<p>Declaration of output variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-a0"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>A0</strong></td>
+            <td>
+                <p>atomic mass number of fast ions [-]
+energy group boundaries for fast ions [keV]
+E_EF(1,NF)= the birth energy
+E_EF(NE_F+1,NF)= energy where becomes thermal
+E_EF(j,NF) &gt; E_EF(j+1,NF)
+critical velocity profile for fast ions [m/s]
+density profile of fast ion per energy group [1/m**3]
+Major radius [m]
+Minor radius [m]
+Magnetic field on axis used by PRL [T]
+PRL fraction of pellet mass to drift [-]
+PRL injection angle (LFS=0, HFS=pi) [radians]
+q profile for PRL model [-]</p>
+<p>Declaration of output variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bt0"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>BT0</strong></td>
+            <td>
+                <p>atomic mass number of fast ions [-]
+energy group boundaries for fast ions [keV]
+E_EF(1,NF)= the birth energy
+E_EF(NE_F+1,NF)= energy where becomes thermal
+E_EF(j,NF) &gt; E_EF(j+1,NF)
+critical velocity profile for fast ions [m/s]
+density profile of fast ion per energy group [1/m**3]
+Major radius [m]
+Minor radius [m]
+Magnetic field on axis used by PRL [T]
+PRL fraction of pellet mass to drift [-]
+PRL injection angle (LFS=0, HFS=pi) [radians]
+q profile for PRL model [-]</p>
+<p>Declaration of output variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ncsol"></span>
+              integer,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>NCSOL</strong></td>
+            <td>
+                <p>number of fast ion species (H,D,T,He3,He4) [-]
+number of energy groups for fast ions [-]
+charge of fast ions (1,2) [-]
+Number of SOL grid points in n_r   [-]
+flag for PRL model calculation
+Number of PRL cloudlets from pellet [-]
+ID number of PRL cloudlet for diag output [-]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-k_prl"></span>
+              integer,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>K_PRL</strong></td>
+            <td>
+                <p>number of fast ion species (H,D,T,He3,He4) [-]
+number of energy groups for fast ions [-]
+charge of fast ions (1,2) [-]
+Number of SOL grid points in n_r   [-]
+flag for PRL model calculation
+Number of PRL cloudlets from pellet [-]
+ID number of PRL cloudlet for diag output [-]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nprlcld"></span>
+              integer,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>NPRLCLD</strong></td>
+            <td>
+                <p>number of fast ion species (H,D,T,He3,He4) [-]
+number of energy groups for fast ions [-]
+charge of fast ions (1,2) [-]
+Number of SOL grid points in n_r   [-]
+flag for PRL model calculation
+Number of PRL cloudlets from pellet [-]
+ID number of PRL cloudlet for diag output [-]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-iprlcld"></span>
+              integer,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>IPRLCLD</strong></td>
+            <td>
+                <p>number of fast ion species (H,D,T,He3,He4) [-]
+number of energy groups for fast ions [-]
+charge of fast ions (1,2) [-]
+Number of SOL grid points in n_r   [-]
+flag for PRL model calculation
+Number of PRL cloudlets from pellet [-]
+ID number of PRL cloudlet for diag output [-]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-fpelprl"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>FPELPRL</strong></td>
+            <td>
+                <p>atomic mass number of fast ions [-]
+energy group boundaries for fast ions [keV]
+E_EF(1,NF)= the birth energy
+E_EF(NE_F+1,NF)= energy where becomes thermal
+E_EF(j,NF) &gt; E_EF(j+1,NF)
+critical velocity profile for fast ions [m/s]
+density profile of fast ion per energy group [1/m**3]
+Major radius [m]
+Minor radius [m]
+Magnetic field on axis used by PRL [T]
+PRL fraction of pellet mass to drift [-]
+PRL injection angle (LFS=0, HFS=pi) [radians]
+q profile for PRL model [-]</p>
+<p>Declaration of output variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-prlinjang"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>PRLINJANG</strong></td>
+            <td>
+                <p>atomic mass number of fast ions [-]
+energy group boundaries for fast ions [keV]
+E_EF(1,NF)= the birth energy
+E_EF(NE_F+1,NF)= energy where becomes thermal
+E_EF(j,NF) &gt; E_EF(j+1,NF)
+critical velocity profile for fast ions [m/s]
+density profile of fast ion per energy group [1/m**3]
+Major radius [m]
+Minor radius [m]
+Magnetic field on axis used by PRL [T]
+PRL fraction of pellet mass to drift [-]
+PRL injection angle (LFS=0, HFS=pi) [radians]
+q profile for PRL model [-]</p>
+<p>Declaration of output variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-prlq_r"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>PRLQ_R</strong>(:)</td>
+            <td>
+                <p>atomic mass number of fast ions [-]
+energy group boundaries for fast ions [keV]
+E_EF(1,NF)= the birth energy
+E_EF(NE_F+1,NF)= energy where becomes thermal
+E_EF(j,NF) &gt; E_EF(j+1,NF)
+critical velocity profile for fast ions [m/s]
+density profile of fast ion per energy group [1/m**3]
+Major radius [m]
+Minor radius [m]
+Magnetic field on axis used by PRL [T]
+PRL fraction of pellet mass to drift [-]
+PRL injection angle (LFS=0, HFS=pi) [radians]
+q profile for PRL model [-]</p>
+<p>Declaration of output variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-prldep"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>PRLDEP</strong>(:)</td>
+            <td>
+                <p>time of pellet entry to path cells [s]
+pellet effective radius at exit from path cells [m]
+source rate in path cells [/s]
+electron density at entrance to path cells [keV]
+electron density at exit from path cells [keV]
+electron temperature at entrance to path cells [keV]
+electron temperature at exit from path cells [keV]
+resulting density deposition from PRL [/m**3]</p>
+<hr>
+<p>Declartation of local variables</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+
+
+    
+    
+
+    
+    
+
+
+
+    
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              PELLETS
+              &copy; 2025 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

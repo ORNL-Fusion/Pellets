@@ -1,0 +1,751 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Documentation for PELLETS">
+    <meta name="author" content="" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>AJAX_FLUXAV_B &ndash; PELLETS</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">PELLETS </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/namelists.html">Namelists</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../program/pellet_dr.html">Program</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>AJAX_FLUXAV_B
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 7.8% of total for procedures.">352 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/ajax_mod.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/ajax_mod.f90.html'>ajax_mod.f90</a></li>
+                <li class="breadcrumb-item"><a href='../module/ajax_mod.html'>AJAX_MOD</a></li>
+            <li class="breadcrumb-item active" aria-current="page">AJAX_FLUXAV_B</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>public  subroutine AJAX_FLUXAV_B(nrho_r, rho_r, iflag, message, B2_R, BM2_R, FM_R, FTRAP_R, GR2BM2_R, GRTH_R, SUS11_R, SUS12_R, SUS21_R, SUS22_R)  
+</h2>
+    
+
+    <p>AJAX_FLUXAV_B gets flux surface quantities that depend on B</p>
+<p>References:
+  W.A.Houlberg, F90 free format 8/2004
+  W.A.Houlberg, named DO loop on EXIT 1/2005</p>
+<hr>
+<h2>Declaration of input variables</h2>
+<h2>Check whether flux surface averaging arrays have been set</h2>
+<h2>Check messages</h2>
+<h2>Check whether values outside R,Z domain are requested (nr is last point inside)</h2>
+<hr>
+<h2><B**2> on internal grid for b2_r, ftrap_r, and fm_r</h2>
+<p>Initialization
+Calculate on internal grid 
+Over radial nodes</p>
+<p>Over toroidal nodes</p>
+<p>Over poloidal nodes</p>
+<p>Over toroidal nodes</p>
+<p>Over toroidal nodes</p>
+<p>Over radial nodes</p>
+<h2>Extrapolate to axis</h2>
+<h2>Theta and gam=n.grad(Theta) for Fm and n.grad(Theta) in axisymmetric plasmas</h2>
+<p>Initialization
+Calculate on internal grid 
+Over radial nodes</p>
+<p>Over poloidal nodes</p>
+<p>Over poloidal nodes</p>
+<p>Over radial nodes</p>
+<h2>Extrapolate to axis</h2>
+<h2><B**2></h2>
+<p>Initialization
+Interpolate to user grid inside R,Z domain
+Check messages
+Extrapolate to user grid outside R,Z domain</p>
+<hr>
+<h2>&lt;1/B**2&gt;</h2>
+<p>Initialization
+Calculate on internal grid 
+Over radial nodes</p>
+<p>Over toroidal nodes</p>
+<p>Over poloidal nodes</p>
+<p>Over toroidal nodes</p>
+<p>Over toroidal nodes</p>
+<p>Over radial nodes</p>
+<p>Extrapolate to axis
+Interpolate to user grid inside R,Z domain
+Check messages
+Extrapolate to user grid outside R,Z domain</p>
+<hr>
+<h2><grad(rho)**2/B**2></h2>
+<p>Initialization
+Over radial nodes</p>
+<p>Over toroidal nodes</p>
+<p>Over poloidal nodes</p>
+<p>Over toroidal nodes</p>
+<p>Over toroidal nodes</p>
+<p>Over radial nodes</p>
+<p>Extrapolate to axis
+Interpolate to user grid inside R,Z domain
+Check messages
+Extrapolate to user grid outside R,Z domain</p>
+<hr>
+<h2>f_trap</h2>
+<p>Initialization
+&lt;|B|&gt; and B_max
+Over radial nodes</p>
+<p>Over toroidal nodes</p>
+<p>Over poloidal nodes</p>
+<p>Over poloidal nodes</p>
+<p>Over poloidal nodes</p>
+<p>Over toroidal nodes</p>
+<p>Over toroidal nodes</p>
+<p>Over radial nodes</p>
+<p>Extrapolate to axis
+Upper and lower trapped fractions bound solution
+Over radial nodes</p>
+<p>Flux surface average for upper estimate of trapped fraction
+Over toroidal nodes</p>
+<p>Over poloidal nodes</p>
+<p>Over poloidal nodes</p>
+<p>Over poloidal nodes</p>
+<p>Over toroidal nodes</p>
+<p>Over toroidal nodes</p>
+<p>Trapped fraction normalized to sqrt(rho) = 0.25<em>f_trap_low + 0.75</em>f_trap_upper
+Over radial nodes</p>
+<p>Extrapolate to axis using constant normalized trapped fraction 
+Find index of first point away from axis in R,Z domain
+Over radial nodes</p>
+<p>Over radial nodes</p>
+<p>Interpolate to user grid inside R,Z domain
+Check messages
+Extrapolate to user grid outside R,Z domain
+Reintroduce dominant radial dependence</p>
+<hr>
+<h2>F_m</h2>
+<p>Initialization
+Non-axisymmetric plasma
+q(rho) for fm_1 interpolation
+Over radial nodes</p>
+<p>Over radial nodes</p>
+<p>Extrapolate to axis
+Interpolate to user grid inside R,Z domain
+Check messages
+Extrapolate to user grid outside R,Z domain
+Reintroduce dominant radial dependence
+If first node is not at the axis, include in calculation
+Over radial nodes</p>
+<p>fm_r(2)=eps<strong>1.5
+fm_r(1)=R_0*q/eps</strong>1.5
+Over radial nodes</p>
+<p>Axisymmetric plasma
+Over poloidal moments</p>
+<p>Over radial nodes</p>
+<p>sin(Theta) terms
+Over poloidal nodes</p>
+<p>d(B)/d(theta) at end points noting periodicity
+sin(m<em>Theta)</em>B^theta/B*(dB/dtheta)
+Over poloidal nodes</p>
+<p>Over poloidal nodes</p>
+<p>Over poloidal nodes</p>
+<p>sin(m<em>Theta)</em>B^theta*(dB/dtheta)
+Over poloidal nodes</p>
+<p>Over poloidal nodes</p>
+<p>cos(Theta) terms
+Over poloidal nodes</p>
+<p>d(B)/d(theta) at end points noting periodicity
+cos(m<em>Theta)</em>B^theta/B*(dB/dtheta)
+Over poloidal nodes</p>
+<p>Over poloidal nodes</p>
+<p>cos(m<em>Theta)</em>B^theta*(dB/dtheta)
+Over poloidal nodes</p>
+<p><B^theta>
+Over poloidal nodes</p>
+<p>Multiply by 2/<B^theta>/<B**2> and normalize to rho**1.5
+Over radial nodes</p>
+<p>Extrapolate to axis
+Interpolate to user grid inside R,Z domain
+Check messages
+Extrapolate to user grid outside R,Z domain
+Reintroduce dominant radial dependence
+Over poloidal moments</p>
+<hr>
+<h2>n.grad(Theta)</h2>
+<p>Initialization
+Interpolate to user grid inside R,Z domain
+Check messages
+Extrapolate to user grid outside R,Z domain</p>
+<hr>
+<h2>Susceptance matrix element S11</h2>
+<p>Initialization
+Calculate on internal grid
+Over radial nodes</p>
+<p>Over toroidal nodes</p>
+<p>Over poloidal nodes</p>
+<p>Over toroidal nodes</p>
+<p>Remove dominant radial dependence
+Over toroidal nodes</p>
+<p>Over radial nodes</p>
+<p>Extrapolate to axis
+Interpolate to user grid inside R,Z domain
+Check messages
+Extrapolate to user grid outside R,Z domain
+Reintroduce dominant radial dependence</p>
+<hr>
+<h2>Susceptance matrix element S12</h2>
+<p>Initialization
+Calculate on internal grid
+Over radial nodes</p>
+<p>Over toroidal nodes</p>
+<p>Over poloidal nodes</p>
+<p>Over toroidal nodes</p>
+<p>Remove dominant radial dependence
+Over toroidal nodes</p>
+<p>Over radial nodes</p>
+<p>Extrapolate to axis
+Interpolate to user grid inside R,Z domain
+Check messages
+Extrapolate to user grid outside R,Z domain
+Reintroduce dominant radial dependence</p>
+<hr>
+<h2>Susceptance matrix element S21</h2>
+<p>Initialization
+Calculate on internal grid
+Over radial nodes</p>
+<p>Over toroidal nodes</p>
+<p>Over poloidal nodes</p>
+<p>Over toroidal nodes</p>
+<p>Remove dominant radial dependence
+Over toroidal nodes</p>
+<p>Over radial nodes</p>
+<p>Extrapolate to axis
+Interpolate to user grid inside R,Z domain
+Check messages
+Extrapolate to user grid outside R,Z domain
+Reintroduce dominant radial dependence</p>
+<hr>
+<h2>Susceptance matrix element S22</h2>
+<p>Initialization
+Calculate on internal grid
+Over radial nodes</p>
+<p>Over toroidal nodes</p>
+<p>Over poloidal nodes</p>
+<p>Over toroidal nodes</p>
+<p>Remove dominant radial dependence
+Over toroidal nodes</p>
+<p>Over radial nodes</p>
+<p>Extrapolate to axis
+Interpolate to user grid inside R,Z domain
+Check messages
+Extrapolate to user grid outside R,Z domain
+Reintroduce dominant radial dependence
+If first node is not at the axis, include in calculation</p>
+<hr>
+<h2>Cleanup and exit</h2>
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nrho_r"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nrho_r</strong></td>
+            <td>
+                <p>no. of radial nodes [-]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rho_r~5"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>rho_r</strong>(:)</td>
+            <td>
+                <p>radial nodes [rho]</p>
+<p>Declaration of output variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-iflag~22"></span>
+              integer,
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>iflag</strong></td>
+            <td>
+                <p>error and warning flag [-]
+=-1 warning
+=0 none
+=1 error</p>
+<p>Declaration of optional output variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-message~22"></span>
+              character(len=*),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>message</strong></td>
+            <td>
+                <p>warning or error message [character]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-b2_r"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>B2_R</strong>(:)</td>
+            <td>
+                <p><B**2> [T<strong>2]
+&lt;1/B</strong>2&gt; [/T<strong>2]
+poloidal moments of &lt;[n.grad(B)]</strong>2&gt;/<B**2> [-]
+trapped particle fraction [-]
+<grad(rho)**2/B**2> [rho<strong>2/m</strong>2/T**2]
+n.grad(Theta) [/m]
+suceptance matrix element 11 (pol-pol) [-]
+suceptance matrix element 12 (pol-tor) [-]
+suceptance matrix element 21 (tor-pol) [-]
+suceptance matrix element 22 (tor-tor) [-]</p>
+<hr>
+<p>Declaration of local variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bm2_r"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>BM2_R</strong>(:)</td>
+            <td>
+                <p><B**2> [T<strong>2]
+&lt;1/B</strong>2&gt; [/T<strong>2]
+poloidal moments of &lt;[n.grad(B)]</strong>2&gt;/<B**2> [-]
+trapped particle fraction [-]
+<grad(rho)**2/B**2> [rho<strong>2/m</strong>2/T**2]
+n.grad(Theta) [/m]
+suceptance matrix element 11 (pol-pol) [-]
+suceptance matrix element 12 (pol-tor) [-]
+suceptance matrix element 21 (tor-pol) [-]
+suceptance matrix element 22 (tor-tor) [-]</p>
+<hr>
+<p>Declaration of local variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-fm_r"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>FM_R</strong>(:,:)</td>
+            <td>
+                <p><B**2> [T<strong>2]
+&lt;1/B</strong>2&gt; [/T<strong>2]
+poloidal moments of &lt;[n.grad(B)]</strong>2&gt;/<B**2> [-]
+trapped particle fraction [-]
+<grad(rho)**2/B**2> [rho<strong>2/m</strong>2/T**2]
+n.grad(Theta) [/m]
+suceptance matrix element 11 (pol-pol) [-]
+suceptance matrix element 12 (pol-tor) [-]
+suceptance matrix element 21 (tor-pol) [-]
+suceptance matrix element 22 (tor-tor) [-]</p>
+<hr>
+<p>Declaration of local variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ftrap_r"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>FTRAP_R</strong>(:)</td>
+            <td>
+                <p><B**2> [T<strong>2]
+&lt;1/B</strong>2&gt; [/T<strong>2]
+poloidal moments of &lt;[n.grad(B)]</strong>2&gt;/<B**2> [-]
+trapped particle fraction [-]
+<grad(rho)**2/B**2> [rho<strong>2/m</strong>2/T**2]
+n.grad(Theta) [/m]
+suceptance matrix element 11 (pol-pol) [-]
+suceptance matrix element 12 (pol-tor) [-]
+suceptance matrix element 21 (tor-pol) [-]
+suceptance matrix element 22 (tor-tor) [-]</p>
+<hr>
+<p>Declaration of local variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-gr2bm2_r"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>GR2BM2_R</strong>(:)</td>
+            <td>
+                <p><B**2> [T<strong>2]
+&lt;1/B</strong>2&gt; [/T<strong>2]
+poloidal moments of &lt;[n.grad(B)]</strong>2&gt;/<B**2> [-]
+trapped particle fraction [-]
+<grad(rho)**2/B**2> [rho<strong>2/m</strong>2/T**2]
+n.grad(Theta) [/m]
+suceptance matrix element 11 (pol-pol) [-]
+suceptance matrix element 12 (pol-tor) [-]
+suceptance matrix element 21 (tor-pol) [-]
+suceptance matrix element 22 (tor-tor) [-]</p>
+<hr>
+<p>Declaration of local variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-grth_r"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>GRTH_R</strong>(:)</td>
+            <td>
+                <p><B**2> [T<strong>2]
+&lt;1/B</strong>2&gt; [/T<strong>2]
+poloidal moments of &lt;[n.grad(B)]</strong>2&gt;/<B**2> [-]
+trapped particle fraction [-]
+<grad(rho)**2/B**2> [rho<strong>2/m</strong>2/T**2]
+n.grad(Theta) [/m]
+suceptance matrix element 11 (pol-pol) [-]
+suceptance matrix element 12 (pol-tor) [-]
+suceptance matrix element 21 (tor-pol) [-]
+suceptance matrix element 22 (tor-tor) [-]</p>
+<hr>
+<p>Declaration of local variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sus11_r"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>SUS11_R</strong>(:)</td>
+            <td>
+                <p><B**2> [T<strong>2]
+&lt;1/B</strong>2&gt; [/T<strong>2]
+poloidal moments of &lt;[n.grad(B)]</strong>2&gt;/<B**2> [-]
+trapped particle fraction [-]
+<grad(rho)**2/B**2> [rho<strong>2/m</strong>2/T**2]
+n.grad(Theta) [/m]
+suceptance matrix element 11 (pol-pol) [-]
+suceptance matrix element 12 (pol-tor) [-]
+suceptance matrix element 21 (tor-pol) [-]
+suceptance matrix element 22 (tor-tor) [-]</p>
+<hr>
+<p>Declaration of local variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sus12_r"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>SUS12_R</strong>(:)</td>
+            <td>
+                <p><B**2> [T<strong>2]
+&lt;1/B</strong>2&gt; [/T<strong>2]
+poloidal moments of &lt;[n.grad(B)]</strong>2&gt;/<B**2> [-]
+trapped particle fraction [-]
+<grad(rho)**2/B**2> [rho<strong>2/m</strong>2/T**2]
+n.grad(Theta) [/m]
+suceptance matrix element 11 (pol-pol) [-]
+suceptance matrix element 12 (pol-tor) [-]
+suceptance matrix element 21 (tor-pol) [-]
+suceptance matrix element 22 (tor-tor) [-]</p>
+<hr>
+<p>Declaration of local variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sus21_r"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>SUS21_R</strong>(:)</td>
+            <td>
+                <p><B**2> [T<strong>2]
+&lt;1/B</strong>2&gt; [/T<strong>2]
+poloidal moments of &lt;[n.grad(B)]</strong>2&gt;/<B**2> [-]
+trapped particle fraction [-]
+<grad(rho)**2/B**2> [rho<strong>2/m</strong>2/T**2]
+n.grad(Theta) [/m]
+suceptance matrix element 11 (pol-pol) [-]
+suceptance matrix element 12 (pol-tor) [-]
+suceptance matrix element 21 (tor-pol) [-]
+suceptance matrix element 22 (tor-tor) [-]</p>
+<hr>
+<p>Declaration of local variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sus22_r"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>SUS22_R</strong>(:)</td>
+            <td>
+                <p><B**2> [T<strong>2]
+&lt;1/B</strong>2&gt; [/T<strong>2]
+poloidal moments of &lt;[n.grad(B)]</strong>2&gt;/<B**2> [-]
+trapped particle fraction [-]
+<grad(rho)**2/B**2> [rho<strong>2/m</strong>2/T**2]
+n.grad(Theta) [/m]
+suceptance matrix element 11 (pol-pol) [-]
+suceptance matrix element 12 (pol-tor) [-]
+suceptance matrix element 21 (tor-pol) [-]
+suceptance matrix element 22 (tor-tor) [-]</p>
+<hr>
+<p>Declaration of local variables</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+
+
+    
+    
+
+    
+    
+
+
+
+    
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              PELLETS
+              &copy; 2025 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

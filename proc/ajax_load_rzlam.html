@@ -1,0 +1,718 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Documentation for PELLETS">
+    <meta name="author" content="" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>AJAX_LOAD_RZLAM &ndash; PELLETS</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">PELLETS </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/namelists.html">Namelists</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../program/pellet_dr.html">Program</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>AJAX_LOAD_RZLAM
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 4.4% of total for procedures.">199 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/ajax_mod.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/ajax_mod.f90.html'>ajax_mod.f90</a></li>
+                <li class="breadcrumb-item"><a href='../module/ajax_mod.html'>AJAX_MOD</a></li>
+            <li class="breadcrumb-item active" aria-current="page">AJAX_LOAD_RZLAM</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>public  subroutine AJAX_LOAD_RZLAM(nr_rz, nk_rz, rho_rz, m, n, r, z, iflag, message, K_GRID, L_MFILTER_AJAX, NRHO_AJAX, NTHETA_AJAX, NZETA_AJAX, RHOMAX_AJAX, NR_LAM, NK_LAM, RHO_LAM, LAM)  
+</h2>
+    
+
+    <p>AJAX_LOAD_RZLAM loads 2D/3D MHD equilibria in inverse coordinate form</p>
+<p>References:
+  W.A.Houlberg, F90 free format 8/2004
+  W.A.Houlberg, named DO loop on EXIT 1/2005</p>
+<p>Comments:
+  Knowledge of the form of the input radial grid (see K_GRID) is necessary for
+    accurate mapping to the internal grid
+  The internal radial grid, rho_3d, is proportional to the square root of the
+    toroidal flux
+  The maximum value of the R,Z radial grid defines rho/rhomax=1
+  The internal radial grid will be scaled to rhomax if specified, otherwise it
+    will default to the domain [0,1]
+  The input poloidal and toroidal mode numbers are the same for the R,Z and
+    lambda expansions and dimensioned to the greater of the two; e.g., if there
+    are more poloidal and toroidal modes for the input lambda they should be
+    appended to the end of the sequence of values for the R,Z expansions
+  Mode filtering may be tried to improve calculations near the axis and the
+    outer boundary</p>
+<hr>
+<p>Declaration of input variables
+Set number of angular modes
+Set the number of toroidal field periods, &lt; 100 periods
+Over modes</p>
+<p>Find lowest non-zero toroidal mode number
+Over modes</p>
+<p>Found no peiodicity in data, set to axisymmetric
+Non-axisymmetric 
+Check periodicity
+Over modes</p>
+<p>Some mode does not fit the periodicity
+Over modes</p>
+<hr>
+<h2>Check optional input for internal grid initialization</h2>
+<p>Set the number of internal radial nodes
+Use input value
+Use default value
+Set the number of internal poloidal nodes
+Use input value
+Make sure the number of modes is odd for 4th order Simpson integration
+Axisymmetric
+4k+1 typically yields &lt;0.1% error in B_zeta = RB_t ~ const
+Non-axisymmetric
+Error estimate yet to be quantified, typically |m| &lt;= 8
+Set the number of internal toroidal nodes
+Use input value
+Make sure the number of modes is odd for 4th order Simpson integration
+Use axisymmetric value
+Use non-axisymmetric default value
+Error estimate yet to be quantified, typically |n/nper| &lt;= 5
+Set the option for mode filtering
+Use input value
+Use default value</p>
+<hr>
+<h2>Set general information and initialize arrays</h2>
+<p>Scale the outer radial boundary of R,Z to rhomax
+Use input value
+Use default value
+Set the mode numbers of the (m,n)=(0,0) and (m,n)=(1,0) modes
+Over modes</p>
+<h2>Call initialization routine</h2>
+<h2>Poloidal and toroidal mode data</h2>
+<p>Initialization
+Copy data
+Set |m| with mode filtering for rho**|m| normalization
+Over modes</p>
+<p>Check for filtering
+Filtering for |m| &gt; 3
+Even mode, remove rho<strong>2
+Odd mode, remove rho</strong>3
+Over modes</p>
+<hr>
+<h2>Load R and Z expansion data</h2>
+<p>Initialization
+Make copy of radial grid and expansion coefficients
+If the user does not provide an axial value for R,Z data, need to fill in
+Allocate radial grid and R,Z arrays, add radial node at axis
+Allocate radial grid and R,Z arrays, use input grid
+Convert rho to sqrt(toroidal flux) if necesssary and scale
+~toroidal flux
+~sqrt(toroidal flux)
+Unallowed choice of input grid
+Set the inner radial boundary of R,Z for checking axial extrapolation
+Allocate spline arrays
+Normalize the expansion coefficients to rho**m
+Over modes</p>
+<p>Over radial nodes</p>
+<p>Over radial nodes</p>
+<p>Parabolic extrapolation to axis (user values ignored)
+Map R_mn to internal radial grid
+Check messages
+Respline the R coeffs for internal storage
+Map Z_mn to internal radial grid
+Check messages
+Respline the Z coeffs for internal storage
+Over modes</p>
+<h2>Set the length scale factors</h2>
+<h2>Magnetic stream function</h2>
+<p>Load lambda from input
+Check messages
+Calculate lambdas for axisymmetric plasma
+Set up 3d grid for flux surface integrals
+Check messages
+Calculate lambda
+Need to specify stream function for non-axisymmetric plasmas</p>
+<hr>
+<h2>Cleanup and exit</h2>
+<p>Deallocate radial grid and R,Z arrays
+Deallocate spline arrays</p>
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nr_rz~2"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nr_rz</strong></td>
+            <td>
+                <p>no. of radial nodes in the input R,Z [-]
+no. of poloidal &amp; toroidal modes in the input R,Z [-]
+poloidal mode numbers [-]
+toroidal mode numbers [-]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nk_rz~2"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nk_rz</strong></td>
+            <td>
+                <p>no. of radial nodes in the input R,Z [-]
+no. of poloidal &amp; toroidal modes in the input R,Z [-]
+poloidal mode numbers [-]
+toroidal mode numbers [-]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rho_rz~3"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>rho_rz</strong>(:)</td>
+            <td>
+                <p>radial nodes in the input R,Z [arb]
+expansion coeffs for R [m]
+expansion coeffs for Z [m]</p>
+<p>Declaration of output variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-m~3"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>m</strong>(:)</td>
+            <td>
+                <p>no. of radial nodes in the input R,Z [-]
+no. of poloidal &amp; toroidal modes in the input R,Z [-]
+poloidal mode numbers [-]
+toroidal mode numbers [-]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-n~10"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n</strong>(:)</td>
+            <td>
+                <p>no. of radial nodes in the input R,Z [-]
+no. of poloidal &amp; toroidal modes in the input R,Z [-]
+poloidal mode numbers [-]
+toroidal mode numbers [-]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-r~5"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>r</strong>(:,:)</td>
+            <td>
+                <p>radial nodes in the input R,Z [arb]
+expansion coeffs for R [m]
+expansion coeffs for Z [m]</p>
+<p>Declaration of output variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-z~2"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>z</strong>(:,:)</td>
+            <td>
+                <p>radial nodes in the input R,Z [arb]
+expansion coeffs for R [m]
+expansion coeffs for Z [m]</p>
+<p>Declaration of output variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-iflag~17"></span>
+              integer,
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>iflag</strong></td>
+            <td>
+                <p>error and warning flag [-]
+=-1 warning
+=0 none
+=1 error</p>
+<p>Declaration of optional input variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-message~17"></span>
+              character(len=*),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>message</strong></td>
+            <td>
+                <p>warning or error message [character]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-k_grid"></span>
+              integer,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>K_GRID</strong></td>
+            <td>
+                <p>option designating type of input radial grid [-]
+=0 proportional to sqrt(toroidal flux)
+=1 proportional to toroidal flux
+=else not allowed
+no. of radial nodes in internal data [-]
+=21 default
+no. of poloidal nodes in internal data [odd]
+=21 default
+no. of toroidal nodes per period in internal data [odd]
+=11 default for non-axisymmetric plasma
+=0 default for axisymmetric plasma
+no. of radial nodes in the input lambda [-]
+no. of poloidal &amp; toroidal modes in the input lambda [-]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-l_mfilter_ajax"></span>
+              logical,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>L_MFILTER_AJAX</strong></td>
+            <td>
+                <p>option for mode filtering [logical]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nrho_ajax~2"></span>
+              integer,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>NRHO_AJAX</strong></td>
+            <td>
+                <p>option designating type of input radial grid [-]
+=0 proportional to sqrt(toroidal flux)
+=1 proportional to toroidal flux
+=else not allowed
+no. of radial nodes in internal data [-]
+=21 default
+no. of poloidal nodes in internal data [odd]
+=21 default
+no. of toroidal nodes per period in internal data [odd]
+=11 default for non-axisymmetric plasma
+=0 default for axisymmetric plasma
+no. of radial nodes in the input lambda [-]
+no. of poloidal &amp; toroidal modes in the input lambda [-]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ntheta_ajax~2"></span>
+              integer,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>NTHETA_AJAX</strong></td>
+            <td>
+                <p>option designating type of input radial grid [-]
+=0 proportional to sqrt(toroidal flux)
+=1 proportional to toroidal flux
+=else not allowed
+no. of radial nodes in internal data [-]
+=21 default
+no. of poloidal nodes in internal data [odd]
+=21 default
+no. of toroidal nodes per period in internal data [odd]
+=11 default for non-axisymmetric plasma
+=0 default for axisymmetric plasma
+no. of radial nodes in the input lambda [-]
+no. of poloidal &amp; toroidal modes in the input lambda [-]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nzeta_ajax"></span>
+              integer,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>NZETA_AJAX</strong></td>
+            <td>
+                <p>option designating type of input radial grid [-]
+=0 proportional to sqrt(toroidal flux)
+=1 proportional to toroidal flux
+=else not allowed
+no. of radial nodes in internal data [-]
+=21 default
+no. of poloidal nodes in internal data [odd]
+=21 default
+no. of toroidal nodes per period in internal data [odd]
+=11 default for non-axisymmetric plasma
+=0 default for axisymmetric plasma
+no. of radial nodes in the input lambda [-]
+no. of poloidal &amp; toroidal modes in the input lambda [-]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rhomax_ajax~2"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>RHOMAX_AJAX</strong></td>
+            <td>
+                <p>value of internal radial grid at R,Z boundary [rho]
+=1.0 default
+radial nodes in the input lambda [arb]
+expansion coeffs for lambda [-]</p>
+<hr>
+<p>Declaration of local variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nr_lam"></span>
+              integer,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>NR_LAM</strong></td>
+            <td>
+                <p>option designating type of input radial grid [-]
+=0 proportional to sqrt(toroidal flux)
+=1 proportional to toroidal flux
+=else not allowed
+no. of radial nodes in internal data [-]
+=21 default
+no. of poloidal nodes in internal data [odd]
+=21 default
+no. of toroidal nodes per period in internal data [odd]
+=11 default for non-axisymmetric plasma
+=0 default for axisymmetric plasma
+no. of radial nodes in the input lambda [-]
+no. of poloidal &amp; toroidal modes in the input lambda [-]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nk_lam"></span>
+              integer,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>NK_LAM</strong></td>
+            <td>
+                <p>option designating type of input radial grid [-]
+=0 proportional to sqrt(toroidal flux)
+=1 proportional to toroidal flux
+=else not allowed
+no. of radial nodes in internal data [-]
+=21 default
+no. of poloidal nodes in internal data [odd]
+=21 default
+no. of toroidal nodes per period in internal data [odd]
+=11 default for non-axisymmetric plasma
+=0 default for axisymmetric plasma
+no. of radial nodes in the input lambda [-]
+no. of poloidal &amp; toroidal modes in the input lambda [-]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rho_lam"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>RHO_LAM</strong>(:)</td>
+            <td>
+                <p>value of internal radial grid at R,Z boundary [rho]
+=1.0 default
+radial nodes in the input lambda [arb]
+expansion coeffs for lambda [-]</p>
+<hr>
+<p>Declaration of local variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-lam"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>LAM</strong>(:,:)</td>
+            <td>
+                <p>value of internal radial grid at R,Z boundary [rho]
+=1.0 default
+radial nodes in the input lambda [arb]
+expansion coeffs for lambda [-]</p>
+<hr>
+<p>Declaration of local variables</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+
+
+    
+    
+
+    
+    
+
+
+
+    
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              PELLETS
+              &copy; 2025 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>
