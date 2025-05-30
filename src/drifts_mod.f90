@@ -95,29 +95,29 @@ SUBROUTINE PARKS_DRIFT(W,r_p,ne_inf,Te_inf,R,B,M0, &
 
   real(kind=rspec), intent(in) :: &
     W,                            &
-    !! pellet mass in amu <br />
-    !! PELLET: amu_pel [-] 
+      !! pellet mass in amu <br />
+      !! PELLET: amu_pel [-] 
     r_p,                          &
-    !! pellet radius [cm]
-    !! PELLET: r0 [m]
+      !! pellet radius [cm]
+      !! PELLET: r0 [m]
     ne_inf,                       &
-    !! background plasma density [/cm**3]
-    !! PELLET: d0 [/m**3]
+      !! background plasma density [/cm**3]
+      !! PELLET: d0 [/m**3]
     Te_inf,                       &
-    !! background plasma temperature [keV]
-    !! PELLET: te0 [keV]
+      !! background plasma temperature [keV]
+      !! PELLET: te0 [keV]
     R,                            &
-    !! major radius [m]
-    !! PELLET: r0 [m]
+      !! major radius [m]
+      !! PELLET: r0 [m]
     B,                            &
-    !! toroidal magnetic field [T]
-    !! PELLET: bt0 [T]
+      !! toroidal magnetic field [T]
+      !! PELLET: bt0 [T]
     M0,                           &
-    !! mach number at the channel entrance [-]
-    !! PELLET: NA ? 
+      !! mach number at the channel entrance [-]
+      !! PELLET: NA ? 
     T0                             
-    !! temperature at the channel entrance [eV]
-    !! PELLET: NA ?
+      !! temperature at the channel entrance [eV]
+      !! PELLET: NA ?
 
 !>------------------------------------------------------------------#
 !> Currently these out quantities are just to compare with
