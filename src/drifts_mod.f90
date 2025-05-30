@@ -31,6 +31,8 @@ real(kind=rspec), private, save :: &
   T_star,                          &
 !> sound speed at the channel entrance
   cs_0,                            &
+!> beta at the channel entrance [-]
+  beta_0,                          &
 !> background plasma density (ion) [/m**3]
 !> PELLET: NA
   ni_inf,                          &
@@ -57,13 +59,13 @@ real(kind=rspec), private, save :: &
   quant                            
 
 real(kind=rspec), private, parameter :: &
-!> free space permeability
-  mu0 = 1.2566e-06,                     &
+!> free space permeability [kg/s**2/A**2]
+  mu0 = 1.25663706e-06,                 &
 !> Coloumb charge (eV --> J)
-  e0 = 1.6022e-19,                      &
+  e0 = 1.60217663e-19,                  &
 !> ion mass [kg]
 !> PELLET: NA
-  mi = 1.67e-27,                        &
+  mi = 1.6735575e-27,                   &
 !> gas constant [-]
   gam = 5./3.,                          &
 !> latent energy of ionization [eV/ion]
@@ -80,7 +82,7 @@ contains
 SUBROUTINE PARKS_DRIFT(W,r_p,ne_inf,Te_inf,R,B,M0, &
                        T0,cA_inf,beta_inf,kap_c, &
                        beta_ratio,lnLam_en,lnLam_ee, &
-                       Sigma_0,c_0_bar,Psi_int)
+                       Sigma_0,c_0_bar,Psi_int,DelR)
 
 !>------------------------------------------------------------------
 !> PARKS_DRIFT calculates the change in pellet position Delta R
@@ -138,7 +140,9 @@ real(kind=rspec), intent(out) :: &
   lnLam_en,                      &
   lnLam_ee,                      &
 !> toroidal drive integral
-  Psi_int  
+  Psi_int,                       &
+!> final penetration depth
+  DelR    
 
 !>------------------------------------------------------------------#
 !> Calculating scalar quantities
@@ -147,7 +151,7 @@ real(kind=rspec), intent(out) :: &
 lnLam_en = log(2.0*Te_inf/7.5)
 lnLam_ee = 23.5 - log(((ne_inf)**(1./2.))*((Te_inf)**(-5./6.)))
 quant = ne_inf*r_p*lnLam_en
-beta_inf = 4.0*mu0*(ne_inf*ne_scale)*(Te_inf*e0)/B**2
+beta_inf = 4.0*mu0*(ne_inf*ne_scale)*(Te_inf*e0)/B**2.0
 
 !>------------------------------------------------------------------
 !> Calculate sonic radius quantities
@@ -159,10 +163,10 @@ beta_inf = 4.0*mu0*(ne_inf*ne_scale)*(Te_inf*e0)/B**2
 beta_star_prime = 4.3e3*((W/quant)**(1./3.))*(Te_inf**(2./3.))*beta_inf
 T_star_prime = 1.88e-9*((W/Te_inf)**(1./3.))*(quant**(2./3.))
 
-!> NOTE: T_star =/= T_star_prime but I'm not 100% sure of the value
-!>       so setting as equal for now.
-!>       !!!!!This absolutely needs to be fixed!!!!!
-T_star = T_star_prime
+!>------------------------------------------------------------------
+!> temperature where M = 1
+!>------------------------------------------------------------------
+T_star = T0*(((1.0 + gam*(M0**2.0))**2.0)/(((1.0 + gam)**2.0)*(M0**2)))
 
 !>------------------------------------------------------------------
 !> background plasma Alfven velocity
@@ -183,20 +187,19 @@ c_0_bar = ((cs_0**2.0)/gam)**(1./2.)
 cs_0 = cs_0*1.0e2
 c_0_bar = c_0_bar*1.0e2
 
-!> NOTE: because I've set T_star = T_star_prime, kap_c isn't
-!>       correct and it does make a decent difference to
-!>       Delta R!!!!
 kap_c_term1 = 1.54e4*(Te_inf**(1./6.))
 kap_c_term2 = ((1.0 - muE)**(1./2.))*(W**(1./6.))*(quant**(1./3.))
-kap_c_term3 = (4.0*gam*T_star * eps_diss + eps_ion)**(1./2.)
+kap_c_term3 = (4.0*gam*T_star + eps_diss + eps_ion)**(1./2.)
 kap_c = (kap_c_term1/kap_c_term2)*kap_c_term3
 
 !>------------------------------------------------------------------
 !> Dimensionless quantities at channel entrance
 !>------------------------------------------------------------------
 
+!> For the life of me I cannot get Sigma_0 to match the paper value...
+!> which is leading to a final DelR 50% larger than it should be.
 Sigma_0_term1 = ((582.0*(R**(1./2.)))/(M0*((kap_c)**(3./2.))*(W**(1./3.))*cs_0))
-Sigma_0_term2 = ((((ne_inf)**2.0)/Te_inf*r_p)**(1./6.))
+Sigma_0_term2 = ((((ne_inf)**2.0)/(Te_inf*r_p))**(1./6.))
 Sigma_0_term3 = (lnLam_ee/(lnLam_en**(2./3.)))
 Sigma_0 = Sigma_0_term1*Sigma_0_term2*Sigma_0_term3
 
@@ -213,10 +216,17 @@ beta_ratio = beta_ratio_term1*beta_ratio_term2
 
 Psi_int = 0.036*(Sigma_0**1.1)*((beta_ratio - 1.0)**2.64)
 
+!>------------------------------------------------------------------
+!> Penetration depth (Eq. 28)
+!>------------------------------------------------------------------
+
+beta_0 = beta_ratio*beta_inf
+DelR = 0.5*beta_0*kap_c*r_p*(cA_inf/c_0_bar)*Psi_int
+
 open (unit=10,file="test.txt",action="write")
-write(10,*) cA_inf,beta_inf,kap_c, &
-            beta_ratio,lnLam_en,lnLam_ee, &
-            Sigma_0,c_0_bar,Psi_int
+write(10,*) kap_c, &
+            beta_ratio,beta_0, &
+            Sigma_0,Psi_int,DelR
 close (10)
 
 END SUBROUTINE PARKS_DRIFT
