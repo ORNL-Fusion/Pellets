@@ -84,40 +84,40 @@ SUBROUTINE PARKS_DRIFT(W,r_p,ne_inf,Te_inf,R,B,M0, &
                        beta_ratio, &
                        Sigma_0,c_0_bar,Psi_int,DelR)
 
-!>------------------------------------------------------------------
-!> PARKS_DRIFT calculates the change in pellet position Delta R
-!> based on an ad-hoc scaling law.
-!> See Parks et al. (2000)
-!>
-!> We use the same convention as Parks but also include the
-!> corresponding PELLET parameters along with their units.
-!>------------------------------------------------------------------
+  !!------------------------------------------------------------------
+  !! PARKS_DRIFT calculates the change in pellet position Delta R
+  !! based on an ad-hoc scaling law.
+  !! See Parks et al. (2000)
+  !!
+  !! We use the same convention as Parks but also include the
+  !! corresponding PELLET parameters along with their units.
+  !!------------------------------------------------------------------
 
-real(kind=rspec), intent(in) :: &
-!> pellet mass in amu <br />
-!> PELLET: amu_pel [-] 
-  W,                            &
-!> pellet radius [cm]
-!> PELLET: r0 [m]
-  r_p,                          &
-!> background plasma density [/cm**3]
-!> PELLET: d0 [/m**3]
-  ne_inf,                       &
-!> background plasma temperature [keV]
-!> PELLET: te0 [keV]
-  Te_inf,                       &
-!> major radius [m]
-!> PELLET: r0 [m]
-  R,                            &
-!> toroidal magnetic field [T]
-!> PELLET: bt0 [T]
-  B,                            &
-!> mach number at the channel entrance [-]
-!> PELLET: NA ? 
-  M0,                           &
-!> temperature at the channel entrance [eV]
-!> PELLET: NA ?
-  T0                             
+  real(kind=rspec), intent(in) :: &
+    W,                            &
+      !! pellet mass in amu <br />
+      !! PELLET: amu_pel [-] 
+    r_p,                          &
+      !! pellet radius [cm]
+      !! PELLET: r0 [m]
+    ne_inf,                       &
+      !! background plasma density [/cm**3]
+      !! PELLET: d0 [/m**3]
+    Te_inf,                       &
+      !! background plasma temperature [keV]
+      !! PELLET: te0 [keV]
+    R,                            &
+      !! major radius [m]
+      !! PELLET: r0 [m]
+    B,                            &
+      !! toroidal magnetic field [T]
+      !! PELLET: bt0 [T]
+    M0,                           &
+      !! mach number at the channel entrance [-]
+      !! PELLET: NA ? 
+    T0                             
+      !! temperature at the channel entrance [eV]
+      !! PELLET: NA ?
 
 !>------------------------------------------------------------------#
 !> Currently these out quantities are just to compare with

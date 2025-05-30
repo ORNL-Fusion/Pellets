@@ -256,40 +256,40 @@
 <a id="ln-84" name="ln-84" href="#ln-84"></a><span class="w">                       </span><span class="n">beta_ratio</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
 <a id="ln-85" name="ln-85" href="#ln-85"></a><span class="w">                       </span><span class="n">Sigma_0</span><span class="p">,</span><span class="n">c_0_bar</span><span class="p">,</span><span class="n">Psi_int</span><span class="p">,</span><span class="n">DelR</span><span class="p">)</span>
 <a id="ln-86" name="ln-86" href="#ln-86"></a>
-<a id="ln-87" name="ln-87" href="#ln-87"></a><span class="c">!&gt;------------------------------------------------------------------</span>
-<a id="ln-88" name="ln-88" href="#ln-88"></a><span class="c">!&gt; PARKS_DRIFT calculates the change in pellet position Delta R</span>
-<a id="ln-89" name="ln-89" href="#ln-89"></a><span class="c">!&gt; based on an ad-hoc scaling law.</span>
-<a id="ln-90" name="ln-90" href="#ln-90"></a><span class="c">!&gt; See Parks et al. (2000)</span>
-<a id="ln-91" name="ln-91" href="#ln-91"></a><span class="c">!&gt;</span>
-<a id="ln-92" name="ln-92" href="#ln-92"></a><span class="c">!&gt; We use the same convention as Parks but also include the</span>
-<a id="ln-93" name="ln-93" href="#ln-93"></a><span class="c">!&gt; corresponding PELLET parameters along with their units.</span>
-<a id="ln-94" name="ln-94" href="#ln-94"></a><span class="c">!&gt;------------------------------------------------------------------</span>
+<a id="ln-87" name="ln-87" href="#ln-87"></a><span class="w">  </span><span class="c">!!------------------------------------------------------------------</span>
+<a id="ln-88" name="ln-88" href="#ln-88"></a><span class="w">  </span><span class="c">!! PARKS_DRIFT calculates the change in pellet position Delta R</span>
+<a id="ln-89" name="ln-89" href="#ln-89"></a><span class="w">  </span><span class="c">!! based on an ad-hoc scaling law.</span>
+<a id="ln-90" name="ln-90" href="#ln-90"></a><span class="w">  </span><span class="c">!! See Parks et al. (2000)</span>
+<a id="ln-91" name="ln-91" href="#ln-91"></a><span class="w">  </span><span class="c">!!</span>
+<a id="ln-92" name="ln-92" href="#ln-92"></a><span class="w">  </span><span class="c">!! We use the same convention as Parks but also include the</span>
+<a id="ln-93" name="ln-93" href="#ln-93"></a><span class="w">  </span><span class="c">!! corresponding PELLET parameters along with their units.</span>
+<a id="ln-94" name="ln-94" href="#ln-94"></a><span class="w">  </span><span class="c">!!------------------------------------------------------------------</span>
 <a id="ln-95" name="ln-95" href="#ln-95"></a>
-<a id="ln-96" name="ln-96" href="#ln-96"></a><span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="n">rspec</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="p">&amp;</span>
-<a id="ln-97" name="ln-97" href="#ln-97"></a><span class="c">!&gt; pellet mass in amu &lt;br /&gt;</span>
-<a id="ln-98" name="ln-98" href="#ln-98"></a><span class="c">!&gt; PELLET: amu_pel [-] </span>
-<a id="ln-99" name="ln-99" href="#ln-99"></a><span class="w">  </span><span class="n">W</span><span class="p">,</span><span class="w">                            </span><span class="p">&amp;</span>
-<a id="ln-100" name="ln-100" href="#ln-100"></a><span class="c">!&gt; pellet radius [cm]</span>
-<a id="ln-101" name="ln-101" href="#ln-101"></a><span class="c">!&gt; PELLET: r0 [m]</span>
-<a id="ln-102" name="ln-102" href="#ln-102"></a><span class="w">  </span><span class="n">r_p</span><span class="p">,</span><span class="w">                          </span><span class="p">&amp;</span>
-<a id="ln-103" name="ln-103" href="#ln-103"></a><span class="c">!&gt; background plasma density [/cm**3]</span>
-<a id="ln-104" name="ln-104" href="#ln-104"></a><span class="c">!&gt; PELLET: d0 [/m**3]</span>
-<a id="ln-105" name="ln-105" href="#ln-105"></a><span class="w">  </span><span class="n">ne_inf</span><span class="p">,</span><span class="w">                       </span><span class="p">&amp;</span>
-<a id="ln-106" name="ln-106" href="#ln-106"></a><span class="c">!&gt; background plasma temperature [keV]</span>
-<a id="ln-107" name="ln-107" href="#ln-107"></a><span class="c">!&gt; PELLET: te0 [keV]</span>
-<a id="ln-108" name="ln-108" href="#ln-108"></a><span class="w">  </span><span class="n">Te_inf</span><span class="p">,</span><span class="w">                       </span><span class="p">&amp;</span>
-<a id="ln-109" name="ln-109" href="#ln-109"></a><span class="c">!&gt; major radius [m]</span>
-<a id="ln-110" name="ln-110" href="#ln-110"></a><span class="c">!&gt; PELLET: r0 [m]</span>
-<a id="ln-111" name="ln-111" href="#ln-111"></a><span class="w">  </span><span class="n">R</span><span class="p">,</span><span class="w">                            </span><span class="p">&amp;</span>
-<a id="ln-112" name="ln-112" href="#ln-112"></a><span class="c">!&gt; toroidal magnetic field [T]</span>
-<a id="ln-113" name="ln-113" href="#ln-113"></a><span class="c">!&gt; PELLET: bt0 [T]</span>
-<a id="ln-114" name="ln-114" href="#ln-114"></a><span class="w">  </span><span class="n">B</span><span class="p">,</span><span class="w">                            </span><span class="p">&amp;</span>
-<a id="ln-115" name="ln-115" href="#ln-115"></a><span class="c">!&gt; mach number at the channel entrance [-]</span>
-<a id="ln-116" name="ln-116" href="#ln-116"></a><span class="c">!&gt; PELLET: NA ? </span>
-<a id="ln-117" name="ln-117" href="#ln-117"></a><span class="w">  </span><span class="n">M0</span><span class="p">,</span><span class="w">                           </span><span class="p">&amp;</span>
-<a id="ln-118" name="ln-118" href="#ln-118"></a><span class="c">!&gt; temperature at the channel entrance [eV]</span>
-<a id="ln-119" name="ln-119" href="#ln-119"></a><span class="c">!&gt; PELLET: NA ?</span>
-<a id="ln-120" name="ln-120" href="#ln-120"></a><span class="w">  </span><span class="n">T0</span><span class="w">                             </span>
+<a id="ln-96" name="ln-96" href="#ln-96"></a><span class="w">  </span><span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="n">rspec</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-97" name="ln-97" href="#ln-97"></a><span class="w">    </span><span class="n">W</span><span class="p">,</span><span class="w">                            </span><span class="p">&amp;</span>
+<a id="ln-98" name="ln-98" href="#ln-98"></a><span class="w">      </span><span class="c">!! pellet mass in amu &lt;br /&gt;</span>
+<a id="ln-99" name="ln-99" href="#ln-99"></a><span class="w">      </span><span class="c">!! PELLET: amu_pel [-] </span>
+<a id="ln-100" name="ln-100" href="#ln-100"></a><span class="w">    </span><span class="n">r_p</span><span class="p">,</span><span class="w">                          </span><span class="p">&amp;</span>
+<a id="ln-101" name="ln-101" href="#ln-101"></a><span class="w">      </span><span class="c">!! pellet radius [cm]</span>
+<a id="ln-102" name="ln-102" href="#ln-102"></a><span class="w">      </span><span class="c">!! PELLET: r0 [m]</span>
+<a id="ln-103" name="ln-103" href="#ln-103"></a><span class="w">    </span><span class="n">ne_inf</span><span class="p">,</span><span class="w">                       </span><span class="p">&amp;</span>
+<a id="ln-104" name="ln-104" href="#ln-104"></a><span class="w">      </span><span class="c">!! background plasma density [/cm**3]</span>
+<a id="ln-105" name="ln-105" href="#ln-105"></a><span class="w">      </span><span class="c">!! PELLET: d0 [/m**3]</span>
+<a id="ln-106" name="ln-106" href="#ln-106"></a><span class="w">    </span><span class="n">Te_inf</span><span class="p">,</span><span class="w">                       </span><span class="p">&amp;</span>
+<a id="ln-107" name="ln-107" href="#ln-107"></a><span class="w">      </span><span class="c">!! background plasma temperature [keV]</span>
+<a id="ln-108" name="ln-108" href="#ln-108"></a><span class="w">      </span><span class="c">!! PELLET: te0 [keV]</span>
+<a id="ln-109" name="ln-109" href="#ln-109"></a><span class="w">    </span><span class="n">R</span><span class="p">,</span><span class="w">                            </span><span class="p">&amp;</span>
+<a id="ln-110" name="ln-110" href="#ln-110"></a><span class="w">      </span><span class="c">!! major radius [m]</span>
+<a id="ln-111" name="ln-111" href="#ln-111"></a><span class="w">      </span><span class="c">!! PELLET: r0 [m]</span>
+<a id="ln-112" name="ln-112" href="#ln-112"></a><span class="w">    </span><span class="n">B</span><span class="p">,</span><span class="w">                            </span><span class="p">&amp;</span>
+<a id="ln-113" name="ln-113" href="#ln-113"></a><span class="w">      </span><span class="c">!! toroidal magnetic field [T]</span>
+<a id="ln-114" name="ln-114" href="#ln-114"></a><span class="w">      </span><span class="c">!! PELLET: bt0 [T]</span>
+<a id="ln-115" name="ln-115" href="#ln-115"></a><span class="w">    </span><span class="n">M0</span><span class="p">,</span><span class="w">                           </span><span class="p">&amp;</span>
+<a id="ln-116" name="ln-116" href="#ln-116"></a><span class="w">      </span><span class="c">!! mach number at the channel entrance [-]</span>
+<a id="ln-117" name="ln-117" href="#ln-117"></a><span class="w">      </span><span class="c">!! PELLET: NA ? </span>
+<a id="ln-118" name="ln-118" href="#ln-118"></a><span class="w">    </span><span class="n">T0</span><span class="w">                             </span>
+<a id="ln-119" name="ln-119" href="#ln-119"></a><span class="w">      </span><span class="c">!! temperature at the channel entrance [eV]</span>
+<a id="ln-120" name="ln-120" href="#ln-120"></a><span class="w">      </span><span class="c">!! PELLET: NA ?</span>
 <a id="ln-121" name="ln-121" href="#ln-121"></a>
 <a id="ln-122" name="ln-122" href="#ln-122"></a><span class="c">!&gt;------------------------------------------------------------------#</span>
 <a id="ln-123" name="ln-123" href="#ln-123"></a><span class="c">!&gt; Currently these out quantities are just to compare with</span>
