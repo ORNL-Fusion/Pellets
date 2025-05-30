@@ -14,6 +14,7 @@ USE MIRTH_MOD
 USE PELLET_MOD
 USE TRACK_MOD
 USE WRITE_MOD
+use DRIFTS_MOD
 IMPLICIT NONE
 
 !-------------------------------------------------------------------------------
@@ -125,6 +126,7 @@ REAL(KIND=rspec) :: &
   prlinjang,           & !PRL injection angle
   prlq0,               & !PRL q0 value
   prlqa,               & !PRL qa value 
+  beta_inf,            &
   prlqf                  !PRL q profile exponent q(r) = (qa-q0) + q0*(1-(r/a)^qf)
 !
 !
@@ -292,6 +294,7 @@ prlinjang=0
 prlq0=0
 prlqa=0
 prlqf=0
+beta_inf=0
 
 
 !-------------------------------------------------------------------------------
@@ -875,6 +878,8 @@ IF(iflag /= 0) THEN
   message=''
 
 ENDIF
+
+call PARKS_DRIFT(2.0,0.05,7.0e13,1.3e3,107.,3.0,0.0,2.0,beta_inf)
 
 raxis=r_cyl(1)
 
