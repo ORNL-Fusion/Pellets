@@ -81,7 +81,7 @@ contains
 
 SUBROUTINE PARKS_DRIFT(W,r_p,ne_inf,Te_inf,R,B,M0, &
                        T0,cA_inf,beta_inf,kap_c, &
-                       beta_ratio,lnLam_en,lnLam_ee, &
+                       beta_ratio, &
                        Sigma_0,c_0_bar,Psi_int,DelR)
 
 !>------------------------------------------------------------------
