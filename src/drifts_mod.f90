@@ -229,4 +229,27 @@ close (10)
 
 END SUBROUTINE PARKS_DRIFT
 
+SUBROUTINE BAYLOR_DRIFT(B,Te0,Teped,r_pel,qa, &
+                        DelR)
+
+real(kind=rspec), intent(in) :: &
+!> magnetic field [T] 
+  B,                            &
+!> central electron temp [keV]
+  Te0,                          &
+!> pedestal electron temp [keV]
+  Teped,                        &
+!> pellet radius [m]
+  r_pel,                        &
+!> safety factor at the edge    
+  qa
+
+real(kind=rspec), intent(out) :: &
+!> drift radius
+  DelR 
+
+
+
+END SUBROUTINE
+
 END MODULE DRIFTS_MOD
