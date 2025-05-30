@@ -127,6 +127,13 @@ REAL(KIND=rspec) :: &
   prlq0,               & !PRL q0 value
   prlqa,               & !PRL qa value 
   beta_inf,            &
+  cA_inf,kap_c,        &
+  beta_ratio,          &
+  Sigma_0,c_0_bar,     &
+  Psi_int,             &
+  lnLam_en,            &
+  lnLam_ee,            &
+  DelR,                &
   prlqf                  !PRL q profile exponent q(r) = (qa-q0) + q0*(1-(r/a)^qf)
 !
 !
@@ -295,7 +302,15 @@ prlq0=0
 prlqa=0
 prlqf=0
 beta_inf=0
-
+cA_inf=0
+kap_c=0
+beta_ratio=0
+Sigma_0=0
+c_0_bar=0
+Psi_int=0
+lnLam_en=0
+lnLam_ee=0
+DelR=0
 
 !-------------------------------------------------------------------------------
 !Set the input namelist unit, open, read and close file
@@ -879,7 +894,10 @@ IF(iflag /= 0) THEN
 
 ENDIF
 
-call PARKS_DRIFT(2.0,0.05,7.0e13,1.3e3,107.,3.0,0.0,2.0,beta_inf)
+call PARKS_DRIFT(2.0,0.05,7.0e13,1.3e3,107.0,3.0,0.8,2.0, &
+                  cA_inf,beta_inf,kap_c,beta_ratio, &
+                  lnLam_en,lnLam_ee, &
+                  Sigma_0,c_0_bar,Psi_int,DelR)
 
 raxis=r_cyl(1)
 
