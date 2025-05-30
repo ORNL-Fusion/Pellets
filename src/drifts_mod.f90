@@ -248,7 +248,6 @@ real(kind=rspec), intent(out) :: &
 !> drift radius
   DelR 
 
-
 END SUBROUTINE
 
 END MODULE DRIFTS_MOD
