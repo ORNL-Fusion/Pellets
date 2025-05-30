@@ -13,3 +13,5 @@
 ./src/*.dat
 ./src/*.txt
 
+# Ignore local doc files
+./documentation/pellet_docs/
