@@ -29,14 +29,11 @@ real(kind=rspec), private, save :: &
   T_star_prime,                    &
 !> temperature at the location where M=1
   T_star,                          &
-!> normalized cloud opacity (?) (dimensionless)
-  Sigma_0,                         &
-!> ratio of channel entrance and  background plasma betas
-  beta_ratio,                      &
-!> kap_c == r_perp/r_p
-  kap_c,                           &
 !> sound speed at the channel entrance
   cs_0,                            &
+!> background plasma density (ion) [/m**3]
+!> PELLET: NA
+  ni_inf,                          &
 !>------------------------------------------------------------------
 !> These "termX" variable names could
 !> stand to be a little more descriptive
@@ -81,7 +78,8 @@ real(kind=rspec), private, parameter :: &
 contains
 
 SUBROUTINE PARKS_DRIFT(W,r_p,ne_inf,Te_inf,R,B,M0, &
-                       T0,beta_inf)
+                       T0,cA_inf,beta_inf,kap_c, &
+                       beta_ratio,Sigma_0,c_0_bar,Psi_int)
 
 !>------------------------------------------------------------------
 !> PARKS_DRIFT calculates the change in pellet position Delta R
@@ -118,9 +116,26 @@ real(kind=rspec), intent(in) :: &
 !> PELLET: NA ?
   T0                             
 
+!>------------------------------------------------------------------#
+!> Currently these out quantities are just to compare with
+!> the calculations in Parks et al. (2000)
+!>------------------------------------------------------------------#
+
 real(kind=rspec), intent(out) :: &
-!> output the background plasma beta as a first test
-  beta_inf
+!> background plasma beta
+  beta_inf,                      &
+!> 
+  c_0_bar,                       &
+!> Alfven velocity of background plasma
+  cA_inf,                        &
+!> normalized cloud opacity (?) (dimensionless)
+  Sigma_0,                       &
+!> ratio of channel entrance and  background plasma betas
+  beta_ratio,                    &
+!> kap_c == r_perp/r_p
+  kap_c,                         &
+!> toroidal drive integral
+  Psi_int  
 
 !>------------------------------------------------------------------#
 !> Calculating scalar quantities
@@ -129,10 +144,6 @@ real(kind=rspec), intent(out) :: &
 lnLam_en = 2.0*T0/7.5
 quant = ne_inf*r_p*lnLam_en
 beta_inf = 4.0*mu0*(ne_inf*ne_scale)*(Te_inf*e0)/B**2
-
-open (unit=10,file="test.txt",action="write")
-write(10,*) (beta_inf)
-close (10)
 
 !>------------------------------------------------------------------
 !> Calculate sonic radius quantities
@@ -150,10 +161,20 @@ T_star_prime = 1.88e-9*((W/Te_inf)**(1./3.))*(quant**(2./3.))
 T_star = T_star_prime
 
 !>------------------------------------------------------------------
+!> background plasma Alfven velocity
+!>------------------------------------------------------------------
+
+!> assuming quasi-neutrality
+ni_inf = ne_inf
+
+cA_inf = (B/(mu0*(W*mi)*ni_inf))**(1./2.)
+
+!>------------------------------------------------------------------
 !> Quantities at channel entrance
 !>------------------------------------------------------------------
 
 cs_0 = (2.0*gam*T0/(W*mi))**(1./2.)
+c_0_bar = ((cs_0**2.0)/gam)**(1./2.)
 
 !> NOTE: because I've set T_star = T_star_prime, kap_c isn't
 !>       correct and it does make a decent difference to
@@ -176,7 +197,19 @@ beta_ratio_term1 = 406.0*cs_0*(Te_inf**(5./6.))/(M0*(kap_c**2.0))
 beta_ratio_term2 = (W/quant)**(2./3.)
 beta_ratio = beta_ratio_term1*beta_ratio_term2
 
+!>------------------------------------------------------------------
+!> Toroidal drive integral
+!>------------------------------------------------------------------
 
+!> This expression is valid only for beta_ratio < 10
+!> Can add extended definition later on
+
+Psi_int = 0.0036*(Sigma_0**1.1)*((beta_ratio - 1.0)**2.64)
+
+open (unit=10,file="test.txt",action="write")
+write(10,*) cA_inf,beta_inf,kap_c, &
+            beta_ratio,Sigma_0,c_0_bar,Psi_int
+close (10)
 
 END SUBROUTINE PARKS_DRIFT
 
