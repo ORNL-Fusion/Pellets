@@ -22,7 +22,7 @@ jobs:
 
     - name: Build FORD docs
       run: |
-        ford project.md
+        ford pellet_project.md
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
