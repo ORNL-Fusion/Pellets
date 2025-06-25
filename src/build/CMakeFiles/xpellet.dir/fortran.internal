@@ -1,0 +1,14 @@
+# The fortran modules provided by this target.
+provides
+ ajax_mod.mod
+ drifts_mod.mod
+ fluxav_mod.mod
+ linear1_mod.mod
+ mirth_mod.mod
+ pellet_mod.mod
+ prl_mod.mod
+ spec_kind_mod.mod
+ spline1_mod.mod
+ track_mod.mod
+ write_mod.mod
+ x_mod.mod
