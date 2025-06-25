@@ -4,10 +4,18 @@
 #------------------------------------------------------------------#
 
 # Set minimum required cmake version
-cmake_minimum_required (VERSION 2.8.12)
+cmake_minimum_required (VERSION 3.5)
 
 # Project name
 project (pellet Fortran)
+
+# Disable in source builds 
+set(CMAKE_DISABLE_IN_SOURCE_BUILD TRUE)
+
+# Check if trying to build in the source directory
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
+    message(FATAL_ERROR "In-source builds are disabled. Please create a build directory and use cmake .. OR run cmake . -B <build-dir> from the source directory.")
+endif()
 
 # The extra CONFIG_DIR is for the location of the user.cmake 
 # (or default.cmake) and saves having to specify it explicitly
