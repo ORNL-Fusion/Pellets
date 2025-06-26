@@ -17,6 +17,8 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
     message(FATAL_ERROR "In-source builds are disabled. Please create a build directory and use cmake .. OR run cmake . -B <build-dir> from the source directory.")
 endif()
 
+set(CMAKE_Fortran_MODULE_DIRECTORY "${CMAKE_BINARY_DIR}/modules")
+
 # The extra CONFIG_DIR is for the location of the user.cmake 
 # (or default.cmake) and saves having to specify it explicitly
 # when loading.

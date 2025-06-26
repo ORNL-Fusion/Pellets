@@ -45,4 +45,4 @@ set(CMAKE_Fortran_TARGET_FORWARD_LINKED_INFO_FILES
   )
 
 # Fortran module output directory.
-set(CMAKE_Fortran_TARGET_MODULE_DIR "")
+set(CMAKE_Fortran_TARGET_MODULE_DIR "/Users/gz6/Documents/pellets/code/Pellets/src/build/modules")

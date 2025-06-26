@@ -1,8 +1,5 @@
 # Ignore fortran build files
-./src/*.mod
-./src/xpellet
-./src/build/*.mod
-./src/build/xpellet
+./src/build
 
 # Ignore CMake/make files
 ./src/CMakeFiles

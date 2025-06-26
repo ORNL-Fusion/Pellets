@@ -1,50 +1,50 @@
 # Remove fortran modules provided by this target.
 FILE(REMOVE
-  "ajax_mod.mod"
-  "AJAX_MOD.mod"
+  "modules/ajax_mod.mod"
+  "modules/AJAX_MOD.mod"
   "CMakeFiles/xpellet.dir/ajax_mod.mod.stamp"
 
-  "drifts_mod.mod"
-  "DRIFTS_MOD.mod"
+  "modules/drifts_mod.mod"
+  "modules/DRIFTS_MOD.mod"
   "CMakeFiles/xpellet.dir/drifts_mod.mod.stamp"
 
-  "fluxav_mod.mod"
-  "FLUXAV_MOD.mod"
+  "modules/fluxav_mod.mod"
+  "modules/FLUXAV_MOD.mod"
   "CMakeFiles/xpellet.dir/fluxav_mod.mod.stamp"
 
-  "linear1_mod.mod"
-  "LINEAR1_MOD.mod"
+  "modules/linear1_mod.mod"
+  "modules/LINEAR1_MOD.mod"
   "CMakeFiles/xpellet.dir/linear1_mod.mod.stamp"
 
-  "mirth_mod.mod"
-  "MIRTH_MOD.mod"
+  "modules/mirth_mod.mod"
+  "modules/MIRTH_MOD.mod"
   "CMakeFiles/xpellet.dir/mirth_mod.mod.stamp"
 
-  "pellet_mod.mod"
-  "PELLET_MOD.mod"
+  "modules/pellet_mod.mod"
+  "modules/PELLET_MOD.mod"
   "CMakeFiles/xpellet.dir/pellet_mod.mod.stamp"
 
-  "prl_mod.mod"
-  "PRL_MOD.mod"
+  "modules/prl_mod.mod"
+  "modules/PRL_MOD.mod"
   "CMakeFiles/xpellet.dir/prl_mod.mod.stamp"
 
-  "spec_kind_mod.mod"
-  "SPEC_KIND_MOD.mod"
+  "modules/spec_kind_mod.mod"
+  "modules/SPEC_KIND_MOD.mod"
   "CMakeFiles/xpellet.dir/spec_kind_mod.mod.stamp"
 
-  "spline1_mod.mod"
-  "SPLINE1_MOD.mod"
+  "modules/spline1_mod.mod"
+  "modules/SPLINE1_MOD.mod"
   "CMakeFiles/xpellet.dir/spline1_mod.mod.stamp"
 
-  "track_mod.mod"
-  "TRACK_MOD.mod"
+  "modules/track_mod.mod"
+  "modules/TRACK_MOD.mod"
   "CMakeFiles/xpellet.dir/track_mod.mod.stamp"
 
-  "write_mod.mod"
-  "WRITE_MOD.mod"
+  "modules/write_mod.mod"
+  "modules/WRITE_MOD.mod"
   "CMakeFiles/xpellet.dir/write_mod.mod.stamp"
 
-  "x_mod.mod"
-  "X_MOD.mod"
+  "modules/x_mod.mod"
+  "modules/X_MOD.mod"
   "CMakeFiles/xpellet.dir/x_mod.mod.stamp"
   )

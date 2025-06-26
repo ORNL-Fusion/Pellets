@@ -6,7 +6,7 @@ Fortran_DEFINES =
 
 Fortran_INCLUDES = -I/opt/homebrew/include
 
-Fortran_FLAGSarm64 = 
+Fortran_FLAGSarm64 = -Jmodules
 
-Fortran_FLAGS = 
+Fortran_FLAGS = -Jmodules
 

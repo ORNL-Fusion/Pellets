@@ -7,14 +7,14 @@ CMakeFiles/xpellet.dir/ajax_mod.f90.o: CMakeFiles/xpellet.dir/spec_kind_mod.mod.
 CMakeFiles/xpellet.dir/ajax_mod.f90.o: CMakeFiles/xpellet.dir/spline1_mod.mod.stamp
 CMakeFiles/xpellet.dir/ajax_mod.f90.o.provides.build: CMakeFiles/xpellet.dir/ajax_mod.mod.stamp
 CMakeFiles/xpellet.dir/ajax_mod.mod.stamp: CMakeFiles/xpellet.dir/ajax_mod.f90.o
-	$(CMAKE_COMMAND) -E cmake_copy_f90_mod ajax_mod.mod CMakeFiles/xpellet.dir/ajax_mod.mod.stamp GNU
+	$(CMAKE_COMMAND) -E cmake_copy_f90_mod modules/ajax_mod.mod CMakeFiles/xpellet.dir/ajax_mod.mod.stamp GNU
 CMakeFiles/xpellet.dir/ajax_mod.f90.o.provides.build:
 	$(CMAKE_COMMAND) -E touch CMakeFiles/xpellet.dir/ajax_mod.f90.o.provides.build
 CMakeFiles/xpellet.dir/build: CMakeFiles/xpellet.dir/ajax_mod.f90.o.provides.build
 CMakeFiles/xpellet.dir/drifts_mod.f90.o: CMakeFiles/xpellet.dir/spec_kind_mod.mod.stamp
 CMakeFiles/xpellet.dir/drifts_mod.f90.o.provides.build: CMakeFiles/xpellet.dir/drifts_mod.mod.stamp
 CMakeFiles/xpellet.dir/drifts_mod.mod.stamp: CMakeFiles/xpellet.dir/drifts_mod.f90.o
-	$(CMAKE_COMMAND) -E cmake_copy_f90_mod drifts_mod.mod CMakeFiles/xpellet.dir/drifts_mod.mod.stamp GNU
+	$(CMAKE_COMMAND) -E cmake_copy_f90_mod modules/drifts_mod.mod CMakeFiles/xpellet.dir/drifts_mod.mod.stamp GNU
 CMakeFiles/xpellet.dir/drifts_mod.f90.o.provides.build:
 	$(CMAKE_COMMAND) -E touch CMakeFiles/xpellet.dir/drifts_mod.f90.o.provides.build
 CMakeFiles/xpellet.dir/build: CMakeFiles/xpellet.dir/drifts_mod.f90.o.provides.build
@@ -23,14 +23,14 @@ CMakeFiles/xpellet.dir/fluxav_mod.f90.o: CMakeFiles/xpellet.dir/spec_kind_mod.mo
 CMakeFiles/xpellet.dir/fluxav_mod.f90.o: CMakeFiles/xpellet.dir/spline1_mod.mod.stamp
 CMakeFiles/xpellet.dir/fluxav_mod.f90.o.provides.build: CMakeFiles/xpellet.dir/fluxav_mod.mod.stamp
 CMakeFiles/xpellet.dir/fluxav_mod.mod.stamp: CMakeFiles/xpellet.dir/fluxav_mod.f90.o
-	$(CMAKE_COMMAND) -E cmake_copy_f90_mod fluxav_mod.mod CMakeFiles/xpellet.dir/fluxav_mod.mod.stamp GNU
+	$(CMAKE_COMMAND) -E cmake_copy_f90_mod modules/fluxav_mod.mod CMakeFiles/xpellet.dir/fluxav_mod.mod.stamp GNU
 CMakeFiles/xpellet.dir/fluxav_mod.f90.o.provides.build:
 	$(CMAKE_COMMAND) -E touch CMakeFiles/xpellet.dir/fluxav_mod.f90.o.provides.build
 CMakeFiles/xpellet.dir/build: CMakeFiles/xpellet.dir/fluxav_mod.f90.o.provides.build
 CMakeFiles/xpellet.dir/linear1_mod.f90.o: CMakeFiles/xpellet.dir/spec_kind_mod.mod.stamp
 CMakeFiles/xpellet.dir/linear1_mod.f90.o.provides.build: CMakeFiles/xpellet.dir/linear1_mod.mod.stamp
 CMakeFiles/xpellet.dir/linear1_mod.mod.stamp: CMakeFiles/xpellet.dir/linear1_mod.f90.o
-	$(CMAKE_COMMAND) -E cmake_copy_f90_mod linear1_mod.mod CMakeFiles/xpellet.dir/linear1_mod.mod.stamp GNU
+	$(CMAKE_COMMAND) -E cmake_copy_f90_mod modules/linear1_mod.mod CMakeFiles/xpellet.dir/linear1_mod.mod.stamp GNU
 CMakeFiles/xpellet.dir/linear1_mod.f90.o.provides.build:
 	$(CMAKE_COMMAND) -E touch CMakeFiles/xpellet.dir/linear1_mod.f90.o.provides.build
 CMakeFiles/xpellet.dir/build: CMakeFiles/xpellet.dir/linear1_mod.f90.o.provides.build
@@ -38,7 +38,7 @@ CMakeFiles/xpellet.dir/mirth_mod.f90.o: CMakeFiles/xpellet.dir/spec_kind_mod.mod
 CMakeFiles/xpellet.dir/mirth_mod.f90.o: CMakeFiles/xpellet.dir/x_mod.mod.stamp
 CMakeFiles/xpellet.dir/mirth_mod.f90.o.provides.build: CMakeFiles/xpellet.dir/mirth_mod.mod.stamp
 CMakeFiles/xpellet.dir/mirth_mod.mod.stamp: CMakeFiles/xpellet.dir/mirth_mod.f90.o
-	$(CMAKE_COMMAND) -E cmake_copy_f90_mod mirth_mod.mod CMakeFiles/xpellet.dir/mirth_mod.mod.stamp GNU
+	$(CMAKE_COMMAND) -E cmake_copy_f90_mod modules/mirth_mod.mod CMakeFiles/xpellet.dir/mirth_mod.mod.stamp GNU
 CMakeFiles/xpellet.dir/mirth_mod.f90.o.provides.build:
 	$(CMAKE_COMMAND) -E touch CMakeFiles/xpellet.dir/mirth_mod.f90.o.provides.build
 CMakeFiles/xpellet.dir/build: CMakeFiles/xpellet.dir/mirth_mod.f90.o.provides.build
@@ -56,7 +56,7 @@ CMakeFiles/xpellet.dir/pellet_mod.f90.o: CMakeFiles/xpellet.dir/prl_mod.mod.stam
 CMakeFiles/xpellet.dir/pellet_mod.f90.o: CMakeFiles/xpellet.dir/spec_kind_mod.mod.stamp
 CMakeFiles/xpellet.dir/pellet_mod.f90.o.provides.build: CMakeFiles/xpellet.dir/pellet_mod.mod.stamp
 CMakeFiles/xpellet.dir/pellet_mod.mod.stamp: CMakeFiles/xpellet.dir/pellet_mod.f90.o
-	$(CMAKE_COMMAND) -E cmake_copy_f90_mod pellet_mod.mod CMakeFiles/xpellet.dir/pellet_mod.mod.stamp GNU
+	$(CMAKE_COMMAND) -E cmake_copy_f90_mod modules/pellet_mod.mod CMakeFiles/xpellet.dir/pellet_mod.mod.stamp GNU
 CMakeFiles/xpellet.dir/pellet_mod.f90.o.provides.build:
 	$(CMAKE_COMMAND) -E touch CMakeFiles/xpellet.dir/pellet_mod.f90.o.provides.build
 CMakeFiles/xpellet.dir/build: CMakeFiles/xpellet.dir/pellet_mod.f90.o.provides.build
@@ -64,7 +64,7 @@ CMakeFiles/xpellet.dir/prl_mod_intel.f90.o: /opt/homebrew/include/netcdf.mod
 CMakeFiles/xpellet.dir/prl_mod_intel.f90.o: CMakeFiles/xpellet.dir/spec_kind_mod.mod.stamp
 CMakeFiles/xpellet.dir/prl_mod_intel.f90.o.provides.build: CMakeFiles/xpellet.dir/prl_mod.mod.stamp
 CMakeFiles/xpellet.dir/prl_mod.mod.stamp: CMakeFiles/xpellet.dir/prl_mod_intel.f90.o
-	$(CMAKE_COMMAND) -E cmake_copy_f90_mod prl_mod.mod CMakeFiles/xpellet.dir/prl_mod.mod.stamp GNU
+	$(CMAKE_COMMAND) -E cmake_copy_f90_mod modules/prl_mod.mod CMakeFiles/xpellet.dir/prl_mod.mod.stamp GNU
 CMakeFiles/xpellet.dir/prl_mod_intel.f90.o.provides.build:
 	$(CMAKE_COMMAND) -E touch CMakeFiles/xpellet.dir/prl_mod_intel.f90.o.provides.build
 CMakeFiles/xpellet.dir/build: CMakeFiles/xpellet.dir/prl_mod_intel.f90.o.provides.build
@@ -72,14 +72,14 @@ CMakeFiles/xpellet.dir/setup_ajax.f90.o: CMakeFiles/xpellet.dir/ajax_mod.mod.sta
 CMakeFiles/xpellet.dir/setup_ajax.f90.o: CMakeFiles/xpellet.dir/spec_kind_mod.mod.stamp
 CMakeFiles/xpellet.dir/spec_kind_mod.f90.o.provides.build: CMakeFiles/xpellet.dir/spec_kind_mod.mod.stamp
 CMakeFiles/xpellet.dir/spec_kind_mod.mod.stamp: CMakeFiles/xpellet.dir/spec_kind_mod.f90.o
-	$(CMAKE_COMMAND) -E cmake_copy_f90_mod spec_kind_mod.mod CMakeFiles/xpellet.dir/spec_kind_mod.mod.stamp GNU
+	$(CMAKE_COMMAND) -E cmake_copy_f90_mod modules/spec_kind_mod.mod CMakeFiles/xpellet.dir/spec_kind_mod.mod.stamp GNU
 CMakeFiles/xpellet.dir/spec_kind_mod.f90.o.provides.build:
 	$(CMAKE_COMMAND) -E touch CMakeFiles/xpellet.dir/spec_kind_mod.f90.o.provides.build
 CMakeFiles/xpellet.dir/build: CMakeFiles/xpellet.dir/spec_kind_mod.f90.o.provides.build
 CMakeFiles/xpellet.dir/spline1_mod.f90.o: CMakeFiles/xpellet.dir/spec_kind_mod.mod.stamp
 CMakeFiles/xpellet.dir/spline1_mod.f90.o.provides.build: CMakeFiles/xpellet.dir/spline1_mod.mod.stamp
 CMakeFiles/xpellet.dir/spline1_mod.mod.stamp: CMakeFiles/xpellet.dir/spline1_mod.f90.o
-	$(CMAKE_COMMAND) -E cmake_copy_f90_mod spline1_mod.mod CMakeFiles/xpellet.dir/spline1_mod.mod.stamp GNU
+	$(CMAKE_COMMAND) -E cmake_copy_f90_mod modules/spline1_mod.mod CMakeFiles/xpellet.dir/spline1_mod.mod.stamp GNU
 CMakeFiles/xpellet.dir/spline1_mod.f90.o.provides.build:
 	$(CMAKE_COMMAND) -E touch CMakeFiles/xpellet.dir/spline1_mod.f90.o.provides.build
 CMakeFiles/xpellet.dir/build: CMakeFiles/xpellet.dir/spline1_mod.f90.o.provides.build
@@ -87,21 +87,21 @@ CMakeFiles/xpellet.dir/track_mod.f90.o: CMakeFiles/xpellet.dir/ajax_mod.mod.stam
 CMakeFiles/xpellet.dir/track_mod.f90.o: CMakeFiles/xpellet.dir/spec_kind_mod.mod.stamp
 CMakeFiles/xpellet.dir/track_mod.f90.o.provides.build: CMakeFiles/xpellet.dir/track_mod.mod.stamp
 CMakeFiles/xpellet.dir/track_mod.mod.stamp: CMakeFiles/xpellet.dir/track_mod.f90.o
-	$(CMAKE_COMMAND) -E cmake_copy_f90_mod track_mod.mod CMakeFiles/xpellet.dir/track_mod.mod.stamp GNU
+	$(CMAKE_COMMAND) -E cmake_copy_f90_mod modules/track_mod.mod CMakeFiles/xpellet.dir/track_mod.mod.stamp GNU
 CMakeFiles/xpellet.dir/track_mod.f90.o.provides.build:
 	$(CMAKE_COMMAND) -E touch CMakeFiles/xpellet.dir/track_mod.f90.o.provides.build
 CMakeFiles/xpellet.dir/build: CMakeFiles/xpellet.dir/track_mod.f90.o.provides.build
 CMakeFiles/xpellet.dir/write_mod.f90.o: CMakeFiles/xpellet.dir/spec_kind_mod.mod.stamp
 CMakeFiles/xpellet.dir/write_mod.f90.o.provides.build: CMakeFiles/xpellet.dir/write_mod.mod.stamp
 CMakeFiles/xpellet.dir/write_mod.mod.stamp: CMakeFiles/xpellet.dir/write_mod.f90.o
-	$(CMAKE_COMMAND) -E cmake_copy_f90_mod write_mod.mod CMakeFiles/xpellet.dir/write_mod.mod.stamp GNU
+	$(CMAKE_COMMAND) -E cmake_copy_f90_mod modules/write_mod.mod CMakeFiles/xpellet.dir/write_mod.mod.stamp GNU
 CMakeFiles/xpellet.dir/write_mod.f90.o.provides.build:
 	$(CMAKE_COMMAND) -E touch CMakeFiles/xpellet.dir/write_mod.f90.o.provides.build
 CMakeFiles/xpellet.dir/build: CMakeFiles/xpellet.dir/write_mod.f90.o.provides.build
 CMakeFiles/xpellet.dir/x_mod.f90.o: CMakeFiles/xpellet.dir/spec_kind_mod.mod.stamp
 CMakeFiles/xpellet.dir/x_mod.f90.o.provides.build: CMakeFiles/xpellet.dir/x_mod.mod.stamp
 CMakeFiles/xpellet.dir/x_mod.mod.stamp: CMakeFiles/xpellet.dir/x_mod.f90.o
-	$(CMAKE_COMMAND) -E cmake_copy_f90_mod x_mod.mod CMakeFiles/xpellet.dir/x_mod.mod.stamp GNU
+	$(CMAKE_COMMAND) -E cmake_copy_f90_mod modules/x_mod.mod CMakeFiles/xpellet.dir/x_mod.mod.stamp GNU
 CMakeFiles/xpellet.dir/x_mod.f90.o.provides.build:
 	$(CMAKE_COMMAND) -E touch CMakeFiles/xpellet.dir/x_mod.f90.o.provides.build
 CMakeFiles/xpellet.dir/build: CMakeFiles/xpellet.dir/x_mod.f90.o.provides.build

@@ -312,7 +312,7 @@ DelR=0
 !Set the input namelist unit, open, read and close file
 !-------------------------------------------------------------------------------
 n_tmp=20
-cn_tmp='nml_pellet.dat'
+cn_tmp='../nml_pellet.dat'
 OPEN(UNIT=n_tmp, &
      FILE=cn_tmp, &
      STATUS='old', &
