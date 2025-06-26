@@ -253,7 +253,7 @@ close (10)
 END SUBROUTINE
 
 SUBROUTINE HPI2_DRIFT(v_p,r_p,ne0,Te0,alpha,Lambda,a0,r0, &
-                      B0,kappa)
+                      B0,kappa,Del_drift)
 
 real(kind=rspec), parameter :: &
 !> constants (see Table 4 in Koechl for Delta 1)  
@@ -272,8 +272,31 @@ real(kind=rspec), parameter :: &
   C13 = -0.204
 
 real(kind=rspec), intent(in) :: &
+  v_p,      &
+!> pellet velocity [m/s]
+  r_p,      &
+!> pellet radius [mm]
+  ne0,      &
+!> axial electron density [1E19 1/m**3]
+  Te0,      &
+!> axial electron temperature [keV]
+  alpha,    &
 !>
-  
+  Lambda,   &
+!> "impact parameter of the pellet trajectory" [-]
+  a0,       &
+!> minor radius [m]
+  r0,       &
+!> major radius [m]
+  B0,       &
+!> toroidal field strength [T]
+  kappa
+!> plasma elongation close to the separatrix [-]
+
+real(kind=rspec), intent(out) :: &
+  Del_drift
+
+
 
 END SUBROUTINE
 
