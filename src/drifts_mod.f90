@@ -91,29 +91,34 @@ real(kind=rspec) :: &
 
   real(kind=rspec), intent(in) :: &
     W,                            &
-      !! pellet mass in amu <br />
+      !! pellet mass in amu [-]
       !! PELLET: amu_pel [-] 
     r_p,                          &
       !! pellet radius [cm]
       !! PELLET: r0 [m]
+      !! scale input by 1.0E2
     ne_inf,                       &
       !! background plasma density [/cm**3]
-      !! PELLET: d0 [/m**3]
+      !! PELLET: den0 [/m**3]
+      !! scale input by 1.0E6
     Te_inf,                       &
       !! background plasma temperature [keV]
       !! PELLET: te0 [keV]
+      !! no scaling
     R,                            &
       !! major radius [m]
       !! PELLET: r0 [m]
+      !! no scaling
     B,                            &
       !! toroidal magnetic field [T]
       !! PELLET: bt0 [T]
+      !! no scaling
     M0,                           &
       !! mach number at the channel entrance [-]
-      !! PELLET: NA ? 
+      !! PELLET: NA
     T0                             
       !! temperature at the channel entrance [eV]
-      !! PELLET: NA ?
+      !! PELLET: NA
 
 !>------------------------------------------------------------------#
 !> Currently these out quantities are just to compare with
