@@ -13,12 +13,43 @@ module DRIFTS_MOD
 
 use SPEC_KIND_MOD
 IMPLICIT NONE
+                     
+contains
 
-!>------------------------------------------------------------------
-!> Private data
-!>------------------------------------------------------------------
+SUBROUTINE PARKS_DRIFT(W,r_p,ne_inf,Te_inf,R,B,M0, &
+                       T0,cA_inf,beta_inf,kap_c, &
+                       beta_ratio, &
+                       Sigma_0,c_0_bar,Psi_int,DelR)
 
-real(kind=rspec), private, save :: &
+  !!------------------------------------------------------------------
+  !! PARKS_DRIFT calculates the change in pellet position Delta R
+  !! based on an ad-hoc scaling law.
+  !! See Parks et al. (2000)
+  !!
+  !! We use the same convention as Parks but also include the
+  !! corresponding PELLET parameters along with their units.
+  !!------------------------------------------------------------------
+
+real(kind=rspec), parameter :: &
+!> free space permeability [kg/s**2/A**2]
+  mu0 = 1.25663706e-06,                 &
+!> Coloumb charge (eV --> J)
+  e0 = 1.60217663e-19,                  &
+!> ion mass [kg]
+!> PELLET: NA
+  mi = 1.6735575e-27,                   &
+!> gas constant [-]
+  gam = 5./3.,                          &
+!> latent energy of ionization [eV/ion]
+  eps_ion = 13.6,                       &
+!> dissociation energy              
+  eps_diss = 2.2,                       &
+!> heat flux attenutation
+  muE = 0.5,                            &
+!> scale /cm**3 --> /m**3
+  ne_scale = 1.0e6
+
+real(kind=rspec) :: &
 !> Coulomb log for electron-neutral interactions (?)
   lnLam_en,                        &
 !> Coloumb log for electron-electron interactions
@@ -56,68 +87,38 @@ real(kind=rspec), private, save :: &
 !> pops up a lot, so useful to have defined
 !> (yes, it desperately needs a different name but I don't
 !> have that computing capacity right now.)
-  quant                            
-
-real(kind=rspec), private, parameter :: &
-!> free space permeability [kg/s**2/A**2]
-  mu0 = 1.25663706e-06,                 &
-!> Coloumb charge (eV --> J)
-  e0 = 1.60217663e-19,                  &
-!> ion mass [kg]
-!> PELLET: NA
-  mi = 1.6735575e-27,                   &
-!> gas constant [-]
-  gam = 5./3.,                          &
-!> latent energy of ionization [eV/ion]
-  eps_ion = 13.6,                       &
-!> dissociation energy              
-  eps_diss = 2.2,                       &
-!> heat flux attenutation
-  muE = 0.5,                            &
-!> scale /cm**3 --> /m**3
-  ne_scale = 1.0e6
-
-contains
-
-SUBROUTINE PARKS_DRIFT(W,r_p,ne_inf,Te_inf,R,B,M0, &
-                       T0,cA_inf,beta_inf,kap_c, &
-                       beta_ratio, &
-                       Sigma_0,c_0_bar,Psi_int,DelR)
-
-  !!------------------------------------------------------------------
-  !! PARKS_DRIFT calculates the change in pellet position Delta R
-  !! based on an ad-hoc scaling law.
-  !! See Parks et al. (2000)
-  !!
-  !! We use the same convention as Parks but also include the
-  !! corresponding PELLET parameters along with their units.
-  !!------------------------------------------------------------------
+  quant 
 
   real(kind=rspec), intent(in) :: &
     W,                            &
-      !! pellet mass in amu <br />
+      !! pellet mass in amu [-]
       !! PELLET: amu_pel [-] 
     r_p,                          &
       !! pellet radius [cm]
       !! PELLET: r0 [m]
+      !! scale input by 1.0E2
     ne_inf,                       &
       !! background plasma density [/cm**3]
-      !! PELLET: d0 [/m**3]
+      !! PELLET: den0 [/m**3]
+      !! scale input by 1.0E6
     Te_inf,                       &
       !! background plasma temperature [keV]
       !! PELLET: te0 [keV]
+      !! no scaling
     R,                            &
       !! major radius [m]
       !! PELLET: r0 [m]
+      !! no scaling
     B,                            &
       !! toroidal magnetic field [T]
       !! PELLET: bt0 [T]
+      !! no scaling
     M0,                           &
       !! mach number at the channel entrance [-]
-      !! PELLET: NA ? 
+      !! PELLET: NA
     T0                             
       !! temperature at the channel entrance [eV]
-      !! PELLET: NA ?
+      !! PELLET: NA
 
 !>------------------------------------------------------------------#
 !> Currently these out quantities are just to compare with
@@ -221,7 +222,7 @@ Psi_int = 0.036*(Sigma_0**1.1)*((beta_ratio - 1.0)**2.64)
 beta_0 = beta_ratio*beta_inf
 DelR = 0.5*beta_0*kap_c*r_p*(cA_inf/c_0_bar)*Psi_int
 
-open (unit=10,file="test.txt",action="write")
+open (unit=10,file="parks_2000_test.txt",action="write")
 write(10,*) kap_c, &
             beta_ratio,beta_0, &
             Sigma_0,Psi_int,DelR
@@ -247,6 +248,84 @@ real(kind=rspec), intent(in) :: &
 real(kind=rspec), intent(out) :: &
 !> drift radius
   DelR 
+
+DelR = B**(-0.15)*Te0**(-0.13)*Teped**(0.5)*r_pel**(0.76)*qa**(-0.15)
+
+open (unit=10,file="baylor_2007_test.txt",action="write")
+write(10,*) DelR
+close (10)
+
+END SUBROUTINE
+
+SUBROUTINE HPI2_DRIFT(v_p,r_p,ne0,Te0,alpha,Lambda,a0,r0, &
+                      B0,kappa,Del_drift)
+
+real(kind=rspec), parameter :: &
+!> constants (see Table 4 in Koechl for Delta 1)  
+  C1  = 0.116,    &
+  C2  = 0.120,    &
+  C3  = 0.368,    &
+  C4  = 0.041,    &
+  C5  = 0.015,    &
+  C6  = 1.665,    &
+  C7  = 0.439,    &
+  C8  = 0.217,    &
+  C9  = -0.038,   &
+  C10 = 0.493,    &
+  C11 = 0.193,    &
+  C12 = -0.346,   &
+  C13 = -0.204
+
+real(kind=rspec), intent(in) :: &
+  v_p,      &
+!> pellet velocity [m/s]
+!> input velocity from PELLET in [m/s]
+!> no scaling needed
+  r_p,      &
+!> pellet radius [mm]
+!> input pellet radius from PELLET in [m]
+!> so scale input by 1.0E3.
+  ne0,      &
+!> axial electron density [1E19 1/m**3]
+!> input ne0 from PELLET in [1/m**3]
+!> so scale input by 1.0E-19.
+  Te0,      &
+!> axial electron temperature [keV]
+!> input Te0 from PELLET [keV]
+!> no scaling needed
+  alpha,    &
+!> pellet injection angle w.r.t the horizontal
+!> outward direction in range [-pi, pi]
+!> input from PELLET NA.
+  Lambda,   &
+!> "impact parameter of the pellet trajectory" [-]
+!> input from PELLET NA.
+  a0,       &
+!> minor radius [m]
+!> input a0 from PELLET in [m]
+!> no scaling needed
+  r0,       &
+!> major radius [m]
+!> input r0 from PELLET in [m]
+!> no scaling needed
+  B0,       &
+!> toroidal field strength [T]
+!> input B0 from PELLET in [T]
+!> no scaling needed
+  kappa
+!> plasma elongation close to the separatrix [-]
+
+real(kind=rspec), intent(out) :: &
+  Del_drift
+
+Del_drift = C1*((v_p/100)**C2)*(r_p**C3)*(ne0**C4) &
+            *(Te0**C5)*((ABS(ABS(alpha) - C6) + C8)**C7) &
+            *((1.0 - Lambda)**C9)*(a0**C10)*(R0**C11)*(B0**C12) &
+            *(kappa**C13)
+
+open (unit=10,file="HPI2_2012_test.txt",action="write")
+write(10,*) Del_drift
+close (10)
 
 END SUBROUTINE
 

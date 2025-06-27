@@ -91,7 +91,7 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title=" 5.3% of total for procedures.">236 statements</a>
+                 title=" 5.6% of total for procedures.">255 statements</a>
             </li>
 
             <li class="list-inline-item" id="source-file">
@@ -152,7 +152,7 @@
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2>public  subroutine PELLET(k_pel, amupel, rpel, vpel, n_r, dvol_r, den0_r, te0_r, n_p, map_p, s_p, pden_r, iflag, message, NF, NE_F, IZ_F, AMU_F, E_EF, VC_RF, DEN_REF, PEL_IONS, T_P, RPEL1_P, SRC_P, DEN0_P, DEN1_P, TE0_P, TE1_P, R0, A0, BT0, NCSOL, K_PRL, NPRLCLD, IPRLCLD, FPELPRL, PRLINJANG, PRLQ_R, PRLDEP)  
+    <h2>public  subroutine PELLET(k_pel, amupel, rpel, vpel, n_r, dvol_r, den0_r, te0_r, n_p, map_p, s_p, pden_r, iflag, message, NF, NE_F, IZ_F, AMU_F, E_EF, VC_RF, DEN_REF, PEL_IONS, T_P, RPEL1_P, SRC_P, DEN0_P, DEN1_P, TE0_P, TE1_P, R0, A0, BT0, NCSOL, K_PRL, NPRLCLD, IPRLCLD, FPELPRL, PRLINJANG, PRLQ_R, PRLDEP, K_DRIFT, ALPHA, LAMBDA, KAPPA, DEL_DRIFT)  
 </h2>
     
 
@@ -232,6 +232,20 @@ Convert to density
 <p>Adiabatic approximation
 te(i) = te(i)*den(i)/(den(i) + nea(i))
 den(i) = den(i) + nea(i)</p>
+<p>Profile generation
+ te_r: initial temp profile
+ convert to 1e19 1/m**3
+ ne_r: initial den profile
+ nea_r: den profile after cloudlet motion
+ tea_r: temp profile after cloudlet motion
+Profile generation</p>
+<p>rho_p = 1.0-fi/nfloat
+rho_p = lc(l)/fncp
+ mm from m</p>
+<p>!!!!!</p>
+<p>!!!!!</p>
+<p>ned and teb are arrays
+ HPI2_DRIFT expects a single integer</p>
 <p>Pellet has been in the plasma but is now outside
 present</p>
 <p>rp&gt;1e-6</p>
@@ -263,7 +277,7 @@ present</p>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-k_pel"></span>
+              <span class="anchor" id="variable-k_pel~2"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -309,7 +323,7 @@ pellet velocity [m/s]</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-rpel"></span>
+              <span class="anchor" id="variable-rpel~2"></span>
               real(kind=rspec),
             </td>
 <td>intent(in)</td>
@@ -327,7 +341,7 @@ pellet velocity [m/s]</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-vpel"></span>
+              <span class="anchor" id="variable-vpel~2"></span>
               real(kind=rspec),
             </td>
 <td>intent(in)</td>
@@ -345,7 +359,7 @@ pellet velocity [m/s]</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-n_r~3"></span>
+              <span class="anchor" id="variable-n_r~6"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -373,7 +387,7 @@ number of segments along pellet path [-]</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-dvol_r"></span>
+              <span class="anchor" id="variable-dvol_r~2"></span>
               real(kind=rspec),
             </td>
 <td>intent(in)</td>
@@ -433,7 +447,7 @@ s_p(1) is the entry point and can be non-zero</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-n_p"></span>
+              <span class="anchor" id="variable-n_p~2"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -476,7 +490,7 @@ number of segments along pellet path [-]</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-s_p"></span>
+              <span class="anchor" id="variable-s_p~2"></span>
               real(kind=rspec),
             </td>
 <td>intent(in)</td>
@@ -496,7 +510,7 @@ s_p(1) is the entry point and can be non-zero</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-pden_r"></span>
+              <span class="anchor" id="variable-pden_r~2"></span>
               real(kind=rspec),
             </td>
 <td>intent(out)</td>
@@ -512,7 +526,7 @@ s_p(1) is the entry point and can be non-zero</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-iflag~20"></span>
+              <span class="anchor" id="variable-iflag~13"></span>
               integer,
             </td>
 <td>intent(out)</td>
@@ -530,7 +544,7 @@ s_p(1) is the entry point and can be non-zero</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-message~20"></span>
+              <span class="anchor" id="variable-message~13"></span>
               character(len=*),
             </td>
 <td>intent(out)</td>
@@ -559,9 +573,17 @@ s_p(1) is the entry point and can be non-zero</p>
 number of energy groups for fast ions [-]
 charge of fast ions (1,2) [-]
 Number of SOL grid points in n_r   [-]
-flag for PRL model calculation
+flag for PRL model calculation 
+=0: no drift 
+=1: Parks 2000 drift 
+=2: Baylor 2007 drift 
+=3: HPI2 drift 
 Number of PRL cloudlets from pellet [-]
-ID number of PRL cloudlet for diag output [-]</p>
+ID number of PRL cloudlet for diag output [-]
+flag for drift scalings
+injection angle for HPI2 drift
+.. for HPI2 drift
+plasma elongation</p>
             </td>
         </tr>
         <tr>
@@ -580,9 +602,17 @@ ID number of PRL cloudlet for diag output [-]</p>
 number of energy groups for fast ions [-]
 charge of fast ions (1,2) [-]
 Number of SOL grid points in n_r   [-]
-flag for PRL model calculation
+flag for PRL model calculation 
+=0: no drift 
+=1: Parks 2000 drift 
+=2: Baylor 2007 drift 
+=3: HPI2 drift 
 Number of PRL cloudlets from pellet [-]
-ID number of PRL cloudlet for diag output [-]</p>
+ID number of PRL cloudlet for diag output [-]
+flag for drift scalings
+injection angle for HPI2 drift
+.. for HPI2 drift
+plasma elongation</p>
             </td>
         </tr>
         <tr>
@@ -601,9 +631,17 @@ ID number of PRL cloudlet for diag output [-]</p>
 number of energy groups for fast ions [-]
 charge of fast ions (1,2) [-]
 Number of SOL grid points in n_r   [-]
-flag for PRL model calculation
+flag for PRL model calculation 
+=0: no drift 
+=1: Parks 2000 drift 
+=2: Baylor 2007 drift 
+=3: HPI2 drift 
 Number of PRL cloudlets from pellet [-]
-ID number of PRL cloudlet for diag output [-]</p>
+ID number of PRL cloudlet for diag output [-]
+flag for drift scalings
+injection angle for HPI2 drift
+.. for HPI2 drift
+plasma elongation</p>
             </td>
         </tr>
         <tr>
@@ -752,7 +790,8 @@ electron density at entrance to path cells [keV]
 electron density at exit from path cells [keV]
 electron temperature at entrance to path cells [keV]
 electron temperature at exit from path cells [keV]
-resulting density deposition from PRL [/m**3]</p>
+resulting density deposition from PRL [/m**3]
+drift calculated from HPI2 scaling</p>
 <hr>
 <p>Declartation of local variables</p>
             </td>
@@ -776,7 +815,8 @@ electron density at entrance to path cells [keV]
 electron density at exit from path cells [keV]
 electron temperature at entrance to path cells [keV]
 electron temperature at exit from path cells [keV]
-resulting density deposition from PRL [/m**3]</p>
+resulting density deposition from PRL [/m**3]
+drift calculated from HPI2 scaling</p>
 <hr>
 <p>Declartation of local variables</p>
             </td>
@@ -800,7 +840,8 @@ electron density at entrance to path cells [keV]
 electron density at exit from path cells [keV]
 electron temperature at entrance to path cells [keV]
 electron temperature at exit from path cells [keV]
-resulting density deposition from PRL [/m**3]</p>
+resulting density deposition from PRL [/m**3]
+drift calculated from HPI2 scaling</p>
 <hr>
 <p>Declartation of local variables</p>
             </td>
@@ -824,7 +865,8 @@ electron density at entrance to path cells [keV]
 electron density at exit from path cells [keV]
 electron temperature at entrance to path cells [keV]
 electron temperature at exit from path cells [keV]
-resulting density deposition from PRL [/m**3]</p>
+resulting density deposition from PRL [/m**3]
+drift calculated from HPI2 scaling</p>
 <hr>
 <p>Declartation of local variables</p>
             </td>
@@ -848,7 +890,8 @@ electron density at entrance to path cells [keV]
 electron density at exit from path cells [keV]
 electron temperature at entrance to path cells [keV]
 electron temperature at exit from path cells [keV]
-resulting density deposition from PRL [/m**3]</p>
+resulting density deposition from PRL [/m**3]
+drift calculated from HPI2 scaling</p>
 <hr>
 <p>Declartation of local variables</p>
             </td>
@@ -872,7 +915,8 @@ electron density at entrance to path cells [keV]
 electron density at exit from path cells [keV]
 electron temperature at entrance to path cells [keV]
 electron temperature at exit from path cells [keV]
-resulting density deposition from PRL [/m**3]</p>
+resulting density deposition from PRL [/m**3]
+drift calculated from HPI2 scaling</p>
 <hr>
 <p>Declartation of local variables</p>
             </td>
@@ -896,7 +940,8 @@ electron density at entrance to path cells [keV]
 electron density at exit from path cells [keV]
 electron temperature at entrance to path cells [keV]
 electron temperature at exit from path cells [keV]
-resulting density deposition from PRL [/m**3]</p>
+resulting density deposition from PRL [/m**3]
+drift calculated from HPI2 scaling</p>
 <hr>
 <p>Declartation of local variables</p>
             </td>
@@ -1001,9 +1046,17 @@ q profile for PRL model [-]</p>
 number of energy groups for fast ions [-]
 charge of fast ions (1,2) [-]
 Number of SOL grid points in n_r   [-]
-flag for PRL model calculation
+flag for PRL model calculation 
+=0: no drift 
+=1: Parks 2000 drift 
+=2: Baylor 2007 drift 
+=3: HPI2 drift 
 Number of PRL cloudlets from pellet [-]
-ID number of PRL cloudlet for diag output [-]</p>
+ID number of PRL cloudlet for diag output [-]
+flag for drift scalings
+injection angle for HPI2 drift
+.. for HPI2 drift
+plasma elongation</p>
             </td>
         </tr>
         <tr>
@@ -1022,9 +1075,17 @@ ID number of PRL cloudlet for diag output [-]</p>
 number of energy groups for fast ions [-]
 charge of fast ions (1,2) [-]
 Number of SOL grid points in n_r   [-]
-flag for PRL model calculation
+flag for PRL model calculation 
+=0: no drift 
+=1: Parks 2000 drift 
+=2: Baylor 2007 drift 
+=3: HPI2 drift 
 Number of PRL cloudlets from pellet [-]
-ID number of PRL cloudlet for diag output [-]</p>
+ID number of PRL cloudlet for diag output [-]
+flag for drift scalings
+injection angle for HPI2 drift
+.. for HPI2 drift
+plasma elongation</p>
             </td>
         </tr>
         <tr>
@@ -1043,9 +1104,17 @@ ID number of PRL cloudlet for diag output [-]</p>
 number of energy groups for fast ions [-]
 charge of fast ions (1,2) [-]
 Number of SOL grid points in n_r   [-]
-flag for PRL model calculation
+flag for PRL model calculation 
+=0: no drift 
+=1: Parks 2000 drift 
+=2: Baylor 2007 drift 
+=3: HPI2 drift 
 Number of PRL cloudlets from pellet [-]
-ID number of PRL cloudlet for diag output [-]</p>
+ID number of PRL cloudlet for diag output [-]
+flag for drift scalings
+injection angle for HPI2 drift
+.. for HPI2 drift
+plasma elongation</p>
             </td>
         </tr>
         <tr>
@@ -1064,9 +1133,17 @@ ID number of PRL cloudlet for diag output [-]</p>
 number of energy groups for fast ions [-]
 charge of fast ions (1,2) [-]
 Number of SOL grid points in n_r   [-]
-flag for PRL model calculation
+flag for PRL model calculation 
+=0: no drift 
+=1: Parks 2000 drift 
+=2: Baylor 2007 drift 
+=3: HPI2 drift 
 Number of PRL cloudlets from pellet [-]
-ID number of PRL cloudlet for diag output [-]</p>
+ID number of PRL cloudlet for diag output [-]
+flag for drift scalings
+injection angle for HPI2 drift
+.. for HPI2 drift
+plasma elongation</p>
             </td>
         </tr>
         <tr>
@@ -1172,7 +1249,149 @@ electron density at entrance to path cells [keV]
 electron density at exit from path cells [keV]
 electron temperature at entrance to path cells [keV]
 electron temperature at exit from path cells [keV]
-resulting density deposition from PRL [/m**3]</p>
+resulting density deposition from PRL [/m**3]
+drift calculated from HPI2 scaling</p>
+<hr>
+<p>Declartation of local variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-k_drift"></span>
+              integer,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>K_DRIFT</strong></td>
+            <td>
+                <p>number of fast ion species (H,D,T,He3,He4) [-]
+number of energy groups for fast ions [-]
+charge of fast ions (1,2) [-]
+Number of SOL grid points in n_r   [-]
+flag for PRL model calculation 
+=0: no drift 
+=1: Parks 2000 drift 
+=2: Baylor 2007 drift 
+=3: HPI2 drift 
+Number of PRL cloudlets from pellet [-]
+ID number of PRL cloudlet for diag output [-]
+flag for drift scalings
+injection angle for HPI2 drift
+.. for HPI2 drift
+plasma elongation</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-alpha"></span>
+              integer,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ALPHA</strong></td>
+            <td>
+                <p>number of fast ion species (H,D,T,He3,He4) [-]
+number of energy groups for fast ions [-]
+charge of fast ions (1,2) [-]
+Number of SOL grid points in n_r   [-]
+flag for PRL model calculation 
+=0: no drift 
+=1: Parks 2000 drift 
+=2: Baylor 2007 drift 
+=3: HPI2 drift 
+Number of PRL cloudlets from pellet [-]
+ID number of PRL cloudlet for diag output [-]
+flag for drift scalings
+injection angle for HPI2 drift
+.. for HPI2 drift
+plasma elongation</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-lambda"></span>
+              integer,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>LAMBDA</strong></td>
+            <td>
+                <p>number of fast ion species (H,D,T,He3,He4) [-]
+number of energy groups for fast ions [-]
+charge of fast ions (1,2) [-]
+Number of SOL grid points in n_r   [-]
+flag for PRL model calculation 
+=0: no drift 
+=1: Parks 2000 drift 
+=2: Baylor 2007 drift 
+=3: HPI2 drift 
+Number of PRL cloudlets from pellet [-]
+ID number of PRL cloudlet for diag output [-]
+flag for drift scalings
+injection angle for HPI2 drift
+.. for HPI2 drift
+plasma elongation</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-kappa"></span>
+              integer,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>KAPPA</strong></td>
+            <td>
+                <p>number of fast ion species (H,D,T,He3,He4) [-]
+number of energy groups for fast ions [-]
+charge of fast ions (1,2) [-]
+Number of SOL grid points in n_r   [-]
+flag for PRL model calculation 
+=0: no drift 
+=1: Parks 2000 drift 
+=2: Baylor 2007 drift 
+=3: HPI2 drift 
+Number of PRL cloudlets from pellet [-]
+ID number of PRL cloudlet for diag output [-]
+flag for drift scalings
+injection angle for HPI2 drift
+.. for HPI2 drift
+plasma elongation</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-del_drift"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>DEL_DRIFT</strong></td>
+            <td>
+                <p>time of pellet entry to path cells [s]
+pellet effective radius at exit from path cells [m]
+source rate in path cells [/s]
+electron density at entrance to path cells [keV]
+electron density at exit from path cells [keV]
+electron temperature at entrance to path cells [keV]
+electron temperature at exit from path cells [keV]
+resulting density deposition from PRL [/m**3]
+drift calculated from HPI2 scaling</p>
 <hr>
 <p>Declartation of local variables</p>
             </td>
