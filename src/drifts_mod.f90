@@ -302,6 +302,10 @@ Del_drift = C1*((v_p/100)**C2)*(r_p**C3)*(ne0**C4) &
             *((1.0 - Lambda)**C9)*(a0**C10)*(R0**C11)*(B0**C12) &
             *(kappa**C13)
 
+open (unit=10,file="HPI2_2012_test.txt",action="write")
+write(10,*) Del_drift
+close (10)
+
 END SUBROUTINE
 
 END MODULE DRIFTS_MOD
