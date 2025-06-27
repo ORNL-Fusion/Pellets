@@ -892,11 +892,11 @@ IF(iflag /= 0) THEN
 
 ENDIF
 
-call PARKS_DRIFT(2.0,0.05,7.0e13,1.3e3,107.0,3.0,0.8,2.0, &
-                  cA_inf,beta_inf,kap_c,beta_ratio, &
-                  Sigma_0,c_0_bar,Psi_int,DelR)
-call HPI2_DRIFT(150.0,2.7,5.0,3.0,PI,0.0,0.61,1.67, &
-                      2.2,1.8,Del_drift)
+!call PARKS_DRIFT(2.0,0.05,7.0e13,1.3e3,107.0,3.0,0.8,2.0, &
+!                  cA_inf,beta_inf,kap_c,beta_ratio, &
+!                  Sigma_0,c_0_bar,Psi_int,DelR)
+!call HPI2_DRIFT(150.0,2.7,5.0,3.0,-PI/4.0,0.1,0.61,1.67, &
+!                      2.2,1.8,Del_drift)
 
 raxis=r_cyl(1)
 
