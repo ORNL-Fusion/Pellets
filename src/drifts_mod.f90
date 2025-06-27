@@ -279,6 +279,8 @@ real(kind=rspec), parameter :: &
 real(kind=rspec), intent(in) :: &
   v_p,      &
 !> pellet velocity [m/s]
+!> input velocity from PELLET in [m/s]
+!> no scaling needed
   r_p,      &
 !> pellet radius [mm]
 !> input pellet radius from PELLET in [m]
@@ -294,8 +296,10 @@ real(kind=rspec), intent(in) :: &
   alpha,    &
 !> pellet injection angle w.r.t the horizontal
 !> outward direction in range [-pi, pi]
+!> input from PELLET NA.
   Lambda,   &
 !> "impact parameter of the pellet trajectory" [-]
+!> input from PELLET NA.
   a0,       &
 !> minor radius [m]
 !> input a0 from PELLET in [m]
