@@ -276,10 +276,16 @@ real(kind=rspec), intent(in) :: &
 !> pellet velocity [m/s]
   r_p,      &
 !> pellet radius [mm]
+!> input pellet radius from PELLET in [m]
+!> so scale input by 1.0E3.
   ne0,      &
 !> axial electron density [1E19 1/m**3]
+!> input ne0 from PELLET in [1/m**3]
+!> so scale input by 1.0E-19.
   Te0,      &
 !> axial electron temperature [keV]
+!> input Te0 from PELLET [keV]
+!> no scaling needed
   alpha,    &
 !> pellet injection angle w.r.t the horizontal
 !> outward direction in range [-pi, pi]
@@ -287,10 +293,16 @@ real(kind=rspec), intent(in) :: &
 !> "impact parameter of the pellet trajectory" [-]
   a0,       &
 !> minor radius [m]
+!> input a0 from PELLET in [m]
+!> no scaling needed
   r0,       &
 !> major radius [m]
+!> input r0 from PELLET in [m]
+!> no scaling needed
   B0,       &
 !> toroidal field strength [T]
+!> input B0 from PELLET in [T]
+!> no scaling needed
   kappa
 !> plasma elongation close to the separatrix [-]
 
