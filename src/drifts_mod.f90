@@ -281,7 +281,8 @@ real(kind=rspec), intent(in) :: &
   Te0,      &
 !> axial electron temperature [keV]
   alpha,    &
-!>
+!> pellet injection angle w.r.t the horizontal
+!> outward direction in range [-pi, pi]
   Lambda,   &
 !> "impact parameter of the pellet trajectory" [-]
   a0,       &
@@ -296,7 +297,10 @@ real(kind=rspec), intent(in) :: &
 real(kind=rspec), intent(out) :: &
   Del_drift
 
-
+Del_drift = C1*((v_p/100)**C2)*(r_p**C3)*(ne0**C4) &
+            *(Te0**C5)*((ABS(ABS(alpha) - C6) + C8)**C7) &
+            *((1.0 - Lambda)**C9)*(a0**C10)*(R0**C11)*(B0**C12) &
+            *(kappa**C13)
 
 END SUBROUTINE
 
