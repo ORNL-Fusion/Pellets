@@ -114,7 +114,8 @@ SUBROUTINE PELLET(k_pel,amupel,rpel,vpel,n_r,dvol_r,den0_r,te0_r,n_p,map_p,s_p,&
                   pden_r,iflag,message, &
                   NF,NE_F,IZ_F,AMU_F,E_EF,VC_RF,DEN_REF, &
                   PEL_IONS,T_P,RPEL1_P,SRC_P,DEN0_P,DEN1_P,TE0_P,TE1_P, &
-                  R0,A0,BT0,NCSOL,K_PRL,NPRLCLD,IPRLCLD,FPELPRL,PRLINJANG,PRLQ_R,PRLDEP)
+                  R0,A0,BT0,NCSOL,K_PRL,NPRLCLD,IPRLCLD,FPELPRL,PRLINJANG,PRLQ_R,PRLDEP, &
+                  K_DRIFT,ALPHA,LAMBDA,KAPPA,DEL_DRIFT)
 !!-------------------------------------------------------------------------------
 !!PELLET calculates the ablation profile for solid pellets injected into a plasma
 !!
@@ -166,9 +167,17 @@ INTEGER, INTENT(IN), OPTIONAL :: &
   NE_F(:),             & !!number of energy groups for fast ions [-]
   IZ_F(:),             & !!charge of fast ions (1,2) [-]
   NCSOL,               & !!Number of SOL grid points in n_r   [-]
-  K_PRL,               & !!flag for PRL model calculation
+  K_PRL,               & !!flag for PRL model calculation 
+                         !!=0: no drift 
+                         !!=1: Parks 2000 drift 
+                         !!=2: Baylor 2007 drift 
+                         !!=3: HPI2 drift 
   NPRLCLD,             & !!Number of PRL cloudlets from pellet [-]
-  IPRLCLD                !!ID number of PRL cloudlet for diag output [-]
+  IPRLCLD,             & !!ID number of PRL cloudlet for diag output [-]
+  K_DRIFT,             & !!flag for drift scalings
+  ALPHA,               & !!injection angle for HPI2 drift
+  LAMBDA,              & !!.. for HPI2 drift
+  KAPPA                  !!plasma elongation
 
 REAL(KIND=rspec), INTENT(IN), OPTIONAL :: &
   AMU_F(:),            & !!atomic mass number of fast ions [-]
@@ -211,7 +220,8 @@ REAL(KIND=rspec), INTENT(OUT), OPTIONAL :: &
   DEN1_P(:),           & !!electron density at exit from path cells [keV]
   TE0_P(:),            & !!electron temperature at entrance to path cells [keV]
   TE1_P(:),            & !!electron temperature at exit from path cells [keV]
-  PRLDEP(:)              !!resulting density deposition from PRL [/m**3]
+  PRLDEP(:),           & !!resulting density deposition from PRL [/m**3]
+  DEL_DRIFT              !!drift calculated from HPI2 scaling
 
 !!-------------------------------------------------------------------------------
 !!Declartation of local variables
@@ -619,6 +629,41 @@ DO l=1,n_p
         endif
 
       endif
+
+    ELSEIF(K_DRIFT == 3 .and. rp > 0) then
+
+      do ii=1,ngrid !!Profile generation
+          fi = float(ii)
+          nfloat = float(ngrid)
+          rgrid(ii) = fi/nfloat
+          teb(ii) = te0_r(ii)   !! te_r: initial temp profile
+          neb(ii) = den0_r(ii)*1.0e-19   !! convert to 1e19 1/m**3
+                                         !! ne_r: initial den profile
+          nea(ii) = 0.0         !! nea_r: den profile after cloudlet motion
+          tea(ii) = 0.0         !! tea_r: temp profile after cloudlet motion
+      enddo !!Profile generation
+
+      rgrid(ngrid) = 1.0
+        fi = l
+        fncp = float(ngrid)
+        !!rho_p = 1.0-fi/nfloat
+        !!rho_p = lc(l)/fncp
+        rho_p = map_p(l)/nfloat
+        if (rho_p .gt. 1.0) rho_p = 1.0
+        rpellet = rp*1.0e3 !! mm from m
+        rmaj = R0    !! 
+        amin = A0    !! 
+        !!!!!!!
+        !pnum = PEL_IONS/nprlcld !! check how this translates to non-PRL drifts.
+        !!!!!!!
+        !vpelprl = vpel*(-100.0) !! cm/s from m/s
+
+        !call HPI2_DRIFT(vpel,rpellet,neb,teb,ALPHA,LAMBDA, &
+        !                amin,rmaj,BT0,KAPPA,DEL_DRIFT)
+                        !! ned and teb are arrays
+                        !! HPI2_DRIFT expects a single integer
+
+    endif
 
     ELSEIF(((i <= 0) .OR. (i > n_r)) .AND. l_inside) THEN
 
