@@ -132,6 +132,7 @@ REAL(KIND=rspec) :: &
   Sigma_0,c_0_bar,     &
   Psi_int,             &  
   DelR,                &
+  Del_drift,           &
   prlqf                  !PRL q profile exponent q(r) = (qa-q0) + q0*(1-(r/a)^qf)
 !
 !
@@ -185,7 +186,8 @@ REAL(KIND=rspec), ALLOCATABLE :: &
 REAL(KIND=rspec), PARAMETER :: &
   z_eion=32.6e-3, &
   z_pi=3.141592654, &
-  z_mu0=4.0e-7*z_pi  
+  z_mu0=4.0e-7*z_pi, &
+  pi = 4.0*ATAN(1.0)   
 
 !PRL added variables
 REAL(KIND=rspec) :: &
@@ -893,6 +895,8 @@ ENDIF
 call PARKS_DRIFT(2.0,0.05,7.0e13,1.3e3,107.0,3.0,0.8,2.0, &
                   cA_inf,beta_inf,kap_c,beta_ratio, &
                   Sigma_0,c_0_bar,Psi_int,DelR)
+call HPI2_DRIFT(150.0,2.7,5.0,3.0,PI,0.0,0.61,1.67, &
+                      2.2,1.8,Del_drift)
 
 raxis=r_cyl(1)
 
