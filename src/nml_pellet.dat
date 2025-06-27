@@ -60,4 +60,5 @@
   prlqf      = 1.5
   fpelprl    = 0.9
   iprlcld       = 3
+  k_drifts = 0
 /
