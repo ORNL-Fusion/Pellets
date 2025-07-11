@@ -65,7 +65,7 @@
                   <a class="nav-link" href="../lists/namelists.html">Namelists</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                  <a class="nav-link" href="../program/pellet_dr.html">Program</a>
                 </li>
             </ul>
               <div class="d-flex align-items-end flex-grow-1">
@@ -91,19 +91,19 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title="13.8% of total for modules and submodules.">884 statements</a>
+                 title="15.3% of total for modules and submodules.">982 statements</a>
             </li>
 
             <li class="list-inline-item" id="source-file">
               <i class="fa fa-code"></i>
-              <a href="../src/prl_mod_intel.f90"> Source File</a>
+              <a href="../src/prl_mod.f90"> Source File</a>
             </li>
         </ul>
       </div>
       <div class="col">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb justify-content-end mb-0">
-                <li class="breadcrumb-item"><a href='../sourcefile/prl_mod_intel.f90.html'>prl_mod_intel.f90</a></li>
+                <li class="breadcrumb-item"><a href='../sourcefile/prl_mod.f90.html'>prl_mod.f90</a></li>
             <li class="breadcrumb-item active" aria-current="page">PRL_MOD</li>
           </ol>
         </nav>
@@ -132,9 +132,9 @@
       </a>
       <div id="vars-0" class="collapse">
         <div class="list-group list-group-flush">
-            <a class="list-group-item" href="../module/prl_mod.html#variable-gamma~4">gamma</a>
-            <a class="list-group-item" href="../module/prl_mod.html#variable-mu0~3">mu0</a>
-            <a class="list-group-item" href="../module/prl_mod.html#variable-gammasqrt~2">gammasqrt</a>
+            <a class="list-group-item" href="../module/prl_mod.html#variable-gamma">gamma</a>
+            <a class="list-group-item" href="../module/prl_mod.html#variable-mu0">mu0</a>
+            <a class="list-group-item" href="../module/prl_mod.html#variable-gammasqrt">gammasqrt</a>
         </div>
       </div>
     </div>
@@ -156,7 +156,7 @@
       </a>
       <div id="subs-0" class="collapse">
         <div class="list-group list-group-flush">
-            <a class="list-group-item" href="../module/prl_mod.html#proc-prl~2">PRL</a>
+            <a class="list-group-item" href="../module/prl_mod.html#proc-prl">PRL</a>
         </div>
       </div>
     </div>
@@ -207,7 +207,7 @@
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-gamma~4"></span>
+              <span class="anchor" id="variable-gamma"></span>
               real(kind=rspec),
             </td>
               <td>public,</td>
@@ -224,7 +224,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-mu0~3"></span>
+              <span class="anchor" id="variable-mu0"></span>
               real(kind=rspec),
             </td>
               <td>public,</td>
@@ -241,7 +241,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-gammasqrt~2"></span>
+              <span class="anchor" id="variable-gammasqrt"></span>
               real(kind=rspec),
             </td>
               <td>public,</td>
@@ -270,13 +270,13 @@ parameter
         <section>
           <h2>Subroutines</h2>
               <div class="card">
-    <div class="card-header codesum"><span class="anchor" id="proc-prl~2"></span> <h3>public  subroutine <a href='../proc/prl~2.html'>PRL</a>(irunid, idiag, Bt, Rm, am, chi0, rpel, rhop, pnum, vpel, n_r, te_r, ne_r, q_r, tea_r, nea_r, rho_r, nump)  
+    <div class="card-header codesum"><span class="anchor" id="proc-prl"></span> <h3>public  subroutine <a href='../proc/prl.html'>PRL</a>(irunid, idiag, Bt, Rm, am, chi0, rpel, rhop, pnum, vpel, n_r, te_r, ne_r, q_r, tea_r, nea_r, rho_r, nump)  
 </h3></div>
     <div class="card-body">
           
   <p>**
 neinf_pr = 1.0e14
-teinf_pr = 5000.0  !5 kev</p><a href="../proc/prl~2.html" class="pull-right"><emph>Read more&hellip;</emph></a>
+teinf_pr = 5000.0  !5 kev</p><a href="../proc/prl.html" class="pull-right"><emph>Read more&hellip;</emph></a>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -291,7 +291,7 @@ teinf_pr = 5000.0  !5 kev</p><a href="../proc/prl~2.html" class="pull-right"><em
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-irunid~3"></span>
+              <span class="anchor" id="variable-irunid"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -306,7 +306,7 @@ teinf_pr = 5000.0  !5 kev</p><a href="../proc/prl~2.html" class="pull-right"><em
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-idiag~3"></span>
+              <span class="anchor" id="variable-idiag"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -321,7 +321,7 @@ teinf_pr = 5000.0  !5 kev</p><a href="../proc/prl~2.html" class="pull-right"><em
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-bt~2"></span>
+              <span class="anchor" id="variable-bt"></span>
               real(kind=rspec),
             </td>
 <td>intent(in)</td>
@@ -336,7 +336,7 @@ teinf_pr = 5000.0  !5 kev</p><a href="../proc/prl~2.html" class="pull-right"><em
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-rm~2"></span>
+              <span class="anchor" id="variable-rm"></span>
               real(kind=rspec),
             </td>
 <td>intent(in)</td>
@@ -351,7 +351,7 @@ teinf_pr = 5000.0  !5 kev</p><a href="../proc/prl~2.html" class="pull-right"><em
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-am~2"></span>
+              <span class="anchor" id="variable-am"></span>
               real(kind=rspec),
             </td>
 <td>intent(in)</td>
@@ -366,7 +366,7 @@ teinf_pr = 5000.0  !5 kev</p><a href="../proc/prl~2.html" class="pull-right"><em
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-chi0~2"></span>
+              <span class="anchor" id="variable-chi0"></span>
               real(kind=rspec),
             </td>
 <td>intent(in)</td>
@@ -381,7 +381,7 @@ teinf_pr = 5000.0  !5 kev</p><a href="../proc/prl~2.html" class="pull-right"><em
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-rpel~3"></span>
+              <span class="anchor" id="variable-rpel"></span>
               real(kind=rspec),
             </td>
 <td>intent(in)</td>
@@ -396,7 +396,7 @@ teinf_pr = 5000.0  !5 kev</p><a href="../proc/prl~2.html" class="pull-right"><em
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-rhop~2"></span>
+              <span class="anchor" id="variable-rhop"></span>
               real(kind=rspec),
             </td>
 <td>intent(in)</td>
@@ -411,7 +411,7 @@ teinf_pr = 5000.0  !5 kev</p><a href="../proc/prl~2.html" class="pull-right"><em
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-pnum~4"></span>
+              <span class="anchor" id="variable-pnum"></span>
               real(kind=rspec),
             </td>
 <td>intent(in)</td>
@@ -426,7 +426,7 @@ teinf_pr = 5000.0  !5 kev</p><a href="../proc/prl~2.html" class="pull-right"><em
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-vpel~3"></span>
+              <span class="anchor" id="variable-vpel"></span>
               real(kind=rspec),
             </td>
 <td>intent(in)</td>
@@ -441,7 +441,7 @@ teinf_pr = 5000.0  !5 kev</p><a href="../proc/prl~2.html" class="pull-right"><em
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-n_r~7"></span>
+              <span class="anchor" id="variable-n_r"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -456,7 +456,7 @@ teinf_pr = 5000.0  !5 kev</p><a href="../proc/prl~2.html" class="pull-right"><em
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-te_r~5"></span>
+              <span class="anchor" id="variable-te_r"></span>
               real(kind=rspec),
             </td>
 <td>intent(in)</td>
@@ -471,7 +471,7 @@ teinf_pr = 5000.0  !5 kev</p><a href="../proc/prl~2.html" class="pull-right"><em
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-ne_r~3"></span>
+              <span class="anchor" id="variable-ne_r"></span>
               real(kind=rspec),
             </td>
 <td>intent(in)</td>
@@ -486,7 +486,7 @@ teinf_pr = 5000.0  !5 kev</p><a href="../proc/prl~2.html" class="pull-right"><em
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-q_r~4"></span>
+              <span class="anchor" id="variable-q_r"></span>
               real(kind=rspec),
             </td>
 <td>intent(in)</td>
@@ -501,7 +501,7 @@ teinf_pr = 5000.0  !5 kev</p><a href="../proc/prl~2.html" class="pull-right"><em
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-tea_r~2"></span>
+              <span class="anchor" id="variable-tea_r"></span>
               real(kind=rspec),
             </td>
 <td>intent(out)</td>
@@ -516,7 +516,7 @@ teinf_pr = 5000.0  !5 kev</p><a href="../proc/prl~2.html" class="pull-right"><em
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-nea_r~3"></span>
+              <span class="anchor" id="variable-nea_r"></span>
               real(kind=rspec),
             </td>
 <td>intent(out)</td>
@@ -531,7 +531,7 @@ teinf_pr = 5000.0  !5 kev</p><a href="../proc/prl~2.html" class="pull-right"><em
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-rho_r~11"></span>
+              <span class="anchor" id="variable-rho_r"></span>
               real(kind=rspec),
             </td>
 <td>intent(in)</td>
@@ -546,7 +546,7 @@ teinf_pr = 5000.0  !5 kev</p><a href="../proc/prl~2.html" class="pull-right"><em
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-nump~4"></span>
+              <span class="anchor" id="variable-nump"></span>
               real(kind=rspec),
             </td>
 <td>intent(out)</td>

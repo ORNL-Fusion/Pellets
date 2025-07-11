@@ -281,14 +281,14 @@ real(kind=rspec), intent(in) :: &
 !> pellet velocity [m/s]
 !> input velocity from PELLET in [m/s]
 !> no scaling needed
-  r_p,      &
-!> pellet radius [mm]
-!> input pellet radius from PELLET in [m]
-!> so scale input by 1.0E3.
   ne0,      &
-!> axial electron density [1E19 1/m**3]
-!> input ne0 from PELLET in [1/m**3]
-!> so scale input by 1.0E-19.
+! !> axial electron density [1E19 1/m**3]
+! !> input ne0 from PELLET in [1/m**3]
+! !> so scale input by 1.0E-19.
+  r_p,      &      
+! !> pellet radius [mm]
+! !> input pellet radius from PELLET in [m]
+! !> so scale input by 1.0E3.
   Te0,      &
 !> axial electron temperature [keV]
 !> input Te0 from PELLET [keV]
@@ -315,6 +315,16 @@ real(kind=rspec), intent(in) :: &
   kappa
 !> plasma elongation close to the separatrix [-]
 
+! real(kind=rspec), intent(in) :: & 
+!   ne0,      &
+! !> axial electron density [1E19 1/m**3]
+! !> input ne0 from PELLET in [1/m**3]
+! !> so scale input by 1.0E-19.
+!   r_p      
+! !> pellet radius [mm]
+! !> input pellet radius from PELLET in [m]
+! !> so scale input by 1.0E3.
+
 real(kind=rspec), intent(out) :: &
   Del_drift
 
@@ -324,6 +334,9 @@ Del_drift = C1*((v_p/100)**C2)*(r_p**C3)*(ne0**C4) &
             *(kappa**C13)
 
 open (unit=10,file="HPI2_2012_test.txt",action="write")
+write(10,*) "v_p, r_p, te0, ne0, alpha, lambda, kappa, a0, r0, B0\n"
+write(10,*) v_p, r_p, Te0, ne0, alpha, lambda, kappa, a0, r0, B0
+write(10,*) "Del_drift\n"
 write(10,*) Del_drift
 close (10)
 

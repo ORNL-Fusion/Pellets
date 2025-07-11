@@ -65,7 +65,7 @@
                   <a class="nav-link" href="../lists/namelists.html">Namelists</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                  <a class="nav-link" href="../program/pellet_dr.html">Program</a>
                 </li>
             </ul>
               <div class="d-flex align-items-end flex-grow-1">
@@ -91,7 +91,7 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title=" 0.7% of total for source files.">59 statements</a>
+                 title=" 0.8% of total for source files.">62 statements</a>
             </li>
 
             <li class="list-inline-item" id="source-file">
@@ -453,14 +453,14 @@
 <a id="ln-281" name="ln-281" href="#ln-281"></a><span class="c">!&gt; pellet velocity [m/s]</span>
 <a id="ln-282" name="ln-282" href="#ln-282"></a><span class="c">!&gt; input velocity from PELLET in [m/s]</span>
 <a id="ln-283" name="ln-283" href="#ln-283"></a><span class="c">!&gt; no scaling needed</span>
-<a id="ln-284" name="ln-284" href="#ln-284"></a><span class="w">  </span><span class="n">r_p</span><span class="p">,</span><span class="w">      </span><span class="p">&amp;</span>
-<a id="ln-285" name="ln-285" href="#ln-285"></a><span class="c">!&gt; pellet radius [mm]</span>
-<a id="ln-286" name="ln-286" href="#ln-286"></a><span class="c">!&gt; input pellet radius from PELLET in [m]</span>
-<a id="ln-287" name="ln-287" href="#ln-287"></a><span class="c">!&gt; so scale input by 1.0E3.</span>
-<a id="ln-288" name="ln-288" href="#ln-288"></a><span class="w">  </span><span class="n">ne0</span><span class="p">,</span><span class="w">      </span><span class="p">&amp;</span>
-<a id="ln-289" name="ln-289" href="#ln-289"></a><span class="c">!&gt; axial electron density [1E19 1/m**3]</span>
-<a id="ln-290" name="ln-290" href="#ln-290"></a><span class="c">!&gt; input ne0 from PELLET in [1/m**3]</span>
-<a id="ln-291" name="ln-291" href="#ln-291"></a><span class="c">!&gt; so scale input by 1.0E-19.</span>
+<a id="ln-284" name="ln-284" href="#ln-284"></a><span class="w">  </span><span class="n">ne0</span><span class="p">,</span><span class="w">      </span><span class="p">&amp;</span>
+<a id="ln-285" name="ln-285" href="#ln-285"></a><span class="c">! !&gt; axial electron density [1E19 1/m**3]</span>
+<a id="ln-286" name="ln-286" href="#ln-286"></a><span class="c">! !&gt; input ne0 from PELLET in [1/m**3]</span>
+<a id="ln-287" name="ln-287" href="#ln-287"></a><span class="c">! !&gt; so scale input by 1.0E-19.</span>
+<a id="ln-288" name="ln-288" href="#ln-288"></a><span class="w">  </span><span class="n">r_p</span><span class="p">,</span><span class="w">      </span><span class="p">&amp;</span><span class="w">      </span>
+<a id="ln-289" name="ln-289" href="#ln-289"></a><span class="c">! !&gt; pellet radius [mm]</span>
+<a id="ln-290" name="ln-290" href="#ln-290"></a><span class="c">! !&gt; input pellet radius from PELLET in [m]</span>
+<a id="ln-291" name="ln-291" href="#ln-291"></a><span class="c">! !&gt; so scale input by 1.0E3.</span>
 <a id="ln-292" name="ln-292" href="#ln-292"></a><span class="w">  </span><span class="n">Te0</span><span class="p">,</span><span class="w">      </span><span class="p">&amp;</span>
 <a id="ln-293" name="ln-293" href="#ln-293"></a><span class="c">!&gt; axial electron temperature [keV]</span>
 <a id="ln-294" name="ln-294" href="#ln-294"></a><span class="c">!&gt; input Te0 from PELLET [keV]</span>
@@ -487,21 +487,34 @@
 <a id="ln-315" name="ln-315" href="#ln-315"></a><span class="w">  </span><span class="n">kappa</span>
 <a id="ln-316" name="ln-316" href="#ln-316"></a><span class="c">!&gt; plasma elongation close to the separatrix [-]</span>
 <a id="ln-317" name="ln-317" href="#ln-317"></a>
-<a id="ln-318" name="ln-318" href="#ln-318"></a><span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="n">rspec</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="p">&amp;</span>
-<a id="ln-319" name="ln-319" href="#ln-319"></a><span class="w">  </span><span class="n">Del_drift</span>
-<a id="ln-320" name="ln-320" href="#ln-320"></a>
-<a id="ln-321" name="ln-321" href="#ln-321"></a><span class="n">Del_drift</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">C1</span><span class="o">*</span><span class="p">((</span><span class="n">v_p</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span><span class="o">**</span><span class="n">C2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">r_p</span><span class="o">**</span><span class="n">C3</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">ne0</span><span class="o">**</span><span class="n">C4</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
-<a id="ln-322" name="ln-322" href="#ln-322"></a><span class="w">            </span><span class="o">*</span><span class="p">(</span><span class="n">Te0</span><span class="o">**</span><span class="n">C5</span><span class="p">)</span><span class="o">*</span><span class="p">((</span><span class="nb">ABS</span><span class="p">(</span><span class="nb">ABS</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">C6</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">C8</span><span class="p">)</span><span class="o">**</span><span class="n">C7</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
-<a id="ln-323" name="ln-323" href="#ln-323"></a><span class="w">            </span><span class="o">*</span><span class="p">((</span><span class="mf">1.0</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">Lambda</span><span class="p">)</span><span class="o">**</span><span class="n">C9</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">a0</span><span class="o">**</span><span class="n">C10</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">R0</span><span class="o">**</span><span class="n">C11</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">B0</span><span class="o">**</span><span class="n">C12</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
-<a id="ln-324" name="ln-324" href="#ln-324"></a><span class="w">            </span><span class="o">*</span><span class="p">(</span><span class="n">kappa</span><span class="o">**</span><span class="n">C13</span><span class="p">)</span>
-<a id="ln-325" name="ln-325" href="#ln-325"></a>
-<a id="ln-326" name="ln-326" href="#ln-326"></a><span class="k">open</span><span class="w"> </span><span class="p">(</span><span class="n">unit</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="k">file</span><span class="o">=</span><span class="s2">&quot;HPI2_2012_test.txt&quot;</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s2">&quot;write&quot;</span><span class="p">)</span>
-<a id="ln-327" name="ln-327" href="#ln-327"></a><span class="k">write</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">Del_drift</span>
-<a id="ln-328" name="ln-328" href="#ln-328"></a><span class="k">close</span><span class="w"> </span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-<a id="ln-329" name="ln-329" href="#ln-329"></a>
-<a id="ln-330" name="ln-330" href="#ln-330"></a><span class="k">END SUBROUTINE</span>
-<a id="ln-331" name="ln-331" href="#ln-331"></a>
-<a id="ln-332" name="ln-332" href="#ln-332"></a><span class="k">END MODULE </span><span class="n">DRIFTS_MOD</span>
+<a id="ln-318" name="ln-318" href="#ln-318"></a><span class="c">! real(kind=rspec), intent(in) :: &amp; </span>
+<a id="ln-319" name="ln-319" href="#ln-319"></a><span class="c">!   ne0,      &amp;</span>
+<a id="ln-320" name="ln-320" href="#ln-320"></a><span class="c">! !&gt; axial electron density [1E19 1/m**3]</span>
+<a id="ln-321" name="ln-321" href="#ln-321"></a><span class="c">! !&gt; input ne0 from PELLET in [1/m**3]</span>
+<a id="ln-322" name="ln-322" href="#ln-322"></a><span class="c">! !&gt; so scale input by 1.0E-19.</span>
+<a id="ln-323" name="ln-323" href="#ln-323"></a><span class="c">!   r_p      </span>
+<a id="ln-324" name="ln-324" href="#ln-324"></a><span class="c">! !&gt; pellet radius [mm]</span>
+<a id="ln-325" name="ln-325" href="#ln-325"></a><span class="c">! !&gt; input pellet radius from PELLET in [m]</span>
+<a id="ln-326" name="ln-326" href="#ln-326"></a><span class="c">! !&gt; so scale input by 1.0E3.</span>
+<a id="ln-327" name="ln-327" href="#ln-327"></a>
+<a id="ln-328" name="ln-328" href="#ln-328"></a><span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="n">rspec</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-329" name="ln-329" href="#ln-329"></a><span class="w">  </span><span class="n">Del_drift</span>
+<a id="ln-330" name="ln-330" href="#ln-330"></a>
+<a id="ln-331" name="ln-331" href="#ln-331"></a><span class="n">Del_drift</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">C1</span><span class="o">*</span><span class="p">((</span><span class="n">v_p</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span><span class="o">**</span><span class="n">C2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">r_p</span><span class="o">**</span><span class="n">C3</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">ne0</span><span class="o">**</span><span class="n">C4</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-332" name="ln-332" href="#ln-332"></a><span class="w">            </span><span class="o">*</span><span class="p">(</span><span class="n">Te0</span><span class="o">**</span><span class="n">C5</span><span class="p">)</span><span class="o">*</span><span class="p">((</span><span class="nb">ABS</span><span class="p">(</span><span class="nb">ABS</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">C6</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">C8</span><span class="p">)</span><span class="o">**</span><span class="n">C7</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-333" name="ln-333" href="#ln-333"></a><span class="w">            </span><span class="o">*</span><span class="p">((</span><span class="mf">1.0</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">Lambda</span><span class="p">)</span><span class="o">**</span><span class="n">C9</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">a0</span><span class="o">**</span><span class="n">C10</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">R0</span><span class="o">**</span><span class="n">C11</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">B0</span><span class="o">**</span><span class="n">C12</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-334" name="ln-334" href="#ln-334"></a><span class="w">            </span><span class="o">*</span><span class="p">(</span><span class="n">kappa</span><span class="o">**</span><span class="n">C13</span><span class="p">)</span>
+<a id="ln-335" name="ln-335" href="#ln-335"></a>
+<a id="ln-336" name="ln-336" href="#ln-336"></a><span class="k">open</span><span class="w"> </span><span class="p">(</span><span class="n">unit</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="k">file</span><span class="o">=</span><span class="s2">&quot;HPI2_2012_test.txt&quot;</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s2">&quot;write&quot;</span><span class="p">)</span>
+<a id="ln-337" name="ln-337" href="#ln-337"></a><span class="k">write</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;v_p, r_p, te0, ne0, alpha, lambda, kappa, a0, r0, B0\n&quot;</span>
+<a id="ln-338" name="ln-338" href="#ln-338"></a><span class="k">write</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">v_p</span><span class="p">,</span><span class="w"> </span><span class="n">r_p</span><span class="p">,</span><span class="w"> </span><span class="n">Te0</span><span class="p">,</span><span class="w"> </span><span class="n">ne0</span><span class="p">,</span><span class="w"> </span><span class="n">alpha</span><span class="p">,</span><span class="w"> </span><span class="n">lambda</span><span class="p">,</span><span class="w"> </span><span class="n">kappa</span><span class="p">,</span><span class="w"> </span><span class="n">a0</span><span class="p">,</span><span class="w"> </span><span class="n">r0</span><span class="p">,</span><span class="w"> </span><span class="n">B0</span>
+<a id="ln-339" name="ln-339" href="#ln-339"></a><span class="k">write</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;Del_drift\n&quot;</span>
+<a id="ln-340" name="ln-340" href="#ln-340"></a><span class="k">write</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">Del_drift</span>
+<a id="ln-341" name="ln-341" href="#ln-341"></a><span class="k">close</span><span class="w"> </span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<a id="ln-342" name="ln-342" href="#ln-342"></a>
+<a id="ln-343" name="ln-343" href="#ln-343"></a><span class="k">END SUBROUTINE</span>
+<a id="ln-344" name="ln-344" href="#ln-344"></a>
+<a id="ln-345" name="ln-345" href="#ln-345"></a><span class="k">END MODULE </span><span class="n">DRIFTS_MOD</span>
 </pre></div>
 
       </section>
