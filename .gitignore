@@ -1,16 +1,19 @@
 # Ignore fortran build files
-./src/build
+./src/build/*
+
+# Ignore module files
+./src/build/modules/*
 
 # Ignore CMake/make files
-./src/CMakeFiles
-./src/CMakeCache.txt
-./src/Makefile
+./src/build/CMakeFiles
+./src/build/CMakeCache.txt
+./src/build/Makefile
 ./src/config/user.cmake
 ./src/cmake_install.cmake
 
 # Ignore output files
-./src/*.dat
-./src/*.txt
+./src/build/*.dat
+./src/build/*.txt
 
 # Ignore local doc files
 ./documentation/pellet_docs/
