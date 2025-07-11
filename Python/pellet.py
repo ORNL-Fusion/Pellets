@@ -2,11 +2,11 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 from subprocess import call
-from scipy import interpolate
+# from scipy import interpolate
 
 import EFIT.equilParams_class as epc
-import pellets.PelletNml as pnml
-import pellets.PelletSumfile as psf
+import PelletNml as pnml
+import PelletSumfile as psf
 
 
 # plt.rcParams.update({'font.weight': 'bold'})
@@ -57,7 +57,7 @@ def write_profiles_from_pfile(pfile_loc, gfile_loc, efit_tree = None,
         plt.figure()
         plt.plot(psin_g, torfluxnorm_g, label = 'Tor flux')
         plt.plot(psin, rho, label = 'rho')
-        plt.xlabel('$\psi_N$')
+        plt.xlabel('r$\\psi_N$')
         plt.legend(loc='best')
         plt.show(block=False)
 
@@ -124,7 +124,7 @@ def write_profiles_from_pickle(pickled_file_loc = '/home/wilcoxr/pellets/SPARC/S
         plt.plot(rho_pol**2, rho_tor**2, label='Given')
         plt.plot(rho_pol**2, rho_calc**2, label='rho calc')
         # plt.plot(rho_pol**2, psin_approx, label = '$\psi_N$ calc')  # This matches
-        plt.xlabel('$\psi_N$')
+        plt.xlabel('r$\\psi_N$')
         plt.ylabel('Norm tor flux')
         plt.legend(loc='best')
         plt.grid('on')
@@ -154,7 +154,7 @@ def plot_SPARC_profiles(value,
     plt.plot(rho_pol, profs[value], lw=2)
     plt.grid('on')
     plt.ylabel(value)
-    plt.xlabel('$\psi_n$')
+    plt.xlabel('r$\\psi_n$')
     plt.show(block=False)
 
 # ----------------------------------------------------------------------
@@ -677,7 +677,7 @@ def compare_ablation_profiles(sumfileloclist, gfile_loc, figsize_ratio = [3, 3, 
     ax[-1].set_xlabel(xlab)
     ax[0].set_ylabel('n$_e$ (10$^{19}$ m$^{-3}$)')
     ax[1].set_ylabel('T$_e$ (keV)')
-    ax[2].set_ylabel('$\Delta$n$_e$ (10$^{19}$ m$^{-3}$)')
+    ax[2].set_ylabel('r$\\Delta$n$_e$ (10$^{19}$ m$^{-3}$)')
 
     if xlims is not None:
         plt.xlim(xlims)
@@ -938,7 +938,7 @@ def plot_pendepth_vs_mv(top_folder = '/Users/wilcox/Codes/Pellets/runs/SPARC/LFS
     #                        frac_rad_pen_grid[:, v_order], cmap = cmap, levels=50)
     
     cbar = plt.colorbar(meshobj)
-    cbar.set_label('Penetration depth ($\\rho$)', rotation = 90)
+    cbar.set_label('Penetration depth (r$\\rho$)', rotation = 90)
         
     # z_grid, r_grid = np.meshgrid(self.z, self.r)
     # plt.pcolormesh(r_grid, z_grid, phase_deg, cmap = cmap)
