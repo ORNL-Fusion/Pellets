@@ -10,7 +10,7 @@
     <meta name="author" content="" >
     <link rel="icon" href="../favicon.png">
 
-    <title>MIRTH_MOD &ndash; PELLETS</title>
+    <title>AJAX_FLUXAV_G_POINT &ndash; PELLETS</title>
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -80,8 +80,8 @@
 
     <div class="container">
   <div class="row">
-    <h1>MIRTH_MOD
-      <small>Module</small>
+    <h1>AJAX_FLUXAV_G_POINT
+      <small>Subroutine</small>
       
     </h1>
       <div class="container p-2 mb-4 bg-light border rounded-3">
@@ -91,20 +91,21 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title=" 0.7% of total for modules and submodules.">46 statements</a>
+                 title=" 0.7% of total for procedures.">34 statements</a>
             </li>
 
             <li class="list-inline-item" id="source-file">
               <i class="fa fa-code"></i>
-              <a href="../src/mirth_mod.f90"> Source File</a>
+              <a href="../src/ajax_mod.f90"> Source File</a>
             </li>
         </ul>
       </div>
       <div class="col">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb justify-content-end mb-0">
-                <li class="breadcrumb-item"><a href='../sourcefile/mirth_mod.f90.html'>mirth_mod.f90</a></li>
-            <li class="breadcrumb-item active" aria-current="page">MIRTH_MOD</li>
+                <li class="breadcrumb-item"><a href='../sourcefile/ajax_mod.f90.html'>ajax_mod.f90</a></li>
+                <li class="breadcrumb-item"><a href='../module/ajax_mod.html'>AJAX_MOD</a></li>
+            <li class="breadcrumb-item active" aria-current="page">AJAX_FLUXAV_G_POINT</li>
           </ol>
         </nav>
       </div>
@@ -119,10 +120,10 @@
   </script>
 
   </div>
-
+  
   <div class="row">
-    <div class="col-md-3">
-        <div id="sidebar">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
       <h3>Contents</h3>
   
   
@@ -136,18 +137,7 @@
   
   
   
-      <div class="card mb-4">
-      <a data-bs-toggle="collapse" href="#subs-0"
-         aria-expanded="false" aria-controls="subs-0">
-         <h4 class="card-header bg-primary text-white">Subroutines</h4>
-      </a>
-      <div id="subs-0" class="collapse">
-        <div class="list-group list-group-flush">
-            <a class="list-group-item" href="../module/mirth_mod.html#proc-mirth_ss">MIRTH_SS</a>
-        </div>
-      </div>
-    </div>
-
+  
   
   
   
@@ -160,44 +150,22 @@
   </div>
 
     </div>
-
+    
     <div class="col-md-9" id='text'>
-      
-<br>          <div class="card mb-4">
-      <h3 class="card-header card-title bg-light">Uses</h3>
-      <div class="card-body">
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item">
-              <ul class="list-inline">
-                  <li class="list-inline-item"><a href='x_mod.html'>X_MOD</a></li>
-                  <li class="list-inline-item"><a href='spec_kind_mod.html'>SPEC_KIND_MOD</a></li>
-              </ul>
-            </li>
-        </ul>
-      </div>
-    </div>
+    <h2>public  subroutine AJAX_FLUXAV_G_POINT(rho_p, dvol_p, iflag, message)  
+</h2>
+    
 
-      
-      <br>
+    <p>Check whether flux surface averaging arrays have been set
+Check messages
+Remove dominant radial dependence
+Extrapolate to axis</p>
+<hr>
+<h2>Cleanup and exit</h2>
 
 
-
-
-
-
-
-
-        <section>
-          <h2>Subroutines</h2>
-              <div class="card">
-    <div class="card-header codesum"><span class="anchor" id="proc-mirth_ss"></span> <h3>public  subroutine <a href='../proc/mirth_ss.html'>MIRTH_SS</a>(af, izf, e0, p, nr, te, den, zbr, dn0, dvol, h, ng, eg, dg, vc)  
-</h3></div>
-    <div class="card-body">
-          
-  
-
-  <h4>Arguments</h4>
-      <table class="table table-striped varlist">
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
     <thead>
       <tr>
         <th scope="col">Type</th>
@@ -209,241 +177,80 @@
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-af~2"></span>
-              real(kind=rspec),
+              <span class="anchor" id="variable-rho_p"></span>
+              real,
             </td>
 <td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
-            <td><strong>af</strong></td>
+            <td><strong>rho_p</strong></td>
             <td>
-
+                
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-izf~2"></span>
-              integer,
-            </td>
-<td>intent(in)</td>
-              <td></td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>izf</strong></td>
-            <td>
-
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-e0~6"></span>
-              real(kind=rspec),
-            </td>
-<td>intent(in)</td>
-              <td></td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>e0</strong></td>
-            <td>
-
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-p~2"></span>
-              real(kind=rspec),
-            </td>
-<td>intent(in)</td>
-              <td></td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>p</strong></td>
-            <td>
-
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-nr~5"></span>
-              integer,
-            </td>
-<td>intent(in)</td>
-              <td></td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>nr</strong></td>
-            <td>
-
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-te~14"></span>
-              real(kind=rspec),
-            </td>
-<td>intent(in)</td>
-              <td></td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>te</strong>(:)</td>
-            <td>
-
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-den~14"></span>
-              real(kind=rspec),
-            </td>
-<td>intent(in)</td>
-              <td></td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>den</strong>(:)</td>
-            <td>
-
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-zbr"></span>
-              real(kind=rspec),
-            </td>
-<td>intent(in)</td>
-              <td></td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>zbr</strong>(:)</td>
-            <td>
-
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-dn0"></span>
-              real(kind=rspec),
-            </td>
-<td>intent(in)</td>
-              <td></td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>dn0</strong>(:)</td>
-            <td>
-
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-dvol~2"></span>
-              real(kind=rspec),
-            </td>
-<td>intent(in)</td>
-              <td></td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>dvol</strong>(:)</td>
-            <td>
-
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-h~3"></span>
-              real(kind=rspec),
-            </td>
-<td>intent(in)</td>
-              <td></td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>h</strong>(:)</td>
-            <td>
-
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-ng"></span>
-              integer,
-            </td>
-<td>intent(in)</td>
-              <td></td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>ng</strong></td>
-            <td>
-
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-eg"></span>
-              real(kind=rspec),
-            </td>
-<td>intent(in)</td>
-              <td></td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>eg</strong>(:)</td>
-            <td>
-
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-dg"></span>
-              real(kind=rspec),
-            </td>
-<td>intent(inout)</td>
-              <td></td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>dg</strong>(:,:)</td>
-            <td>
-
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-vc"></span>
-              real(kind=rspec),
+              <span class="anchor" id="variable-dvol_p"></span>
+              real,
             </td>
 <td>intent(out)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
-            <td><strong>vc</strong>(:)</td>
+            <td><strong>dvol_p</strong></td>
             <td>
-
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-iflag~12"></span>
+              integer,
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>iflag</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-message~12"></span>
+              character(len=*),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>message</strong></td>
+            <td>
+                
             </td>
         </tr>
     </tbody>
   </table>
 
-
-    </div>
-  </div>
-
-        </section>
-        <br>
+    <br>
 
 
+    
+    
 
+    
+    
+
+
+
+    
+    
     </div>
   </div>
 

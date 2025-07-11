@@ -14,6 +14,7 @@ MODULE PELLET_MOD
 !!-------------------------------------------------------------------------------
 USE SPEC_KIND_MOD
 USE PRL_MOD
+USE AJAX_MOD
 USE DRIFTS_MOD
 IMPLICIT NONE
 
@@ -110,12 +111,14 @@ REAL(KIND=rspec), PRIVATE, PARAMETER :: &
 !!-------------------------------------------------------------------------------
 CONTAINS
 
-SUBROUTINE PELLET(k_pel,amupel,rpel,vpel,n_r,dvol_r,den0_r,te0_r,n_p,map_p,s_p,&
+SUBROUTINE PELLET(k_pel,amupel,rpel,vpel,n_r,den0_r,te0_r,n_p,map_p,s_p,&
                   pden_r,iflag,message, &
                   NF,NE_F,IZ_F,AMU_F,E_EF,VC_RF,DEN_REF, &
                   PEL_IONS,T_P,RPEL1_P,SRC_P,DEN0_P,DEN1_P,TE0_P,TE1_P, &
                   R0,A0,BT0,NCSOL,K_PRL,NPRLCLD,IPRLCLD,FPELPRL,PRLINJANG,PRLQ_R,PRLDEP, &
-                  K_DRIFT,ALPHA,LAMBDA,KAPPA,DEL_DRIFT)
+                  K_DRIFT,DVOL_R_ARRAY,DVOL_R_POINT,ALPHA,LAM,KAPPA,DEL_DRIFT,RHO_RM, &
+                  RHO_R_SHIFTED)
+
 !!-------------------------------------------------------------------------------
 !!PELLET calculates the ablation profile for solid pellets injected into a plasma
 !!
@@ -155,7 +158,6 @@ REAL(KIND=rspec), INTENT(IN) :: &
   vpel                   !!pellet velocity [m/s]
 
 REAL(KIND=rspec), INTENT(IN) :: &
-  dvol_r(:),           & !!volume of plasma cell i [m**3]
   den0_r(:),           & !!initial electron density in radial cells [/m**3]
   te0_r(:),            & !!initial electron temperature in radial cells [keV]
   s_p(:)                 !!distance to the beginning of path segment [m]
@@ -173,11 +175,10 @@ INTEGER, INTENT(IN), OPTIONAL :: &
                          !!=2: Baylor 2007 drift 
                          !!=3: HPI2 drift 
   NPRLCLD,             & !!Number of PRL cloudlets from pellet [-]
-  IPRLCLD,             & !!ID number of PRL cloudlet for diag output [-]
-  K_DRIFT,             & !!flag for drift scalings
-  ALPHA,               & !!injection angle for HPI2 drift
-  LAMBDA,              & !!.. for HPI2 drift
-  KAPPA                  !!plasma elongation
+  IPRLCLD              !!ID number of PRL cloudlet for diag output [-]
+  
+INTEGER, INTENT(IN), OPTIONAL :: &
+  K_DRIFT                !!flag for drift scalings
 
 REAL(KIND=rspec), INTENT(IN), OPTIONAL :: &
   AMU_F(:),            & !!atomic mass number of fast ions [-]
@@ -192,7 +193,11 @@ REAL(KIND=rspec), INTENT(IN), OPTIONAL :: &
   BT0,                 & !!Magnetic field on axis used by PRL [T]
   FPELPRL,             & !!PRL fraction of pellet mass to drift [-]
   PRLINJANG,           & !!PRL injection angle (LFS=0, HFS=pi) [radians]
-  PRLQ_R(:)              !!q profile for PRL model [-]
+  PRLQ_R(:),           & !!q profile for PRL model [-]
+  RHO_RM(:),            & !!rho original grid
+  ALPHA,               & !!injection angle for HPI2 drift
+  LAM,                 & !!.. for HPI2 drift
+  KAPPA                  !!plasma elongation
 
 
 !!Declaration of output variables
@@ -221,7 +226,14 @@ REAL(KIND=rspec), INTENT(OUT), OPTIONAL :: &
   TE0_P(:),            & !!electron temperature at entrance to path cells [keV]
   TE1_P(:),            & !!electron temperature at exit from path cells [keV]
   PRLDEP(:),           & !!resulting density deposition from PRL [/m**3]
+  RHO_R_SHIFTED,            & !!rho location shifted by radial drift term
   DEL_DRIFT              !!drift calculated from HPI2 scaling
+
+  REAL(KIND=rspec), OPTIONAL, INTENT(IN) :: &
+  DVOL_R_ARRAY(:)              !!volume of plasma cell i [m**3]
+
+  REAL(KIND=rspec), OPTIONAL, INTENT(OUT) :: &
+  DVOL_R_POINT             !!volume of plasma cell i [m**3]
 
 !!-------------------------------------------------------------------------------
 !!Declartation of local variables
@@ -232,8 +244,8 @@ INTEGER :: &
   i,l, ii, idiag
 
 REAL(KIND=rspec) :: &
-  dennew,denold,dt,rp,rpold,srcp,t,tenew,teold, srcp_tot
-
+  dennew,denold,dt,rp,rpold,srcp,t,tenew,teold,srcp_tot, &
+    rp_HPI2,ne_HPI2
 
 !!
 !! Local variables for PRL extension
@@ -311,7 +323,7 @@ ELSEIF(amup_pl >= 9.0 .AND. &
 ENDIF
 
 
-
+! PRINT *, "denm_pl = ", denm_pl
 
 
 
@@ -474,6 +486,8 @@ t=0
 rp=rpel_pl
 xrhoro_pl=0
 
+! PRINT *, "rp: ", rp
+
 
 IF(PRESENT(NPRLCLD)) THEN
    ngrid = N_R - NCSOL
@@ -490,6 +504,8 @@ ENDIF
 !!Optional output
 IF(PRESENT(PEL_IONS)) PEL_IONS=4*z_pi/3*rpel_pl**3*(2*denm_pl)
 
+! PRINT *, "CHECK DVOL_R: ", dvol_r
+
 !!-------------------------------------------------------------------------------
 !!Follow the pellet path and determine the ablation rate
 !!-------------------------------------------------------------------------------
@@ -499,11 +515,20 @@ l_inside=.FALSE.
 !!Flag to indicate whether pellet has entered and exited plasma
 l_inout=.FALSE.
 
+! PRINT *, "map_p: ", map_p
+! PRINT *, "n_p: ", n_p
+
 DO l=1,n_p
+
+  ! PRINT *, "Counter (l): ", l
+  ! PRINT *, "map_p: ", map_p(l)
+  ! PRINT *, "rp: ", rp
+  ! PRINT *, "rpel_pl: ", rpel_pl
 
   IF(rp > 1.0e-6*rpel_pl) THEN
 
     i=map_p(l)
+    ! PRINT *, "Counter: ", i
 
     IF(((i <= 0) .OR. (i > n_r)) .AND. &
        (.NOT. l_inside)) THEN
@@ -532,9 +557,53 @@ DO l=1,n_p
 
       dt=(s_p(l+1)-s_p(l))/vpel_pl
       rpold=rp
-      CALL PELLET_RK4(dvol_r(i),dt, &
+      ! PRINT *, "k_drift: ", K_DRIFT
+      ! PRINT *, "Counter: ", i
+      IF (PRESENT(RHO_R_SHIFTED)) THEN
+        IF (.NOT. PRESENT(DVOL_R_POINT)) THEN
+          PRINT *, 'ERROR: RHO_R_SHIFTED present but DVOL_R_POINT not passed.'
+          RETURN
+        ENDIF
+        ! PRINT *, "Calculating point based dvol_r..."
+        IF (K_DRIFT == 3) THEN
+          rp_HPI2 = rp*1.0e3
+          ne_HPI2 = den0_r(1)*1.0e-19
+          ! PRINT *, "rp_HPI2: ", rp_HPI2
+          ! PRINT *, "ne_HPI2: ", ne_HPI2
+          ! PRINT *, "vel_pl, rp, den0_r, te0_r, ALPHA, LAM, A0, R0, BT0, KAPPA: "
+          ! PRINT *, vpel_pl, rp_HPI2, ne_HPI2, te0_r(1), ALPHA, LAM, A0, R0, BT0, KAPPA
+          ! PRINT *, "Entering HPI2 drift calculation..."
+          ! PRINT *, "den0_r(1)", den0_r(1)
+          ! CALL HPI2_DRIFT(vpel_pl,rp_HPI2,ne_HPI2,te0_r(1),ALPHA,LAM,0.565,1.67,2.2,KAPPA,DEL_DRIFT)
+          CALL HPI2_DRIFT(vpel_pl,rp_HPI2,ne_HPI2,te0_r(1),ALPHA,LAM,A0,R0, &
+                          BT0,KAPPA,Del_drift)
+          PRINT *, "Exited HPI2 drift calculation with Del_drift = ", DEL_DRIFT
+          ! PRINT *, "Counter: ", i
+          PRINT *, "rho(i): ", RHO_RM(i)
+          RHO_R_SHIFTED = RHO_RM(i) - DEL_DRIFT/A0
+          PRINT *, "Shifted rho_r value: ", RHO_R_SHIFTED
+          ! PRINT *, "del_drift: ", DEL_DRIFT
+          ! PRINT *, "rho_r: ", RHO_R
+          CALL AJAX_FLUXAV_G_POINT(RHO_R_SHIFTED, DVOL_R_POINT, iflag, message)
+          ! PRINT *, "Point dvol value: ", DVOL_R_POINT
+          CALL PELLET_RK4(DVOL_R_POINT,dt, &
                       t,rp,teold,denold, &
                       srcp,iflag,message)
+          ! PRINT *, "rp: ", rp
+        ENDIF
+      ELSEIF (.NOT. PRESENT(RHO_R_SHIFTED)) THEN
+        IF (.NOT. PRESENT(DVOL_R_ARRAY)) THEN
+          PRINT *, 'ERROR: DVOL_R_ARRAY not passed.'
+          RETURN
+        ENDIF
+        ! PRINT *, "dvol array (i): ", DVOL_R_ARRAY(i)
+        CALL PELLET_RK4(DVOL_R_ARRAY(i),dt, &
+                      t,rp,teold,denold, &
+                      srcp,iflag,message)
+        ! PRINT *, "rp: ", rp
+      ENDIF
+      ! PRINT *, "dvol = ", dvol_r(i)
+      
       pden_r(i)=pden_r(i)+srcp
       dennew=den0_r(i)+pden_r(i)
       tenew=(den0_r(i)*te0_r(i)-pden_r(i)*z_eion_pl/1.5)/dennew
@@ -543,13 +612,18 @@ DO l=1,n_p
       !!Set optional output parameters along path
       IF(PRESENT(T_P)) T_P(l)=t
       IF(PRESENT(RPEL1_P)) RPEL1_P(l)=rp
-      IF(PRESENT(SRC_P)) SRC_P(l)=srcp*dvol_r(i)/dt
+      ! IF(PRESENT(SRC_P)) SRC_P(l)=srcp*dvol_r(i)/dt
       IF(PRESENT(DEN0_P)) DEN0_P(l)=denold
       IF(PRESENT(DEN1_P)) DEN1_P(l)=dennew
       IF(PRESENT(TE0_P)) TE0_P(l)=teold
       IF(PRESENT(TE1_P)) TE1_P(l)=tenew
 
-      srcp_tot = srcp_tot + srcp*dvol_r(i)    !!  Lets total up the electrons put in plasma as a check
+      IF (PRESENT(DVOL_R_ARRAY)) THEN
+        ! srcp_tot = srcp_tot + srcp*dvol_r(i)    !!  Lets total up the electrons put in plasma as a check
+        srcp_tot = srcp_tot + srcp*DVOL_R_ARRAY(i)
+      ELSEIF (PRESENT(DVOL_R_POINT)) THEN
+        srcp_tot = srcp_tot + srcp*DVOL_R_POINT
+      ENDIF
 
       IF (K_PRL .gt.0 .and. PRESENT(NPRLCLD) .and. rp > 0.0) THEN   !! Call PRL drift model
 
@@ -565,23 +639,38 @@ DO l=1,n_p
           icld = icld + 1
           !! Do PRL calculation
           rgrid(1) = 0.0
+          !> set first cell of the rho grid to 0.0
+          !> rho grid is radial normalized to 0,1
 
           do ii=1,ngrid !!Profile generation
+            !> ngrid is specific to PRL: ngrid = N_R - NCSOL
+            !> N_R: number of radial cells
+            !> NCSOL: number of SOL grid points in N_R
+            !> so ngrid is the number of cells in the core part of
+            !> the domain.
             fi = float(ii)
             nfloat = float(ngrid)
             rgrid(ii) = fi/nfloat
+            !> rgrid: rho domain array
             teb(ii) = te0_r(ii)*1000.0   !! convert to eV
+            !> teb: initial temperature profile
             neb(ii) = den0_r(ii)/10**6   !! convert to cm^-3
+            !> neb: initial  density profile
             nea(ii) = 0.0
+            !> nea: density profile after cloudlet motion
             tea(ii) = 0.0
+            !> tea: temperature profile after cloudlet motion
           enddo !!Profile generation
 
           rgrid(ngrid) = 1.0
           fi = l
+          !> l: n_p counter
+          !> n_p: number of segments along the pellet path
           fncp = float(ngrid)
           !!rho_p = 1.0-fi/nfloat
           !!rho_p = lc(l)/fncp
           rho_p = map_p(l)/nfloat
+          !> map_p: plasma cell for each path segment
           if (rho_p .gt. 1.0) rho_p = 1.0
           rpellet = rp*100 !! cm from m
           rmaj = R0*100    !! cm from m
@@ -589,11 +678,11 @@ DO l=1,n_p
           pnum = PEL_IONS/nprlcld
           vpelprl = vpel*(-100.0) !! cm/s from m/s
 
-		  if (iprlcld == icld) then    !! diagnostic output flag
-		      idiag = 1
-		  else
-		      idiag = 0
-		  endif
+		      if (iprlcld == icld) then    !! diagnostic output flag
+		       idiag = 1
+		      else
+		       idiag = 0
+		      endif
 
           call prl(icld,idiag,BT0,rmaj,amin,PRLINJANG,rpellet,  &
                          rho_p, pnum, vpelprl, ngrid, teb, neb,  &
@@ -612,7 +701,7 @@ DO l=1,n_p
 
             do i=1,ngrid  
               !!nea(i) = (fnumpart/neasum)*nea(i)/dvol(i)
-              nea(i) = nea(i)/dvol_r(i) !!Convert to density
+              ! nea(i) = nea(i)/dvol_r(i) !!Convert to density
             enddo
 
           endif
@@ -630,42 +719,7 @@ DO l=1,n_p
 
       endif
 
-    ELSEIF(K_DRIFT == 3 .and. rp > 0) then
-
-      do ii=1,ngrid !!Profile generation
-          fi = float(ii)
-          nfloat = float(ngrid)
-          rgrid(ii) = fi/nfloat
-          teb(ii) = te0_r(ii)   !! te_r: initial temp profile
-          neb(ii) = den0_r(ii)*1.0e-19   !! convert to 1e19 1/m**3
-                                         !! ne_r: initial den profile
-          nea(ii) = 0.0         !! nea_r: den profile after cloudlet motion
-          tea(ii) = 0.0         !! tea_r: temp profile after cloudlet motion
-      enddo !!Profile generation
-
-      rgrid(ngrid) = 1.0
-        fi = l
-        fncp = float(ngrid)
-        !!rho_p = 1.0-fi/nfloat
-        !!rho_p = lc(l)/fncp
-        rho_p = map_p(l)/nfloat
-        if (rho_p .gt. 1.0) rho_p = 1.0
-        rpellet = rp*1.0e3 !! mm from m
-        rmaj = R0    !! 
-        amin = A0    !! 
-        !!!!!!!
-        !pnum = PEL_IONS/nprlcld !! check how this translates to non-PRL drifts.
-        !!!!!!!
-        !vpelprl = vpel*(-100.0) !! cm/s from m/s
-
-        !call HPI2_DRIFT(vpel,rpellet,neb,teb,ALPHA,LAMBDA, &
-        !                amin,rmaj,BT0,KAPPA,DEL_DRIFT)
-                        !! ned and teb are arrays
-                        !! HPI2_DRIFT expects a single integer
-
-    endif
-
-    ELSEIF(((i <= 0) .OR. (i > n_r)) .AND. l_inside) THEN
+      ELSEIF(((i <= 0) .OR. (i > n_r)) .AND. l_inside) THEN
 
       !!Pellet has been in the plasma but is now outside
       l_inout=.TRUE.
@@ -2676,12 +2730,18 @@ dden=0
 temin=z_eion_pl
 nstep=0
 
-!!Set maximum delta(n)/n, pellet size at that max, and the max ablation rate
+! PRINT *, "Set maximum delta(n)/n, pellet size at that max, and the max ablation rate..."
 fntmax=(te-temin)/(z_eion_pl*2/3+temin)
+! PRINT *, "Max Dn/n = ", fntmax
 IF(fntmax <= 0.0) fntmax=0
 fnmax=MIN(20.0_rspec,fntmax)
+! PRINT *, "dvol = ", dvol
+! PRINT *, "den, denm_pl: ", den, denm_pl
+! PRINT *, "Max fn (?) = ", fnmax
 drp3=(3/(8*z_pi))*fnmax*dvol*(den/denm_pl)
 rp3=rp**3
+
+!!PRINT *, "Max Dn/n, pellet(max), and ablation rate (max) has been set!"
 
 IF(drp3 < rp3) THEN
 
@@ -2696,7 +2756,7 @@ ENDIF
 rdotmx=-(rp0-rpmin)/dt
 
 !!-------------------------------------------------------------------------------
-!!Advance pellet through time interval in cell using up to mstep time steps
+!! PRINT *, "Advance pellet through time interval in cell using up to mstep time steps..."
 !!-------------------------------------------------------------------------------
 step_loop: DO istep=1,mstep  !!Over time steps
 

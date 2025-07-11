@@ -2652,6 +2652,93 @@ IF(j == 2) SUS22_R(1)=SUS22_R(2)
 
 END SUBROUTINE AJAX_FLUXAV_B
 
+SUBROUTINE AJAX_FLUXAV_G_POINT(rho_p, dvol_p, iflag, message)
+  IMPLICIT NONE
+  REAL, INTENT(IN)    :: rho_p
+  REAL, INTENT(OUT)   :: dvol_p
+  INTEGER, INTENT(OUT):: iflag
+  CHARACTER(*), INTENT(OUT) :: message
+
+  REAL, ALLOCATABLE :: v1(:)
+  INTEGER :: ii
+  REAL :: weight, vp_interp
+
+  ! Use same external/interpolated arrays from AJAX_FLUXAV_G context
+  ! Assume v1(:) and rho_3d(:) already exist in module scope
+
+  iflag = 0
+  message = ''
+  ! PRINT *, "l_fluxavg_3d: ", l_fluxavg_3d
+
+  !!Check whether flux surface averaging arrays have been set
+  IF(.NOT. l_fluxavg_3d) THEN
+
+    CALL AJAX_INIT_FLUXAV_G(iflag,message)
+
+    !!Check messages
+    IF(iflag /= 0) THEN
+
+      message='AJAX_FLUXAV_G_POINT(1)/'//message
+      GOTO 9999
+
+    ENDIF
+
+  ENDIF
+
+  dvol_p=0
+
+  ! PRINT *, "nrho_3d: ", nrho_3d
+  ! PRINT *, "rho_3d(1): ", rho_3d(1)
+  ! PRINT *, "rho_p: ", rho_p
+
+  ! IF (rho_p < rho_3d(1) .OR. rho_p > rho_3d(nrho_3d)) THEN
+  !    iflag = 1
+  !    message = 'rho_p out of interpolation bounds in AJAX_DVOL_AT_POINT'
+  !    dvol_p = 0.0
+  !    RETURN
+  ! ENDIF
+
+  ALLOCATE(v1(nrho_3d))
+  v1(:)=0
+
+  ! PRINT *, "vp_3d: ", vp_3d(2:nrho_3d)
+
+  !!Remove dominant radial dependence
+  v1(2:nrho_3d)=vp_3d(2:nrho_3d)/rho_3d(2:nrho_3d)
+
+  ! PRINT *, "nrho_3d: ", nrho_3d
+
+  !!Extrapolate to axis
+  v1(1)=v1(2)-rho_3d(2)*(v1(3)-v1(2))/(rho_3d(3)-rho_3d(2))
+
+  ! Find bracketing indices for rho_p
+  DO ii = 1, nrho_3d - 1
+    ! PRINT *, "rho_p: ", rho_p
+    ! PRINT *, "rho_3d(ii): ", rho_3d(ii)
+    ! PRINT *, "rho_3d(ii+1): ", rho_3d(ii+1)
+    ! PRINT *, "ii: ", ii
+     IF (rho_p >= rho_3d(ii) .AND. rho_p <= rho_3d(ii+1)) THEN
+        weight = (rho_p - rho_3d(ii)) / (rho_3d(ii+1) - rho_3d(ii))
+        vp_interp = v1(ii) * (1.0 - weight) + v1(ii+1) * weight
+        ! PRINT *, "vp_interp: ", vp_interp
+        EXIT
+     ENDIF
+  END DO
+
+! Reintroduce radial dependence to get vp(rho)
+  vp_interp = vp_interp * rho_p
+
+  ! Compute dvol from vp(rho): using Δ(ρ²)/2 volume weight (assumes shell geometry)
+  dvol_p = vp_interp * rho_p
+
+  !!-------------------------------------------------------------------------------
+  !!Cleanup and exit
+  !!-------------------------------------------------------------------------------
+  9999 CONTINUE
+
+END SUBROUTINE AJAX_FLUXAV_G_POINT
+
+
 SUBROUTINE AJAX_FLUXAV_G(nrho_r,rho_r, &
                          iflag,message, &  
                          AREA_R,DVOL_R,GRHO1_R,GRHO2_R,GRHO2RM2_R,RM2_R,VOL_R, &
@@ -2730,6 +2817,9 @@ LOOP_I: DO i=nrho_r,1,-1 !!Over nodes
 
 ENDDO LOOP_I !!Over nodes
 
+! PRINT *, "rho_3d: ", rho_3d
+! PRINT *, "rho_r: ", rho_r
+
 !!-------------------------------------------------------------------------------
 !!d(V)/d(rho) on user grid for area_r, dvol_r, vol_r and vp_r
 !!-------------------------------------------------------------------------------
@@ -2744,6 +2834,8 @@ IF(PRESENT(AREA_R) .OR. &
 
   !!Remove dominant radial dependence
   v1(2:nrho_3d)=vp_3d(2:nrho_3d)/rho_3d(2:nrho_3d)
+
+  ! PRINT *, "nrho_3d: ", nrho_3d
 
   !!Extrapolate to axis
   v1(1)=v1(2)-rho_3d(2)*(v1(3)-v1(2))/(rho_3d(3)-rho_3d(2))
@@ -3108,6 +3200,125 @@ ENDIF
 9999 CONTINUE
 
 END SUBROUTINE AJAX_FLUXAV_G
+
+! SUBROUTINE AJAX_FLUXAV_G_SHIFTED(nrho_r,rho_r, &
+!                          iflag,message, &  
+!                          DVOL_R)
+! !!-------------------------------------------------------------------------------
+! !! AJAX_FLUXAV_G_SHIFTED gets flux surface quantities that depend on geometry
+! !! Calculates dvol_r dynamically to include pellet drift
+! !!
+! !! 250907: RLB
+! !!-------------------------------------------------------------------------------
+
+! !!Declaration of input variables
+! INTEGER, INTENT(IN) :: &     
+!   nrho_r                 !!no. of radial nodes [-]
+
+! REAL(KIND=rspec), INTENT(IN) :: &    
+!   rho_r(:)                     !!radial nodes [rho]
+
+
+! !!Declaration of output variables
+! CHARACTER(len=*), INTENT(OUT) :: &
+!   message                !!warning or error message [character]
+
+! INTEGER, INTENT(OUT) :: &
+!   iflag                  !!error and warning flag [-]
+!                          !!=-1 warning
+!                          !!=0 none
+!                          !!=1 error
+
+! !!Declaration of optional output variables
+! REAL(KIND=rspec), INTENT(OUT), OPTIONAL :: &   
+!   DVOL_R(:)              !!cell volume between rho_r(i) and rho_r(i+1) [m**3]
+
+! !!-------------------------------------------------------------------------------
+! !!Declaration of local variables
+! INTEGER :: &      
+!   i,k,nr
+
+! REAL(KIND=rspec) :: &     
+!   gr(1:nrho_r),v1(1:nrho_3d),vp(1:nrho_r)
+
+! !!-------------------------------------------------------------------------------
+! !!Initialization
+! !!-------------------------------------------------------------------------------
+! !!Null output
+! iflag=0
+! message=''
+
+! !!Check whether flux surface averaging arrays have been set
+! IF(.NOT. l_fluxavg_3d) THEN
+
+!   CALL AJAX_INIT_FLUXAV_G(iflag,message)
+
+!   !!Check messages
+!   IF(iflag /= 0) THEN
+
+!     message='AJAX_FLUXAV_G(1)/'//message
+!     GOTO 9999
+
+!   ENDIF
+
+! ENDIF
+
+! !!Check whether values outside R,Z domain are requested (nr is last point inside)
+! LOOP_I: DO i=nrho_r,1,-1 !!Over nodes
+
+!   nr=i
+!   IF(rho_r(nr) < rhomax_3d+rhores_3d) EXIT LOOP_I
+
+! ENDDO LOOP_I !!Over nodes
+
+! !!-------------------------------------------------------------------------------
+! !!d(V)/d(rho) on user grid for area_r, dvol_r, vol_r and vp_r
+! !!-------------------------------------------------------------------------------
+! IF(PRESENT(DVOL_R)) THEN
+
+!   !!Initialization
+!   vp(:)=0
+!   v1(:)=0
+
+!   !!Remove dominant radial dependence
+!   v1(2:nrho_3d)=vp_3d(2:nrho_3d)/rho_3d(2:nrho_3d)
+
+!   !!Extrapolate to axis
+!   v1(1)=v1(2)-rho_3d(2)*(v1(3)-v1(2))/(rho_3d(3)-rho_3d(2))
+
+!   !!Interpolate to user grid inside R,Z domain
+!   iflag=0
+!   message=''
+!   CALL LINEAR1_INTERP(nrho_3d,rho_3d,v1,nr,rho_r,vp,iflag,message)
+
+!   !!Check messages
+!   IF(iflag /= 0) THEN
+
+!     message='AJAX_FLUXAV_G(2)/'//message
+!     IF(iflag > 0) GOTO 9999
+
+!   ENDIF
+
+!   IF(nr < nrho_r) THEN
+
+!   !!Extrapolate to user grid outside R,Z domain
+!   vp(nr+1:nrho_r)=vp(nr)
+
+!   ENDIF
+
+! ENDIF
+
+! !!-------------------------------------------------------------------------------
+! !!Cleanup and exit
+! !!-------------------------------------------------------------------------------
+! 9999 CONTINUE
+
+! END SUBROUTINE AJAX_FLUXAV_G_SHIFTED
+
+!   !!Reintroduce dominant radial dependence
+!   vp(1:nrho_r)=vp(1:nrho_r)*rho_r(1:nrho_r)
+
+! ENDIF
 
 SUBROUTINE AJAX_I(nrho_r,rho_r, &
                   iflag,message, &   
