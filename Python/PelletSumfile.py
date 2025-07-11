@@ -168,7 +168,7 @@ class PelletSumfile(object):
     
         plt.ylabel(key)
         plt.grid('on')
-        plt.show(block = False)
+        plt.show()
         
     # ----------------------------------------------------------------------
 
@@ -185,7 +185,7 @@ class PelletSumfile(object):
     
         plt.ylabel('n$_e$ (10$^{20}$ m$^{-3}$)')
         plt.grid('on')
-        plt.show(block = False)
+        plt.show()
 
     # ----------------------------------------------------------------------
 
