@@ -68,6 +68,7 @@ INTEGER :: &
   nprlcld,             & !number of cloudlets to be used in PRL modeling
   iprlcld,             & !id number of cloudlet to output PRL diagnostic data
   k_prl,               & !switch to use PRL deposition model, 1=on
+  k_drift,             & 
   k_ped                  !switch for pedestal Te model, 1= on
 
 
@@ -125,12 +126,17 @@ REAL(KIND=rspec) :: &
   fpelprl,             & !fraction of pellet mass unaffected by PRL drift model 
   prlinjang,           & !PRL injection angle
   prlq0,               & !PRL q0 value
-  prlqa,               & !PRL qa value 
+  prlqa,               & !PRL qa value
+  rho_r_shifted,       &
+  dvol_r_point,        &  
   beta_inf,            &
   cA_inf,kap_c,        &
   beta_ratio,          &
   Sigma_0,c_0_bar,     &
   Psi_int,             &  
+  alpha,               &
+  kappa,               &
+  lam,                 &
   DelR,                &
   Del_drift,           &
   prlqf                  !PRL q profile exponent q(r) = (qa-q0) + q0*(1-(r/a)^qf)
@@ -221,7 +227,8 @@ NAMELIST/indata/cn_eq,cn_prof, cn_runid, cn_device, &
                 rvert,zhorz, &
                 pb,px_hb,qx_hb,amu_b,eb0,amu_i,dn01,rl_dn0, &
                 pa,px_ha,qx_ha, k_prl, nprlcld, iprlcld, &
-				pedte, pedne, pedwid, k_ped, fpelprl, prlinjang, prlq0, prlqa, prlqf
+				pedte, pedne, pedwid, k_ped, fpelprl, prlinjang, prlq0, prlqa, prlqf, &
+                k_drift, alpha, kappa, lam 
                
 
 !-------------------------------------------------------------------------------
@@ -247,6 +254,7 @@ k_pel=0
 k_readd=0
 k_seg_p=0
 k_prl=0     ! PRL model flag  LRB
+k_drift=0
 nprlcld=0
 ncplas=0
 ncsol=0
@@ -301,6 +309,9 @@ prlinjang=0
 prlq0=0
 prlqa=0
 prlqf=0
+alpha=0
+kappa=0
+lam=0
 beta_inf=0
 cA_inf=0
 kap_c=0
@@ -309,6 +320,7 @@ Sigma_0=0
 c_0_bar=0
 Psi_int=0
 DelR=0
+dvol_r_point=0
 
 !-------------------------------------------------------------------------------
 !Set the input namelist unit, open, read and close file
@@ -321,6 +333,8 @@ OPEN(UNIT=n_tmp, &
      ACCESS='sequential')
 
 READ(n_tmp,indata)
+
+alpha = alpha*z_pi
 
 CLOSE(UNIT=n_tmp)
 
@@ -576,9 +590,14 @@ ENDIF
 !Get geometric quantities
 iflag=0
 message=''
+! call HPI2_DRIFT(150.0,2.7,5.0,3.0,-PI/4.0,0.1,0.61,1.67, &
+!                       2.2,1.8,Del_drift)
+! Del_drift_rho = Del_drift/a0
 CALL AJAX_FLUXAV_G(n,rho_rm, &
                    iflag,message, &
                    DVOL_R=dvol_r)
+
+! PRINT *, "dvol_r: ", dvol_r
 
 !Check messages
 IF(iflag /= 0) THEN
@@ -831,10 +850,13 @@ IF(iflag /= 0) THEN
 
 ENDIF
 
+PRINT *, "a0, r0, bt0:", a0, r0, bt0
+
+
 !-------------------------------------------------------------------------------
 !Call PELLET
 !-------------------------------------------------------------------------------
-CALL PELLET(k_pel,amu_pel,r_pel,v_pel,nc,dvol_r,den_r,te_r,n_p-1,izone_p,s_p, &
+CALL PELLET(k_pel,amu_pel,r_pel,v_pel,nc,den_r,te_r,n_p-1,izone_p,s_p, &
             pden_r,iflag,message, &
             NF=nf, &
             NE_F=ne_f, &
@@ -851,17 +873,26 @@ CALL PELLET(k_pel,amu_pel,r_pel,v_pel,nc,dvol_r,den_r,te_r,n_p-1,izone_p,s_p, &
             DEN1_P=den1_p, &
             TE0_P=te0_p, &
             TE1_P=te1_p, &
-			R0=r0, &
-			A0=a0, &
-			BT0=bt0,  &
-			NCSOL=ncsol, &
-			K_PRL=k_prl, &
-			NPRLCLD=nprlcld, &
-			IPRLCLD=iprlcld, &
-			FPELPRL=fpelprl, &
-		    PRLINJANG=prlinjang, &
-			PRLQ_R=prlq_r,   &
-			PRLDEP=prldep)
+            R0=r0, &
+            A0=a0, &
+            BT0=bt0,  &
+            NCSOL=ncsol, &
+            K_PRL=k_prl, &
+            NPRLCLD=nprlcld, &
+            IPRLCLD=iprlcld, &
+            FPELPRL=fpelprl, &
+            PRLINJANG=prlinjang, &
+            PRLQ_R=prlq_r,   &
+            PRLDEP=prldep, & 
+            ! DVOL_R_ARRAY=dvol_r)
+            DVOL_R_POINT=dvol_r_point, &
+            RHO_R_SHIFTED=rho_r_shifted, &
+            K_DRIFT=k_drift, &
+            ALPHA=alpha, &
+            LAM=lam, &
+            KAPPA=kappa, &
+            DEL_DRIFT=del_drift, &
+            RHO_RM=rho_rm)
 
 !Check messages
 IF(iflag /= 0) THEN
@@ -895,8 +926,6 @@ ENDIF
 !call PARKS_DRIFT(2.0,0.05,7.0e13,1.3e3,107.0,3.0,0.8,2.0, &
 !                  cA_inf,beta_inf,kap_c,beta_ratio, &
 !                  Sigma_0,c_0_bar,Psi_int,DelR)
-!call HPI2_DRIFT(150.0,2.7,5.0,3.0,-PI/4.0,0.1,0.61,1.67, &
-!                      2.2,1.8,Del_drift)
 
 raxis=r_cyl(1)
 
@@ -1155,7 +1184,7 @@ npro=npro+1
 namepro(npro)='dVol'
 unitpro(npro)='m**3'
 descpro(npro)='Cell volume'
-valpro(:,npro)=dvol_r(:)
+valpro(:,npro)=dvol_r(:) 
 
 !Temperatures
 npro=npro+1
@@ -1251,6 +1280,7 @@ namepro(npro)='ne(tpel+)'
 unitpro(npro)='/m**3'
 descpro(npro)='Final electron density'
 valpro(:,npro)=den_r(:)+pden_r(:)
+PRINT *, "den_r_final: ", (den_r(:)+pden_r(:))
 
 !PRL Deposition
 if (k_prl > 0) then
