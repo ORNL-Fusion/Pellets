@@ -17,14 +17,17 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
     message(FATAL_ERROR "In-source builds are disabled. Please create a build directory and use cmake .. OR run cmake . -B <build-dir> from the source directory.")
 endif()
 
+# Create a separate subdirectory for the module files
 set(CMAKE_Fortran_MODULE_DIRECTORY "${CMAKE_BINARY_DIR}/modules")
 
-# The extra CONFIG_DIR is for the location of the user.cmake 
+# CONFIG_DIR is for the location of user.cmake 
 # (or default.cmake) and saves having to specify it explicitly
 # when loading.
 set(CONFIG_DIR "${CMAKE_SOURCE_DIR}/config")
 
-# The user.cmake path needs to be in reference to wherever
+# Check whether a user.cmake file exists. If yes, use
+# that to build. If no, use defaults.cmake.
+# The user(defaults).cmake path needs to be in reference to wherever
 # the CMakeLists.txt file is. 
 if(EXISTS "${CONFIG_DIR}/user.cmake")
     message(STATUS "Loading user-defined settings from user.cmake")
@@ -85,3 +88,8 @@ set (pellet_sources
 
 # Create the executable -- now you should be good to go!
 add_executable (xpellet ${pellet_sources})
+
+# add_custom_target(clean-all
+#     COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMAKE_SOURCE_DIR}/build
+#     COMMENT "Removing build directory"
+# )
