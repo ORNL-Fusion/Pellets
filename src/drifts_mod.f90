@@ -333,12 +333,12 @@ Del_drift = C1*((v_p/100)**C2)*(r_p**C3)*(ne0**C4) &
             *((1.0 - Lambda)**C9)*(a0**C10)*(R0**C11)*(B0**C12) &
             *(kappa**C13)
 
-open (unit=10,file="HPI2_2012_test.txt",action="write")
-write(10,*) "v_p, r_p, te0, ne0, alpha, lambda, kappa, a0, r0, B0\n"
-write(10,*) v_p, r_p, Te0, ne0, alpha, lambda, kappa, a0, r0, B0
-write(10,*) "Del_drift\n"
-write(10,*) Del_drift
-close (10)
+! open (unit=50,file="HPI2_2012_test.txt",action="write")
+! write(50,*) "v_p, r_p, te0, ne0, alpha, lambda, kappa, a0, r0, B0\n"
+! write(50,*) v_p, r_p, Te0, ne0, alpha, lambda, kappa, a0, r0, B0
+! write(50,*) "Del_drift\n"
+! write(50,*) Del_drift
+! close (50)
 
 END SUBROUTINE
 

@@ -1186,6 +1186,11 @@ unitpro(npro)='m**3'
 descpro(npro)='Cell volume'
 valpro(:,npro)=dvol_r(:) 
 
+! open (unit=10,file="print_out_test.txt",action="write")
+! write(10,*) "dVol"
+! write(10,*) dvol_r(:)
+! close (10)
+
 !Temperatures
 npro=npro+1
 namepro(npro)='Te(tpel-)'
@@ -1280,7 +1285,11 @@ namepro(npro)='ne(tpel+)'
 unitpro(npro)='/m**3'
 descpro(npro)='Final electron density'
 valpro(:,npro)=den_r(:)+pden_r(:)
-PRINT *, "den_r_final: ", (den_r(:)+pden_r(:))
+! PRINT *, "den_r_final: ", (den_r(:)+pden_r(:))
+! open (unit=10,file="print_out_density_test.txt",action="write")
+! write(10,*) "Final electron density"
+! write(10,*) den_r(:)+pden_r(:)
+! close (10)
 
 !PRL Deposition
 if (k_prl > 0) then

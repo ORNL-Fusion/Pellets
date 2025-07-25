@@ -91,7 +91,7 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title=" 0.8% of total for source files.">62 statements</a>
+                 title=" 0.8% of total for source files.">56 statements</a>
             </li>
 
             <li class="list-inline-item" id="source-file">
@@ -505,12 +505,12 @@
 <a id="ln-333" name="ln-333" href="#ln-333"></a><span class="w">            </span><span class="o">*</span><span class="p">((</span><span class="mf">1.0</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">Lambda</span><span class="p">)</span><span class="o">**</span><span class="n">C9</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">a0</span><span class="o">**</span><span class="n">C10</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">R0</span><span class="o">**</span><span class="n">C11</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">B0</span><span class="o">**</span><span class="n">C12</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
 <a id="ln-334" name="ln-334" href="#ln-334"></a><span class="w">            </span><span class="o">*</span><span class="p">(</span><span class="n">kappa</span><span class="o">**</span><span class="n">C13</span><span class="p">)</span>
 <a id="ln-335" name="ln-335" href="#ln-335"></a>
-<a id="ln-336" name="ln-336" href="#ln-336"></a><span class="k">open</span><span class="w"> </span><span class="p">(</span><span class="n">unit</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="k">file</span><span class="o">=</span><span class="s2">&quot;HPI2_2012_test.txt&quot;</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s2">&quot;write&quot;</span><span class="p">)</span>
-<a id="ln-337" name="ln-337" href="#ln-337"></a><span class="k">write</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;v_p, r_p, te0, ne0, alpha, lambda, kappa, a0, r0, B0\n&quot;</span>
-<a id="ln-338" name="ln-338" href="#ln-338"></a><span class="k">write</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">v_p</span><span class="p">,</span><span class="w"> </span><span class="n">r_p</span><span class="p">,</span><span class="w"> </span><span class="n">Te0</span><span class="p">,</span><span class="w"> </span><span class="n">ne0</span><span class="p">,</span><span class="w"> </span><span class="n">alpha</span><span class="p">,</span><span class="w"> </span><span class="n">lambda</span><span class="p">,</span><span class="w"> </span><span class="n">kappa</span><span class="p">,</span><span class="w"> </span><span class="n">a0</span><span class="p">,</span><span class="w"> </span><span class="n">r0</span><span class="p">,</span><span class="w"> </span><span class="n">B0</span>
-<a id="ln-339" name="ln-339" href="#ln-339"></a><span class="k">write</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;Del_drift\n&quot;</span>
-<a id="ln-340" name="ln-340" href="#ln-340"></a><span class="k">write</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">Del_drift</span>
-<a id="ln-341" name="ln-341" href="#ln-341"></a><span class="k">close</span><span class="w"> </span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<a id="ln-336" name="ln-336" href="#ln-336"></a><span class="c">! open (unit=50,file=&quot;HPI2_2012_test.txt&quot;,action=&quot;write&quot;)</span>
+<a id="ln-337" name="ln-337" href="#ln-337"></a><span class="c">! write(50,*) &quot;v_p, r_p, te0, ne0, alpha, lambda, kappa, a0, r0, B0\n&quot;</span>
+<a id="ln-338" name="ln-338" href="#ln-338"></a><span class="c">! write(50,*) v_p, r_p, Te0, ne0, alpha, lambda, kappa, a0, r0, B0</span>
+<a id="ln-339" name="ln-339" href="#ln-339"></a><span class="c">! write(50,*) &quot;Del_drift\n&quot;</span>
+<a id="ln-340" name="ln-340" href="#ln-340"></a><span class="c">! write(50,*) Del_drift</span>
+<a id="ln-341" name="ln-341" href="#ln-341"></a><span class="c">! close (50)</span>
 <a id="ln-342" name="ln-342" href="#ln-342"></a>
 <a id="ln-343" name="ln-343" href="#ln-343"></a><span class="k">END SUBROUTINE</span>
 <a id="ln-344" name="ln-344" href="#ln-344"></a>
