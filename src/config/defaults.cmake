@@ -1,10 +1,10 @@
 #------------------------------------------------------------------#
 # CMake defaults to build the PELLET code.
 #
-# Pretty minimal given that the code only uses NetCDF :).
+# Pretty minimal given that the code only uses NetCDF and gfortran :).
 #
 # To add your personal touch, copy this file to user.cmake and  
-# make your desired modifications (e.g., NetCDF file path...). 
+# make your desired modifications (e.g., NetCDF path...). 
 #------------------------------------------------------------------#
 
 # Set build type
