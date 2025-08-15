@@ -8,6 +8,7 @@
 ./src/build/CMakeFiles/
 ./src/build/CMakeCache.txt
 ./src/build/Makefile
+**/build/
 ./src/config/user.cmake
 ./src/cmake_install.cmake
 
@@ -16,10 +17,11 @@
 ./src/build/*.txt
 
 # Ignore local input files
-./src/pellet_nml.dat
+./src/nml_pellet*.dat
+./src/*.eqdsk
 
 # Ignore python cache files
-./Python/__pycache__/
+./Python/__pycache__/*
 
 # Ignore vscode files
 .vscode
