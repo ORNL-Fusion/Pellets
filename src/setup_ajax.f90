@@ -59,6 +59,7 @@ REAL(KIND=rspec), PARAMETER :: &
 !-------------------------------------------------------------------------------
 !Get data
 !-------------------------------------------------------------------------------
+PRINT *, "Running AJAX setup..."
 !Read inverse coordinate expansion
 IF(k_equil == 1) THEN
 
@@ -80,10 +81,13 @@ ELSE
   !Load boundary values of R,Z and fill in with approximations
   iflag=0
   message=''
+  PRINT *, "Entering RZ boundary load."
   CALL AJAX_LOAD_RZBDY(r0,a0,s0,e0,e1,d1, &
                        iflag,message, &
                        NRHO_AJAX=nrho_ajax, &
                        NTHETA_AJAX=ntheta_ajax)
+
+  
 
   !Check messages
   IF(iflag > 0) THEN
