@@ -93,6 +93,7 @@
 ! r_pel       :     Equivalent spherical radius of pellet [m]
 ! v_pel       :     Pellet velocity [m/s]
 ! rseg_p(3,2) :     Coordinates defining the segment [see k_seg_p]
+!             :     Sets injection angle 
 !                   (:,1) is launch point
 !                   (:,2) is target point
 !--------------------------------------------------!
