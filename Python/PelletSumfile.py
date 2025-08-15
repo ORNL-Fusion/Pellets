@@ -179,12 +179,14 @@ class PelletSumfile(object):
         """
     
         plt.figure()
-        plt.plot(self.profiles['rho_t'], self.profiles['ne(tpel-)']/1.0e20, 'b', lw=2)
-        plt.plot(self.profiles['rho_t'], self.profiles['ne(tpel+)']/1.0e20, 'r', lw=2)
+        plt.plot(self.profiles['rho_t'], self.profiles['ne(tpel-)']/1.0e20, 'b', lw=2, label=r'$n_{e,0}$')
+        plt.plot(self.profiles['rho_t'], self.profiles['ne(tpel+)']/1.0e20, 'r', lw=2, label=r'$n_{e,f}$')
         plt.xlabel('rho')
     
         plt.ylabel('n$_e$ (10$^{20}$ m$^{-3}$)')
+        # plt.ylim([0,1.5])
         plt.grid('on')
+        plt.legend()
         plt.show()
 
     # ----------------------------------------------------------------------
