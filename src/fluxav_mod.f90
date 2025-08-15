@@ -712,6 +712,7 @@ IF(iflag /= 0) THEN
 ENDIF
 
 elong_r(1:nr_r)=value(1,1:nr_r)
+PRINT *, "ELONG_R: ", elong_r
 
 !-------------------------------------------------------------------------------
 !f=poloidal current
