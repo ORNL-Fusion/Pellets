@@ -263,6 +263,9 @@ REAL(KIND=rspec), ALLOCATABLE :: &
 
 INTEGER :: icld, ngrid
 
+PRINT *, "Entered pellet ablation module."
+! PRINT *, "DVOL_R_ARRAY: ", DVOL_R_ARRAY
+
 !!-------------------------------------------------------------------------------
 !!Initialization
 !!-------------------------------------------------------------------------------
@@ -323,7 +326,7 @@ ELSEIF(amup_pl >= 9.0 .AND. &
 ENDIF
 
 
-! PRINT *, "denm_pl = ", denm_pl
+PRINT *, "denm_pl = ", denm_pl
 
 
 
@@ -481,6 +484,8 @@ IF(PRESENT(TE1_P)) TE1_P(:)=0
 !!Set private pellet parameters for normalizations
 rhosrp0_pl=(2*amup_pl*z_protonmass*denm_pl)*rpel_pl
 
+PRINT *, "rhosrp0_pl: ", rhosrp0_pl
+
 !!Initialize parameters at beginning of pellet trajectory
 t=0
 rp=rpel_pl
@@ -521,7 +526,7 @@ l_inout=.FALSE.
 DO l=1,n_p
 
   ! PRINT *, "Counter (l): ", l
-  ! PRINT *, "map_p: ", map_p(l)
+  ! PRINT *, "map_p: ", map_p
   ! PRINT *, "rp: ", rp
   ! PRINT *, "rpel_pl: ", rpel_pl
 
@@ -537,10 +542,14 @@ DO l=1,n_p
       !!Increment parameters for path outside plasma
       dt=(s_p(l+1)-s_p(l))/vpel_pl
       t=t+dt
+      ! PRINT *, "t: ", t
+      ! PRINT *, "dt: ", dt
       IF(PRESENT(T_P)) T_P(l)=t
 
     ELSEIF((i > 0 .AND. i <= n_r) .AND. &
            (.NOT. l_inout)) THEN
+
+      ! PRINT *, "Entered ablation calculation."
 
       !!Pellet is inside plasma and never exited
       l_inside=.TRUE.
@@ -556,7 +565,10 @@ DO l=1,n_p
       ENDIF
 
       dt=(s_p(l+1)-s_p(l))/vpel_pl
+      ! PRINT *, "dt: ", dt
+      ! PRINT *, "DVOL_R_ARRAY: ", DVOL_R_ARRAY
       rpold=rp
+      ! PRINT *, "rp_old: ", rpold
       ! PRINT *, "k_drift: ", K_DRIFT
       ! PRINT *, "Counter: ", i
       IF (PRESENT(RHO_R_SHIFTED)) THEN
@@ -566,6 +578,7 @@ DO l=1,n_p
         ENDIF
         ! PRINT *, "Calculating point based dvol_r..."
         IF (K_DRIFT == 3) THEN
+          PRINT *, "Entering drift calculation."
           rp_HPI2 = rp*1.0e3
           ne_HPI2 = den0_r(1)*1.0e-19
           ! PRINT *, "rp_HPI2: ", rp_HPI2
@@ -607,6 +620,7 @@ DO l=1,n_p
       pden_r(i)=pden_r(i)+srcp
       dennew=den0_r(i)+pden_r(i)
       tenew=(den0_r(i)*te0_r(i)-pden_r(i)*z_eion_pl/1.5)/dennew
+      ! PRINT *, "srcp: ", srcp
       IF(tenew < z_eion_pl) tenew=z_eion_pl
 
       !!Set optional output parameters along path
@@ -751,14 +765,14 @@ if (PRESENT(NPRLCLD) .and. fcld > 1 ) then !! Done with PRL - determine prldep
 !!	  endif
 endif
 
+PRINT *, "Finished pellet module."
+
+write(*,*) ' Total electrons: ',srcp_tot
 
 !!-------------------------------------------------------------------------------
 !!Cleanup and exit
 !!-------------------------------------------------------------------------------
 9999 CONTINUE
-
-
-   write(*,*) ' Total electrons: ',srcp_tot
 
 END SUBROUTINE PELLET
 
@@ -2717,7 +2731,9 @@ REAL(KIND=rspec) :: &
 REAL(KIND=rspec) :: &
   dr(4)
 
-!!-------------------------------------------------------------------------------
+! PRINT *, "Entered RK4 stepping algorithm."
+
+  !!-------------------------------------------------------------------------------
 !!Initialization
 !!-------------------------------------------------------------------------------
 !!Set parameters assuming a single step through the cell
@@ -2755,6 +2771,8 @@ ENDIF
 
 rdotmx=-(rp0-rpmin)/dt
 
+! PRINT *, "rdotmx: ", rdotmx
+
 !!-------------------------------------------------------------------------------
 !! PRINT *, "Advance pellet through time interval in cell using up to mstep time steps..."
 !!-------------------------------------------------------------------------------
@@ -2763,6 +2781,7 @@ step_loop: DO istep=1,mstep  !!Over time steps
   !!Initialize intermediate runge-kutta parameters and step flag
   rps=rp
   nstep=nstep+1
+  ! PRINT *, "dden: ", dden
 
   !!Employ 4th order Runge-Kutta scheme for each step
   DO i=1,4 !!Over RK steps
@@ -2932,6 +2951,8 @@ step_loop: DO istep=1,mstep  !!Over time steps
      (rp  <= 1.0e-6*rpel_pl)) GOTO 9999
 
 ENDDO step_loop
+
+! PRINT *, "dden: ", dden
 
 !!Exceeded maximum number of steps in cell
 iflag=1

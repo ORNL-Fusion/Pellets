@@ -91,7 +91,7 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title=" 1.4% of total for procedures.">62 statements</a>
+                 title=" 1.3% of total for procedures.">62 statements</a>
             </li>
 
             <li class="list-inline-item" id="source-file">
@@ -181,23 +181,23 @@ Axial resolution</p>
 <p>Loop over modes
 Over modes</p>
 <p>Set sine and cosine values
-Calculate rho<strong>m and its derivative
-rho</strong>0
-Inside last closed surface, rho<strong>|m|
-Outside last closed surface, rhomax</strong>|m|
+Calculate rho**m and its derivative</p>
+<p>rho<strong>0
+Inside last closed surface, rho</strong>|m|
+Outside last closed surface, rhomax<strong>|m|
 R_mn and dR_mn/drho from spline fits
 Z_mn and dZ_mn/drho from spline fits
-R = sum_mn [ R_mn * cos(m<em>theta-n</em>zeta) * rho<strong>m ]
-Z = sum_mn [ Z_mn * sin(m<em>theta-n</em>zeta) * rho</strong>m ]
-dR/dtheta = sum_mn [ -m * R_mn * sin(m<em>theta-n</em>zeta) * rho<strong>m ]
-dR/dzeta = sum_mn [ n * R_mn * sin(m<em>theta-n</em>zeta) * rho</strong>m ]
-dZ/dtheta = sum_mn [ m * Z_mn * cos(m<em>theta-n</em>zeta) * rho<strong>m ]
-dZ/dtheta = sum_mn [ -n * Z_mn * cos(m<em>theta-n</em>zeta) * rho</strong>m ]
+R = sum_mn [ R_mn * cos(m<em>theta-n</em>zeta) * rho</strong>m ]</p>
+<p>Z = sum_mn [ Z_mn * sin(m<em>theta-n</em>zeta) * rho<strong>m ]
+dR/dtheta = sum_mn [ -m * R_mn * sin(m<em>theta-n</em>zeta) * rho</strong>m ]
+dR/dzeta = sum_mn [ n * R_mn * sin(m<em>theta-n</em>zeta) * rho<strong>m ]
+dZ/dtheta = sum_mn [ m * Z_mn * cos(m<em>theta-n</em>zeta) * rho</strong>m ]
+dZ/dtheta = sum_mn [ -n * Z_mn * cos(m<em>theta-n</em>zeta) * rho<strong>m ]
 Radial derivatives inside R,Z domain
-dR/drho = sum_mn [ rho<strong>m * dR_mn/drho + R_mn *d(rho</strong>m)/drho ]
-                   * cos(m<em>theta-n</em>zeta)
-dZ/drho = sum_mn [ rho<strong>m * dZ_mn/drho + Z_mn *d(rho</strong>m)/drho ]
-                   * sin(m<em>theta-n</em>zeta)
+dR/drho = sum_mn [ rho</strong>m * dR_mn/drho + R_mn <em>d(rho</em><em>m)/drho ]
+                   * cos(m</em>theta-n<em>zeta)
+dZ/drho = sum_mn [ rho</em><em>m * dZ_mn/drho + Z_mn </em>d(rho<em><em>m)/drho ]
+                   * sin(m</em>theta-n</em>zeta)
 Over modes</p>
 <p>Radial derivatives outside R,Z domain
 This point is off the grid toward the wall</p>
@@ -221,7 +221,7 @@ This point is off the grid toward the wall</p>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-r_flx~4"></span>
+              <span class="anchor" id="variable-r_flx~3"></span>
               real(kind=rspec),
             </td>
 <td>intent(in)</td>
@@ -237,7 +237,7 @@ This point is off the grid toward the wall</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-r_cyl~6"></span>
+              <span class="anchor" id="variable-r_cyl~5"></span>
               real(kind=rspec),
             </td>
 <td>intent(out)</td>
@@ -253,7 +253,7 @@ This point is off the grid toward the wall</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-iflag~17"></span>
+              <span class="anchor" id="variable-iflag~14"></span>
               integer,
             </td>
 <td>intent(out)</td>
@@ -271,7 +271,7 @@ This point is off the grid toward the wall</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-message~17"></span>
+              <span class="anchor" id="variable-message~14"></span>
               character(len=*),
             </td>
 <td>intent(out)</td>
