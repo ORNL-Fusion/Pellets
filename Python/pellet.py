@@ -2,6 +2,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 from subprocess import call
+import subprocess
 # from scipy import interpolate
 
 import EFIT.equilParams_class as epc
@@ -622,7 +623,7 @@ def compare_sum_files(sumfileloclist, gfile_loc, keylist=['ne(tpel-)', 'Te(tpel-
         plt.grid('on')
         plt.xlabel('rho')
 
-    plt.show(block = False)
+    plt.show(block = True)
 
 # ----------------------------------------------------------------------
 
@@ -719,18 +720,25 @@ def scan_pellet_mass_velocity(top_folder, device = 'SPARC', runid_prefix = 'PFR'
     os.chdir(top_folder)
 
     existing_nml = top_folder + 'nml_pellet.dat'
+    profile_fileloc = []
     
     for f in os.listdir(top_folder):
         if f[:2] == 'g1' or f[:6].lower() =='geqdsk':
             equilib_fileloc = f
-            
+        elif f[-5:] == 'eqdsk':
+            equilib_fileloc = f
         elif f[:5] == 'prof_':
             profile_fileloc = f
             
     # Read the example
-    nml_orig = pnml.PelletNml(equilib_fileloc, profile_fileloc, device = device,
-                              runid = 'just read',
-                              existing_nml_fileloc = existing_nml)
+    if profile_fileloc:
+        nml_orig = pnml.PelletNml(equilib_fileloc, profile_fileloc, device = device,
+                                runid = 'just read',
+                                existing_nml_fileloc = existing_nml)
+    else:
+        nml_orig = pnml.PelletNml(equilib_fileloc, profile_fileloc=None, device = device,
+                                runid = 'just read',
+                                existing_nml_fileloc = existing_nml)
             
     # Make a new folder for each pellet size and run xpellet in each one
     
@@ -741,24 +749,34 @@ def scan_pellet_mass_velocity(top_folder, device = 'SPARC', runid_prefix = 'PFR'
             # Need to copy over files to each folder, otherwise it breaks
             new_folder = 'd' + str(d) + '_v' + str(v)
             if runid_prefix is None:
-                runid = equilib_fileloc[1:] + '_' + new_folder
+                runid = '_pellet_test_'
             else:
                 runid = runid_prefix + '_' + new_folder
         
             os.mkdir(new_folder)
             call(['cp', equilib_fileloc, new_folder])
-            call(['cp', profile_fileloc, new_folder])
+            if profile_fileloc:
+                call(['cp', profile_fileloc, new_folder])
             os.chdir(new_folder)
-        
-            nml = pnml.PelletNml(equilib_fileloc, profile_fileloc, device = device,
-                                 runid = runid,
-                                 existing_nml_fileloc = existing_nml)
+            
+            if profile_fileloc:
+                nml = pnml.PelletNml(equilib_fileloc, profile_fileloc, device = device,
+                                    runid = runid,
+                                    existing_nml_fileloc = existing_nml)
+            else:
+                nml = pnml.PelletNml(equilib_fileloc, profile_fileloc=None, device = device,
+                                runid = runid,
+                                existing_nml_fileloc = existing_nml)
+                
             nml.write_nml('nml_pellet.dat', input_dict = {'v_pel': v, 'r_pel' : r_pel_in})
         
-            call([pellet_executable_loc])
+            with open("output_d"+str(d)+'_v'+str(v)+'.out',"w") as output:
+                subprocess.run([pellet_executable_loc],stdout=output)
             rename_output_files_without_spaces()
             os.remove(equilib_fileloc)
-            os.remove(profile_fileloc)
+            if profile_fileloc:
+                os.remove(profile_fileloc)
+
             os.chdir(top_folder)
             
 # ----------------------------------------------------------------------
@@ -794,6 +812,7 @@ def scan_pellet_mass(top_folder, mass_scale = np.arange(0.1, 1.6, 0.1),
     os.chdir(top_folder)
 
     existing_nml = top_folder + 'nml_pellet.dat'
+    profile_fileloc = []
     
     for f in os.listdir(top_folder):
         if f[:2] == 'g1':
@@ -801,8 +820,22 @@ def scan_pellet_mass(top_folder, mass_scale = np.arange(0.1, 1.6, 0.1),
             
         elif f[:5] == 'prof_':
             profile_fileloc = f
-            
-    # Read the example
+
+        elif f[-5:] == 'eqdsk':
+            equilib_fileloc = f
+    
+    print(equilib_fileloc)
+
+    if not profile_fileloc:
+        profile_fileloc = None
+    #     nml_orig = pnml.PelletNml(equilib_fileloc, profile_fileloc = None, runid = 'just read',
+    #                           existing_nml_fileloc = existing_nml)
+    # else:
+    #     # Read the example
+    #     nml_orig = pnml.PelletNml(equilib_fileloc, profile_fileloc, runid = 'just read',
+    #                           existing_nml_fileloc = existing_nml)
+        
+    # # Read the example
     nml_orig = pnml.PelletNml(equilib_fileloc, profile_fileloc, runid = 'just read',
                               existing_nml_fileloc = existing_nml)
     r_pel_orig = nml_orig.indata['r_pel']
@@ -811,12 +844,12 @@ def scan_pellet_mass(top_folder, mass_scale = np.arange(0.1, 1.6, 0.1),
     
     for m in mass_scale:
         # Need to copy over files to each folder, otherwise it breaks
-        new_folder = 'mass' + str(m)
+        new_folder = 'mass_' + str(np.round(m,4))
         runid = equilib_fileloc[1:] + '_' + new_folder
         
         os.mkdir(new_folder)
         call(['cp', equilib_fileloc, new_folder])
-        call(['cp', profile_fileloc, new_folder])
+        # call(['cp', profile_fileloc, new_folder])
         os.chdir(new_folder)
 
         nml = pnml.PelletNml(equilib_fileloc, profile_fileloc, runid = runid,
@@ -826,6 +859,7 @@ def scan_pellet_mass(top_folder, mass_scale = np.arange(0.1, 1.6, 0.1),
         nml.write_nml('nml_pellet.dat', input_dict = {'r_pel' : r_pel_in})
         
         call([pellet_executable_loc])
+        print(m)
         os.chdir(top_folder)
 
 # ----------------------------------------------------------------------
