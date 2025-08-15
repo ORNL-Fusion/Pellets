@@ -326,13 +326,17 @@ dvol_r_point=0
 !Set the input namelist unit, open, read and close file
 !-------------------------------------------------------------------------------
 n_tmp=20
-cn_tmp='../nml_pellet.dat'
+cn_tmp='nml_pellet.dat'
+! PRINT *, "cn_tmp: ", cn_tmp
 OPEN(UNIT=n_tmp, &
      FILE=cn_tmp, &
      STATUS='old', &
      ACCESS='sequential')
 
 READ(n_tmp,indata)
+
+PRINT *, "r_pel: ", r_pel
+PRINT *, "v_pel: ", v_pel
 
 alpha = alpha*z_pi
 
@@ -553,6 +557,18 @@ ELSEIF(k_equil == 2) THEN
 
   CLOSE(UNIT=n_tmp)
 
+  ! PRINT *, "rho_rm: ", rho_rm 
+  ! PRINT *, "r0: ", r0 
+  ! PRINT *, "a0: ", a0 
+  ! PRINT *, "bt0: ", bt0 
+  ! PRINT *, "s0: ", s0 
+  ! PRINT *, "e0: ", e0 
+  ! PRINT *, "e1: ", e1 
+  ! PRINT *, "d1: ", d1 
+  ! PRINT *, "q0: ", q0 
+  ! PRINT *, "q1: ", q1
+
+
   !Check messages
   IF(iflag /= 0) THEN
 
@@ -577,6 +593,8 @@ ELSEIF(k_equil == 2) THEN
 
   ENDIF
 
+  PRINT *, "Called SETUP_AJAX."
+
 ELSE
 
   !Illegal choice of k_equil
@@ -598,6 +616,7 @@ CALL AJAX_FLUXAV_G(n,rho_rm, &
                    DVOL_R=dvol_r)
 
 ! PRINT *, "dvol_r: ", dvol_r
+! PRINT *, "n: ", n
 
 !Check messages
 IF(iflag /= 0) THEN
@@ -832,6 +851,8 @@ ALLOCATE(irho_p(6*n), &
   rcyl_p(:,:)=0
   rflx_p(:,:)=0
 
+
+PRINT *, "rseg_p: ", rseg_p
 !Get pellet path
 CALL TRACK(n,rho_rm,2,rseg_p, &
            n_p,irho_p,s_p,iflag,message, &
@@ -839,6 +860,10 @@ CALL TRACK(n,rho_rm,2,rseg_p, &
            IZONE_INT=izone_p, &
            RCYL_INT=rcyl_p, &
            RFLX_INT=rflx_p)
+
+! PRINT *, "n_p: ", n_p
+! PRINT *, "irho_p: ", irho_p
+! PRINT *, "s_p: ", s_p
 
 !Check messages
 IF(iflag /= 0) THEN
@@ -850,8 +875,10 @@ IF(iflag /= 0) THEN
 
 ENDIF
 
-PRINT *, "a0, r0, bt0:", a0, r0, bt0
+! PRINT *, "a0, r0, bt0:", a0, r0, bt0
+! PRINT *, "dvol_r: ", dvol_r
 
+! PRINT *, "izone: ", izone_p
 
 !-------------------------------------------------------------------------------
 !Call PELLET
@@ -884,15 +911,17 @@ CALL PELLET(k_pel,amu_pel,r_pel,v_pel,nc,den_r,te_r,n_p-1,izone_p,s_p, &
             PRLINJANG=prlinjang, &
             PRLQ_R=prlq_r,   &
             PRLDEP=prldep, & 
-            ! DVOL_R_ARRAY=dvol_r)
-            DVOL_R_POINT=dvol_r_point, &
-            RHO_R_SHIFTED=rho_r_shifted, &
-            K_DRIFT=k_drift, &
-            ALPHA=alpha, &
-            LAM=lam, &
-            KAPPA=kappa, &
-            DEL_DRIFT=del_drift, &
-            RHO_RM=rho_rm)
+            DVOL_R_ARRAY=dvol_r)
+            ! DVOL_R_POINT=dvol_r_point, &
+            ! RHO_R_SHIFTED=rho_r_shifted, &
+            ! K_DRIFT=k_drift, &
+            ! ALPHA=alpha, &
+            ! LAM=lam, &
+            ! KAPPA=kappa, &
+            ! DEL_DRIFT=del_drift, &
+            ! RHO_RM=rho_rm)
+
+! PRINT *, "pden_r: ", pden_r
 
 !Check messages
 IF(iflag /= 0) THEN
@@ -1205,7 +1234,7 @@ unitpro(npro)='/m**3'
 descpro(npro)='Initial electron density'
 valpro(:,npro)=den_r(:)
 
-
+! PRINT *, "nf: ", nf
 !Fast ions and neutrals
 IF(nf > 0) THEN
 
@@ -1590,10 +1619,10 @@ REAL(KIND=rspec), INTENT(OUT) :: &
 !-------------------------------------------------------------------------------
 !Declaration of local variables
 INTEGER, PARAMETER :: &
-  mxnx_xy=130, &
-  mxny_xy=130,  &
+  mxnx_xy=300, &
+  mxny_xy=300,  &
   mxnr_r=300, &
-  mxn_lim=200, &
+  mxn_lim=500, &
   mxn_bdry=1500
 
 REAL(KIND=rspec), PARAMETER :: &
@@ -1642,6 +1671,8 @@ REAL(KIND=rspec) :: &
   x_xy(1:mxnx_xy),y_xy(1:mxny_xy),psi_xy(1:mxnx_xy,1:mxny_xy), &
   x_lim(1:mxn_lim),y_lim(1:mxn_lim)
 
+PRINT *, "Entering PELLET_EFIT."
+
 !-------------------------------------------------------------------------------
 !Initialization
 !-------------------------------------------------------------------------------
@@ -1671,6 +1702,8 @@ CALL READ_EFIT_EQDSK(nin,cnin,mxnx_xy,mxny_xy,mxn_lim, &
                      n_lim,x_lim,y_lim, &
                      iflag,message)
 
+
+PRINT *, "Finished loading EQDSK."
 !Check messages
 IF(iflag /= 0) THEN
 
@@ -1678,6 +1711,8 @@ IF(iflag /= 0) THEN
   IF(iflag > 0) GOTO 9999
 
 ENDIF
+
+PRINT *, "Current: ", cur
 
 !-------------------------------------------------------------------------------
 !Call FLUXAV to generate metrics from EFIT MHD equilibrium
@@ -1711,6 +1746,8 @@ IF(iflag /= 0) THEN
 
 ENDIF
 
+PRINT *, "Generated metrics from EFIT."
+
 !Set 0-D quantities
 r0=(rout_r(nr_r)+rin_r(nr_r))/2
 s0=(rout_r(1)-r0)/a0
@@ -1719,6 +1756,21 @@ e1=elong_r(nr_r)
 d1=triang_r(nr_r)
 q0=q_r(1)
 q1=q_r(nr_r)
+
+! PRINT *, "rho_rm: ", rho_rm 
+PRINT *, "r0: ", r0 
+PRINT *, "a0: ", a0 
+PRINT *, "bt0: ", bt0 
+PRINT *, "s0: ", s0 
+PRINT *, "e0: ", e0 
+PRINT *, "e1: ", e1 
+PRINT *, "d1: ", d1 
+PRINT *, "q0: ", q0 
+PRINT *, "q1: ", q1
+
+PRINT *, "elong_r: ", elong_r
+
+
 
 !Change grid normalization to a0
 fhat_r(:)=fhat_r(:)*a0
@@ -1836,6 +1888,8 @@ REAL(KIND=rspec) :: &
 iflag=0
 message=''
 
+PRINT *, "Reading EQDSK."
+
 !Open the EQDSK file
 OPEN(UNIT=nin, &
      STATUS='old', & 
@@ -1847,6 +1901,9 @@ OPEN(UNIT=nin, &
 !-------------------------------------------------------------------------------
 !Point data - dum values are duplicate information or not used
 READ(nin,'(52x,2i4)') nx_xy,ny_xy
+
+! PRINT *, "mxnx_xy, mxny_xy: ", mxnx_xy, mxny_xy
+! PRINT *, "nx_xy, ny_xy: ", nx_xy, ny_xy
 
 !Check if x dimension is exceeded
 IF(nx_xy > mxnx_xy) THEN
@@ -1873,6 +1930,8 @@ READ(nin,'(5e16.9)') rmag,zmag,psimag,psilim,bt0
 READ(nin,'(5e16.9)') cur
 READ(nin,'(5e16.9)') dum
 
+PRINT *, "r0, rmin, zmid: ", r0, rmin, zmid
+
 !Read 1-D and 2-D data, radial grid is equally spaced in poloidal flux (1:nx_xy)
 READ(nin,'(5e16.9)') (f_x(i),i=1,nx_xy)
 READ(nin,'(5e16.9)') (p_x(i),i=1,nx_xy)
@@ -1880,6 +1939,10 @@ READ(nin,'(5e16.9)') (ffp_x(i),i=1,nx_xy)
 READ(nin,'(5e16.9)') (pp_x(i),i=1,nx_xy)
 READ(nin,'(5e16.9)') ((psi_xy(i,j),i=1,nx_xy),j=1,ny_xy)
 READ(nin,'(5e16.9)') (q_x(i),i=1,nx_xy)
+
+! ['line0', 'ecase', 'mw', 'mh', 'xdim', 'zdim', 'rzero', 'rgrid1', 'zmid', 'rmaxis', 'zmaxis', 
+! 'ssimag', 'ssibry', 'bcentr', 'cpasma', 'fpol', 'pres', 'ffprim', 'pprime', 'psirz', 'qpsi', 'nbdry', 'limitr', 'bdry', 
+! 'rbdry', 'zbdry', 'lim', 'rlim', 'zlim', 'dR', 'dZ', 'R', 'Z', 'pn', 'ip_sign', 'fpol_coeffs', 'psi_bicub_coeffs_inv']
 
 !Boundary and limiter data
 READ(nin,'(2i5)') n_bdry,n_lim
@@ -1893,6 +1956,9 @@ READ(nin,'(2i5)') n_bdry,n_lim
 !  GOTO 9999
 !
 !ENDIF
+
+! PRINT *, "n_lim: ", n_lim
+! PRINT *, "mxn_lim: ", mxn_lim
 
 !Check if limiter dimension is exceeded
 IF(n_lim > mxn_lim) THEN
@@ -1911,10 +1977,15 @@ READ(nin,'(5e16.9)') (x_lim(i),y_lim(i),i=1,n_lim)
 !2D grid
 x_xy(1:nx_xy)=rmin+rdim*(/ (i-1,i=1,nx_xy) /)/(nx_xy-1)
 y_xy(1:ny_xy)=zmid-zdim/2+zdim*(/ (i-1,i=1,ny_xy) /)/(ny_xy-1)
+PRINT *, "y_xy: ", y_xy
+
+! PRINT *, "x_xy: ", x_xy
 
 !1D radial grid and poloidal flux
 psi_x(1:nx_xy)=psimag+(psilim-psimag)*(/ (i-1,i=1,nx_xy) /)/(nx_xy-1)
 rhop_x(1:nx_xy)=(psi_x(1:nx_xy)-psi_x(1))/(psi_x(nx_xy)-psi_x(1))
+
+! PRINT *, "rhop_x: ", rhop_x
 
 !-------------------------------------------------------------------------------
 !Cleanup and exit
