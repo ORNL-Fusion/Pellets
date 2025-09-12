@@ -325,7 +325,7 @@ dvol_r_point=0
 !-------------------------------------------------------------------------------
 !Set the input namelist unit, open, read and close file
 !-------------------------------------------------------------------------------
-n_tmp=20
+n_tmp=100
 cn_tmp='nml_pellet.dat'
 ! PRINT *, "cn_tmp: ", cn_tmp
 OPEN(UNIT=n_tmp, &
@@ -337,6 +337,9 @@ READ(n_tmp,indata)
 
 PRINT *, "r_pel: ", r_pel
 PRINT *, "v_pel: ", v_pel
+PRINT *, "entry: ", rseg_p(1:3,1)
+PRINT *, "exit: ", rseg_p(1:3,2)
+PRINT *, "dsol: ", dsol
 
 alpha = alpha*z_pi
 
@@ -1533,13 +1536,17 @@ ALLOCATE(xr(nxr), &
   denxr(:)=0
   texr(:)=0
 
+PRINT *, "nxr: ", nxr
+
 !-------------------------------------------------------------------------------
 !Read profile data and interpolate to external grid
 !-------------------------------------------------------------------------------
-READ(nin,*) (xr(i),denxr(i),texr(i),tixr, i=1,nxr)
+READ(nin,*) (xr(i),denxr(i),texr(i), i=1,nxr)
 
 !Change density to 10^19 /m^3 units
 denxr(:)=denxr(:)*(1e19)
+
+PRINT *, "PFILE denxr: ", denxr
 
 CALL LINEAR1_INTERP(nxr,xr,denxr,n_rho,rho_r, &
                     den_r,iflag,message)
@@ -1746,7 +1753,7 @@ IF(iflag /= 0) THEN
 
 ENDIF
 
-PRINT *, "Generated metrics from EFIT."
+! PRINT *, "Generated metrics from EFIT."
 
 !Set 0-D quantities
 r0=(rout_r(nr_r)+rin_r(nr_r))/2
@@ -1758,17 +1765,17 @@ q0=q_r(1)
 q1=q_r(nr_r)
 
 ! PRINT *, "rho_rm: ", rho_rm 
-PRINT *, "r0: ", r0 
-PRINT *, "a0: ", a0 
-PRINT *, "bt0: ", bt0 
-PRINT *, "s0: ", s0 
-PRINT *, "e0: ", e0 
-PRINT *, "e1: ", e1 
-PRINT *, "d1: ", d1 
-PRINT *, "q0: ", q0 
-PRINT *, "q1: ", q1
+! PRINT *, "r0: ", r0 
+! PRINT *, "a0: ", a0 
+! PRINT *, "bt0: ", bt0 
+! PRINT *, "s0: ", s0 
+! PRINT *, "e0: ", e0 
+! PRINT *, "e1: ", e1 
+! PRINT *, "d1: ", d1 
+! PRINT *, "q0: ", q0 
+! PRINT *, "q1: ", q1
 
-PRINT *, "elong_r: ", elong_r
+! PRINT *, "elong_r: ", elong_r
 
 
 
@@ -1977,9 +1984,9 @@ READ(nin,'(5e16.9)') (x_lim(i),y_lim(i),i=1,n_lim)
 !2D grid
 x_xy(1:nx_xy)=rmin+rdim*(/ (i-1,i=1,nx_xy) /)/(nx_xy-1)
 y_xy(1:ny_xy)=zmid-zdim/2+zdim*(/ (i-1,i=1,ny_xy) /)/(ny_xy-1)
-PRINT *, "y_xy: ", y_xy
+! PRINT *, "y_xy: ", y_xy
 
-! PRINT *, "x_xy: ", x_xy
+PRINT *, "x_xy: ", x_xy
 
 !1D radial grid and poloidal flux
 psi_x(1:nx_xy)=psimag+(psilim-psimag)*(/ (i-1,i=1,nx_xy) /)/(nx_xy-1)
