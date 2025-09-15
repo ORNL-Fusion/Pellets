@@ -7,30 +7,33 @@ import hermite_ped as hp
 pellet_func = 0
 eped_func = 0
 hermite_func = 1
-save = 0
-plot = 1
+save = 1
+plot = 0
 
 ncplas = 105
-te0 = 25.0
+te0 = 3.0
 te1 = 0.075
-px_te = 1.5
-qx_te = 1.0
 tetop = 3.0
-den0 = 11.0
-pedfrac = 1.5
-denmult = 0.85
-dentop = 7.0
-pedne = dentop/pedfrac
-den1 = pedne*denmult
-px_den = 4.5
-qx_den = 0.075
+den0 = 5.0
+dentop = 5.0
+pedfrac = 0.7
+pedne = den0/2.0
+# pedne = dentop
+# den1 = 0.25*pedne
+den1 = 4.0
+pedte = tetop
 pedwid = 0.1
-pedte = 4.5
+print(den0/1.5)
+# pedte = 4.5
+# print(dentop/den0)
+# print(tetop/te0)
+# 0.6363636363636364
+# 0.12
 
 xped = 1.0 - pedwid
 xmid = 1.0 - 0.5*pedwid
 rho_r = np.linspace(0,1,ncplas)
-print(rho_r)
+# print(rho_r)
 
 if pellet_func:
     pedte1 = np.zeros(ncplas)
@@ -39,6 +42,10 @@ if pellet_func:
     pedne2 = np.zeros(ncplas)
 
     for ii in range(0,ncplas):
+        px_den = 4.5
+        qx_den = 0.075
+        px_te = 1.5
+        qx_te = 1.0     
         thill = te0 - pedte
         nhill = den0 - pedne
         pedtlambda = (te0-te1)/(1.0+np.tanh(1.0))
@@ -69,8 +76,8 @@ if eped_func:
     ne_prof = den1 + pednlambda*(np.tanh(2.0*(1.0-xmid)/pedwid) - np.tanh(2.0*(rho_r - xmid)/pedwid)) + 0.1*np.heaviside(H1,H2ne)
 
 if hermite_func:
-    ne_prof = hp.hermite_ped(rho_r,xped,valaxis=den0,valsep=den1,valpedtop=dentop)
-    te_prof = hp.hermite_ped(rho_r,xped,valaxis=te0,valsep=te1,valpedtop=tetop)
+    ne_prof = hp.hermite_ped(rho_r,xped,valaxis=den0,valsep=den1,fact=1.0,valpedtop=dentop)
+    te_prof = hp.hermite_ped(rho_r,xped,valaxis=te0,valsep=te1,fact=0.5,valpedtop=tetop)
 
 if plot:
     fig, ax = plt.subplots(2,1,sharex=True)
@@ -79,11 +86,14 @@ if plot:
     ax[0].set_ylabel(r"Density ($\times 10^{19}$ m$^{-3}$)")
     ax[1].set_ylabel(r"Temperature (keV)")
     ax[1].set_xlabel(r"$\rho_r$")
+    ax[0].set_xlim([0.0,1.0])
+    ax[0].grid(True)
+    ax[1].grid(True)
     plt.show()
 
 if save:
     df = pd.DataFrame({"xr": rho_r, "denxr": ne_prof, "texr": te_prof})
-    pfile_name = '/Users/gz6/Documents/pellets/code_dev/code/Pellets/src/' + 'p_'+'ped_'+str(den0)+'_'+str(np.round(den1))+'.dat'
+    pfile_name = '/Users/gz6/Documents/pellets/code_dev/code/Pellets/src/' + 'prof_'+'ped_'+str(np.round(dentop))+'_'+str(np.round(tetop))+'.dat'
     pfile = open(pfile_name, 'a')
     pfile.write("User set pedestal.\n")
     pfile.write(str(ncplas)+'\n')
