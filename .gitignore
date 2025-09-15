@@ -18,10 +18,14 @@
 
 # Ignore local input files
 ./src/nml_pellet*.dat
+./src/build/nml_pellet*.dat
 ./src/*.eqdsk
+./src/prof*.dat
 
-# Ignore python cache files
+# Ignore python cache and local file changes
 ./Python/__pycache__/*
+./Python/Pellet*.py
+./Python/pellet.py
 
 # Ignore vscode files
 .vscode
