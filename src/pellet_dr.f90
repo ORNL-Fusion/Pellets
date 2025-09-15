@@ -126,9 +126,7 @@ REAL(KIND=rspec) :: &
   fpelprl,             & !fraction of pellet mass unaffected by PRL drift model 
   prlinjang,           & !PRL injection angle
   prlq0,               & !PRL q0 value
-  prlqa,               & !PRL qa value
-  rho_r_shifted,       &
-  dvol_r_point,        &  
+  prlqa,               & !PRL qa value 
   beta_inf,            &
   cA_inf,kap_c,        &
   beta_ratio,          &
@@ -185,15 +183,16 @@ REAL(KIND=rspec), ALLOCATABLE :: &
   dn0_r(:),zbr_r(:),amu_f(:),e0_f(:),p_f(:),e_ef(:,:),h_rf(:,:), &
   vc_rf(:,:),den_ref(:,:,:), &
   t_p(:),s_p(:),te0_p(:),te1_p(:),den0_p(:),den1_p(:),rpel1_p(:), &
-  src_p(:),rcyl_p(:,:),rflx_p(:,:), &
-  s_c(:), pedte1(:), pedte2(:), pedne1(:), pedne2(:), prlq_r(:), prldep(:)
+  src_p(:),rcyl_p(:,:),rflx_p(:,:),rho2r_temp(:,:),rho_temp(:,:),rho2r(:), &
+  s_c(:), pedte1(:), pedte2(:), pedne1(:), pedne2(:), prlq_r(:), prldep(:), &
+  r_shifted(:,:),rho_r_shifted(:,:),dvol_r_point(:)
 
 !Physical constants, mathematical constants, conversion factors
 REAL(KIND=rspec), PARAMETER :: &
   z_eion=32.6e-3, &
   z_pi=3.141592654, &
   z_mu0=4.0e-7*z_pi, &
-  pi = 4.0*ATAN(1.0)   
+  pi = 4.0*ATAN(1.0)
 
 !PRL added variables
 REAL(KIND=rspec) :: &
@@ -320,7 +319,6 @@ Sigma_0=0
 c_0_bar=0
 Psi_int=0
 DelR=0
-dvol_r_point=0
 
 !-------------------------------------------------------------------------------
 !Set the input namelist unit, open, read and close file
@@ -335,11 +333,11 @@ OPEN(UNIT=n_tmp, &
 
 READ(n_tmp,indata)
 
-PRINT *, "r_pel: ", r_pel
-PRINT *, "v_pel: ", v_pel
-PRINT *, "entry: ", rseg_p(1:3,1)
-PRINT *, "exit: ", rseg_p(1:3,2)
-PRINT *, "dsol: ", dsol
+! PRINT *, "r_pel: ", r_pel
+! PRINT *, "v_pel: ", v_pel
+! PRINT *, "entry: ", rseg_p(1:3,1)
+! PRINT *, "exit: ", rseg_p(1:3,2)
+! PRINT *, "dsol: ", dsol
 
 alpha = alpha*z_pi
 
@@ -634,6 +632,7 @@ ENDIF
 !-------------------------------------------------------------------------------
 IF(k_readd == 1) THEN
 
+  PRINT *, "Reading plasma profiles from file."
   !Get electron profiles from file
   CALL READ_PELLET_PRO(n_tmp,cn_prof,n,rho_r, &
                        den_r,te_r,iflag,message)
@@ -838,6 +837,12 @@ ALLOCATE(irho_p(6*n), &
          den1_p(6*n), &
          src_p(6*n), &
          rpel1_p(6*n), &
+         rho2r_temp(3,n), &
+         rho_temp(3,n), &
+         rho2r(n), &
+         r_shifted(3,n), &
+         rho_r_shifted(3,n), &
+         dvol_r_point(n), &
          rcyl_p(3,6*n), &
          rflx_p(3,6*n))
 
@@ -853,9 +858,30 @@ ALLOCATE(irho_p(6*n), &
   rpel1_p(:)=0
   rcyl_p(:,:)=0
   rflx_p(:,:)=0
+  rho2r_temp(:,:)=0
+  rho_temp(:,:)=0
+  rho2r(:)=0
+  r_shifted(:,:)=0
+  rho_r_shifted(:,:)=0
+  dvol_r_point(:)=0
 
+rho_temp(1,:)=rho_r
 
-PRINT *, "rseg_p: ", rseg_p
+! PRINT *, "rho_r_shifted: ", rho_r_shifted
+! PRINT *, "r_shifted: ", r_shifted
+
+DO ii=1,(n)
+  CALL AJAX_FLX2CYL(rho_temp(1:3,ii),rho2r_temp(1:3,ii),iflag,message)
+ENDDO
+
+rho2r(1:n) = rho2r_temp(1,1:n)
+! PRINT *, "rho_r: ", rho_r
+! PRINT *, "rho2r: ", rho2r
+
+! PRINT *, "n: ", n
+! PRINT *, "rho_rm: ", rho_rm
+! PRINT *, "rseg_p: ", rseg_p
+
 !Get pellet path
 CALL TRACK(n,rho_rm,2,rseg_p, &
            n_p,irho_p,s_p,iflag,message, &
@@ -864,9 +890,9 @@ CALL TRACK(n,rho_rm,2,rseg_p, &
            RCYL_INT=rcyl_p, &
            RFLX_INT=rflx_p)
 
-! PRINT *, "n_p: ", n_p
-! PRINT *, "irho_p: ", irho_p
-! PRINT *, "s_p: ", s_p
+PRINT *, "Finished TRACK."
+
+! PRINT *, "n, nc, n_p:", n, nc, n_p
 
 !Check messages
 IF(iflag /= 0) THEN
@@ -914,15 +940,17 @@ CALL PELLET(k_pel,amu_pel,r_pel,v_pel,nc,den_r,te_r,n_p-1,izone_p,s_p, &
             PRLINJANG=prlinjang, &
             PRLQ_R=prlq_r,   &
             PRLDEP=prldep, & 
-            DVOL_R_ARRAY=dvol_r)
-            ! DVOL_R_POINT=dvol_r_point, &
-            ! RHO_R_SHIFTED=rho_r_shifted, &
-            ! K_DRIFT=k_drift, &
-            ! ALPHA=alpha, &
-            ! LAM=lam, &
-            ! KAPPA=kappa, &
-            ! DEL_DRIFT=del_drift, &
-            ! RHO_RM=rho_rm)
+            ! DVOL_R_ARRAY=dvol_r)
+            DVOL_R_POINT=dvol_r_point, &
+            RHO_R_SHIFTED=rho_r_shifted, &
+            R_SHIFTED=r_shifted, &
+            K_DRIFT=k_drift, &
+            ALPHA=alpha, &
+            LAM=lam, &
+            KAPPA=kappa, &
+            DEL_DRIFT=del_drift, &
+            RHO_RM=rho_r, &
+            RHO2R=rho2r)
 
 ! PRINT *, "pden_r: ", pden_r
 
@@ -1536,7 +1564,7 @@ ALLOCATE(xr(nxr), &
   denxr(:)=0
   texr(:)=0
 
-PRINT *, "nxr: ", nxr
+! PRINT *, "nxr: ", nxr
 
 !-------------------------------------------------------------------------------
 !Read profile data and interpolate to external grid
@@ -1546,7 +1574,7 @@ READ(nin,*) (xr(i),denxr(i),texr(i), i=1,nxr)
 !Change density to 10^19 /m^3 units
 denxr(:)=denxr(:)*(1e19)
 
-PRINT *, "PFILE denxr: ", denxr
+! PRINT *, "PFILE denxr: ", denxr
 
 CALL LINEAR1_INTERP(nxr,xr,denxr,n_rho,rho_r, &
                     den_r,iflag,message)
@@ -1622,6 +1650,7 @@ REAL(KIND=rspec), INTENT(OUT) :: &
   q1,                  & !edge sagety factor [-]
   r0,                  & !major radius, center of boundary flux suface [m]
   s0                     !axis shift normalized to a0 [-]
+  
 
 !-------------------------------------------------------------------------------
 !Declaration of local variables
@@ -1630,7 +1659,7 @@ INTEGER, PARAMETER :: &
   mxny_xy=300,  &
   mxnr_r=300, &
   mxn_lim=500, &
-  mxn_bdry=1500
+  mxn_bdry=300
 
 REAL(KIND=rspec), PARAMETER :: &
   z_mu0=1.2566e-06, &
@@ -1702,7 +1731,7 @@ rm2_r(:)=0
 !-------------------------------------------------------------------------------
 !Get EFIT data
 !-------------------------------------------------------------------------------
-CALL READ_EFIT_EQDSK(nin,cnin,mxnx_xy,mxny_xy,mxn_lim, &
+CALL READ_EFIT_EQDSK(nin,cnin,mxnx_xy,mxny_xy,mxn_lim,mxn_bdry, &
                      bt0,cur,psimag,psilim,r0,rmag,zmag, &
                      nx_xy,ny_xy,x_xy,y_xy,psi_xy, &
                      f_x,ffp_x,psi_x,q_x,rhop_x, &
@@ -1719,7 +1748,7 @@ IF(iflag /= 0) THEN
 
 ENDIF
 
-PRINT *, "Current: ", cur
+! PRINT *, "Current: ", cur
 
 !-------------------------------------------------------------------------------
 !Call FLUXAV to generate metrics from EFIT MHD equilibrium
@@ -1799,7 +1828,7 @@ q_r(1:nr_r)=q_r(1:nr_r)*SIGN(1.0_rspec,bpout_r(nr_r)*btout_r(nr_r))
 
 END SUBROUTINE PELLET_EFIT
 
-SUBROUTINE READ_EFIT_EQDSK(nin,cnin,mxnx_xy,mxny_xy,mxn_lim, &
+SUBROUTINE READ_EFIT_EQDSK(nin,cnin,mxnx_xy,mxny_xy,mxn_lim,mxn_bdry, &
                            bt0,cur,psimag,psilim,r0,rmag,zmag, &
                            nx_xy,ny_xy,x_xy,y_xy,psi_xy, &
                            f_x,ffp_x,psi_x,q_x,rhop_x, &
@@ -1828,6 +1857,7 @@ INTEGER,INTENT(IN) :: &
   mxnx_xy,             & !maximum number of x points on psi(x,y) grid [-]
   mxny_xy,             & !maximum number of y points on psi(x,y) grid [-]
   mxn_lim,             & !maximum number of points on limiter surface [-]
+  mxn_bdry,            & !maximum number of points on boundary [-]
   nin                    !input unit number [-]
 
 !Declaration of output variables
@@ -1862,7 +1892,7 @@ REAL(KIND=rspec), INTENT(OUT) :: &
   q_x(mxnx_xy),              & !safety factor on equilibrium psi grid [-]
   rhop_x(mxnx_xy),           & !normalized poloidal flux grid proportional to psi [-]
   x_lim(mxn_lim),            & !horizontal positions of limiter points [m]
-  y_lim(mxn_lim)               !vertical positions of limiter points [m]
+  y_lim(mxn_lim)               !vertical positions of limiter points [m]              
 
 !-------------------------------------------------------------------------------
 !Declaration of local variables
@@ -1876,8 +1906,8 @@ REAL(KIND=rspec) :: &
   zmid,                & !vertical center of comoputational domain [m]
   rdim,                & !width of computational domain [m]
   zdim,                & !height of computational domain [m]
-  x_bdry,              & !horizontal positions of boundary points [m]
-  y_bdry,              & !vertical positions of boundary points [m]
+  x_bdry(mxn_bdry),    & !horizontal positions of boundary points [m]
+  y_bdry(mxn_bdry),    & !vertical positions of boundary points [m]
   p_x(mxnx_xy),        & !plasma kinetic pressure [N/m**2]
   pp_x(mxnx_xy)          !dp/dpsi on equilibrium psi grid [rad*N/m**2/Wb]
 
@@ -1887,6 +1917,8 @@ INTEGER :: &
 
 REAL(KIND=rspec) :: &
   dum
+
+CHARACTER(len=256) :: line
 
 !-------------------------------------------------------------------------------
 !Initialization
@@ -1937,7 +1969,10 @@ READ(nin,'(5e16.9)') rmag,zmag,psimag,psilim,bt0
 READ(nin,'(5e16.9)') cur
 READ(nin,'(5e16.9)') dum
 
-PRINT *, "r0, rmin, zmid: ", r0, rmin, zmid
+! PRINT *, "r0, rmag, zmag: ", r0, rmag, zmag
+! PRINT *, "dum: ", dum
+
+! PRINT *, "pp_x before read: ", pp_x
 
 !Read 1-D and 2-D data, radial grid is equally spaced in poloidal flux (1:nx_xy)
 READ(nin,'(5e16.9)') (f_x(i),i=1,nx_xy)
@@ -1946,6 +1981,8 @@ READ(nin,'(5e16.9)') (ffp_x(i),i=1,nx_xy)
 READ(nin,'(5e16.9)') (pp_x(i),i=1,nx_xy)
 READ(nin,'(5e16.9)') ((psi_xy(i,j),i=1,nx_xy),j=1,ny_xy)
 READ(nin,'(5e16.9)') (q_x(i),i=1,nx_xy)
+
+! PRINT *, "pp_x: ", pp_x
 
 ! ['line0', 'ecase', 'mw', 'mh', 'xdim', 'zdim', 'rzero', 'rgrid1', 'zmid', 'rmaxis', 'zmaxis', 
 ! 'ssimag', 'ssibry', 'bcentr', 'cpasma', 'fpol', 'pres', 'ffprim', 'pprime', 'psirz', 'qpsi', 'nbdry', 'limitr', 'bdry', 
@@ -1965,6 +2002,8 @@ READ(nin,'(2i5)') n_bdry,n_lim
 !ENDIF
 
 ! PRINT *, "n_lim: ", n_lim
+! PRINT *, "n_bdry: ", n_bdry
+! PRINT *, "mxn_bdry: ", mxn_bdry
 ! PRINT *, "mxn_lim: ", mxn_lim
 
 !Check if limiter dimension is exceeded
@@ -1977,8 +2016,12 @@ IF(n_lim > mxn_lim) THEN
 
 ENDIF
 
-READ(nin,'(5e16.9)') (x_bdry,y_bdry,i=1,n_bdry)
+! PRINT *, "x_bdry before read: ", x_bdry
+
+READ(nin,'(5e16.9)') (x_bdry(i),y_bdry(i),i=1,n_bdry)
 READ(nin,'(5e16.9)') (x_lim(i),y_lim(i),i=1,n_lim)
+
+! PRINT *, "x_lim: ", x_lim
 
 !Construct implied grids
 !2D grid
@@ -1986,13 +2029,17 @@ x_xy(1:nx_xy)=rmin+rdim*(/ (i-1,i=1,nx_xy) /)/(nx_xy-1)
 y_xy(1:ny_xy)=zmid-zdim/2+zdim*(/ (i-1,i=1,ny_xy) /)/(ny_xy-1)
 ! PRINT *, "y_xy: ", y_xy
 
-PRINT *, "x_xy: ", x_xy
+! PRINT *, "x_xy: ", x_xy
+! PRINT *, "x_bdry: ", x_bdry
 
 !1D radial grid and poloidal flux
 psi_x(1:nx_xy)=psimag+(psilim-psimag)*(/ (i-1,i=1,nx_xy) /)/(nx_xy-1)
 rhop_x(1:nx_xy)=(psi_x(1:nx_xy)-psi_x(1))/(psi_x(nx_xy)-psi_x(1))
 
 ! PRINT *, "rhop_x: ", rhop_x
+
+    ! g['R'] = np.array([g['rgrid1'] + g['dR']*i for i in range(nR)])
+    ! g['Z'] = np.array([g['zmid'] - 0.5*g['zdim'] + g['dZ']*i for i in range(nZ)])
 
 !-------------------------------------------------------------------------------
 !Cleanup and exit
