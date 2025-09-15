@@ -212,7 +212,7 @@ ELSE
 
 ENDIF
 
-PRINT *, "r_seg: ", r_seg
+! PRINT *, "r_seg: ", r_seg
 
 !Set cylindrical coordinates defining segments
 IF(k == 1) THEN
@@ -252,7 +252,7 @@ ELSE
   !Default cylindrical
   PRINT *, "Default cylindrical."
   r_cylc(1:3,1:n_seg)=r_seg(1:3,1:n_seg)
-  PRINT *, "r_cylc: ", r_cylc
+  ! PRINT *, "r_cylc: ", r_cylc
 
 ENDIF
 
@@ -274,13 +274,13 @@ r_flx0(2)=ATAN2(-r_cyl0(3),r_cyl0(1)-r000)
 r_flx0(3)=r_cyl0(2)
 
 ! PRINT *, "rflx0: ", r_flx0(1)
-PRINT *, "Starting point of first segment: "
-PRINT *, "g_cyl0: ", g_cyl0
-PRINT *, "r_cyl0: ", r_cyl0
-PRINT *, "r_flx0:", r_flx0
+! PRINT *, "Starting point of first segment: "
+! PRINT *, "g_cyl0: ", g_cyl0
+! PRINT *, "r_cyl0: ", r_cyl0
+! PRINT *, "r_flx0:", r_flx0
 iflag=0
 message=''
-PRINT *, "************* Post INIT ****************"
+! PRINT *, "************* Post INIT ****************"
 CALL AJAX_CYL2FLX(r_cyl0, &
                   r_flx0,iflag,message, &
                   G_CYL=g_cyl0)
@@ -309,13 +309,13 @@ ENDIF
 
 !Find nearest flux surface between starting point and axis (may be on surface)
 IF(r_flx0(1) > rho(n_rho)+drho_min) THEN
-  PRINT *, "rflx_0, tol value: ", r_flx0(1), rho(n_rho)+drho_min
+  ! PRINT *, "rflx_0, tol value: ", r_flx0(1), rho(n_rho)+drho_min
 
   !Outside largest surface of interest to user
   ilo=n_rho
   irho_int(1)=0
 
-  PRINT *, "ilo = n_rho: ", ilo
+  ! PRINT *, "ilo = n_rho: ", ilo
 
 ELSE
 
@@ -323,7 +323,7 @@ ELSE
   LOOP_I: DO i=n_rho,1,-1 !Over radial nodes
 
     ilo=i
-    PRINT *, "ilo = i: ", ilo
+    ! PRINT *, "ilo = i: ", ilo
 
     IF(ABS(r_flx0(1)-rho(ilo)) <= drho_min) THEN
 
@@ -391,7 +391,7 @@ ENDIF
 
 !Initialize flux coordinates at 1
 r_flx1(:)=r_flx0(:)
-PRINT *, "n_seg: ", n_seg
+! PRINT *, "n_seg: ", n_seg
 !-------------------------------------------------------------------------------
 !Loop over segments
 !-------------------------------------------------------------------------------
@@ -466,7 +466,8 @@ DO i=1,n_seg-1 !Over segments
 
     ! PRINT *, "ilo: ", ilo
 
-    PRINT *, "drds0: ", drds0
+    ! PRINT *, "drds0: ", drds0
+    ! PRINT *, "drds_min: ", drds_min
 
     IF(d1 > dseg-ds_min) EXIT LOOP_K
 
@@ -490,11 +491,14 @@ DO i=1,n_seg-1 !Over segments
         !Try to step past ilo
         ds=1.2*ABS((r_flx0(1)-rho(ilo))/drds0)
 
-        PRINT *, "ds: ", ds
+        ! PRINT *, "ds: ", ds
 
       ENDIF
 
     ELSE
+
+      ! PRINT *, "ilo: ", ilo
+      ! PRINT *, "n_rho: ", n_rho
 
       IF(ilo < n_rho) THEN
 
@@ -510,15 +514,17 @@ DO i=1,n_seg-1 !Over segments
 
     ENDIF
 
+    ! PRINT *, "ds: ", ds
     !Check restrictions on step size
     ds=MIN(ds,dseg-d0,ds_max)
     ds=ds/REAL(2**mhalf,rspec)
     ds=MAX(ds,ds_min)
+    ! PRINT *, "ds: ", ds
 
     !Set position in segment at end of step
     d1=d0+ds
 
-    PRINT *, "d1: ", d1
+    ! PRINT *, "d1: ", d1
 
     !Get parameters at 1
     r_flx1(:)=r_flx0(:)
@@ -669,6 +675,9 @@ DO i=1,n_seg-1 !Over segments
           ds=d1-d0
 
           PRINT *, "II.B.4"
+          ! PRINT *, "d0: ", d0
+          ! PRINT *, "d1: ", d1
+          ! PRINT *, "ds: ", ds
 
         ELSE
 !Case II.B.5: Crossed no surfaces
@@ -958,6 +967,10 @@ DO i=1,n_seg-1 !Over segments
       !Save in case of forced end gradients
       drds1f=drds1
 
+      ! PRINT *, "drds1: ", drds1
+      ! PRINT *, "d1: ", d1
+      ! PRINT *, "rcars: ", r_cars
+
       !Record hit
       iflag=0
       message=''
@@ -977,7 +990,7 @@ DO i=1,n_seg-1 !Over segments
       ENDIF
 
       n_int=n_int+1
-      PRINT *, "n_int: ", n_int
+      ! PRINT *, "n_int: ", n_int
       r_flx1(1)=rho(ihit)
       irho_int(n_int)=ihit
       s_int(n_int)=sseg+d1
