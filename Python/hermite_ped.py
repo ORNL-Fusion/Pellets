@@ -1,12 +1,12 @@
 import numpy as np
 
-def hermite_ped(rho_r,xped,valaxis,valsep,valpedtop=None):
+def hermite_ped(rho_r,xped,valaxis,valsep,fact,valpedtop=None):
     prof = np.zeros(len(rho_r))
     t = (rho_r - xped) / (np.max(rho_r) - xped)
     s = rho_r/xped
     mo = -25.0
     if valpedtop is not None:
-        mt = 0.5*(valpedtop-valaxis)/xped
+        mt = fact*(valpedtop-valaxis)/xped
     else:
         mt = 0.0
         valpedtop = 0.0
