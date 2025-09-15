@@ -577,6 +577,7 @@ ELSE
   !Grid proportional to sqrt(toroidal flux)
   rinterp(:)=rhot_f(:)
   dpsidrho(1:nr_f)=ABS(phit_f(nr_f)*rhot_f(1:nr_f)/z_pi/q_f(1:nr_f))
+  PRINT *, "dpsi/drho: ", dpsidrho
 
 ENDIF
 
