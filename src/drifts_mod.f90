@@ -160,6 +160,7 @@ beta_inf = 4.0*mu0*(ne_inf*ne_scale)*(Te_inf*e0)/B**2.0
 !>------------------------------------------------------------------
 
 beta_star_prime = 4.3e3*((W/quant)**(1./3.))*(Te_inf**(2./3.))*beta_inf
+PRINT *, "beta_star_prime: ", beta_star_prime
 T_star_prime = 1.88e-9*((W/Te_inf)**(1./3.))*(quant**(2./3.))
 
 !>------------------------------------------------------------------
@@ -251,9 +252,9 @@ real(kind=rspec), intent(out) :: &
 
 DelR = B**(-0.15)*Te0**(-0.13)*Teped**(0.5)*r_pel**(0.76)*qa**(-0.15)
 
-open (unit=10,file="baylor_2007_test.txt",action="write")
-write(10,*) DelR
-close (10)
+! open (unit=10,file="baylor_2007_test.txt",action="write")
+! write(10,*) DelR
+! close (10)
 
 END SUBROUTINE
 

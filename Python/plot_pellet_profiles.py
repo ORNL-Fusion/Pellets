@@ -9,7 +9,8 @@ plt.rcParams.update({'font.size': 12})
 plt.rcParams.update({'mathtext.default': 'regular'})
 
 base_dir = "/Users/gz6/Documents/pellets/code_dev/code/Pellets/src/"
-gfile = base_dir + "st50010dn.eqdsk"
+# gfile = base_dir + "st50010dn.eqdsk"
+gfile = base_dir + "g200201.00000"
 
 dv_plot = 0
 dd_plot = 0
@@ -26,16 +27,26 @@ if single_plot:
     sumfile_loc = '/Users/gz6/Documents/pellets/code_dev/code/Pellets/src/build/sum_pellet_DIII-D_drift            .dat'
     pelsum = PS.PelletSumfile(sumfile_loc=sumfile_loc,gfile=gfile)
     # pelsum.plot_density_change()
-    plt.figure()
-    plt.plot(pelsum.profiles['rho_t'],pelsum.profiles['ne(tpel-)'])
+    # plt.figure()
+    # plt.plot(pelsum.profiles['rho_t'],pelsum.profiles['ne(tpel-)'])
     # plt.plot(pelsum.profiles['rho_t'],pelsum.profiles['ne(tpel+)'])
+    # plt.show()
+    # plt.figure()
+    # plt.plot(pelsum.profiles['rho_t'],pelsum.profiles['Te(tpel-)'])
+    # plt.plot(pelsum.profiles['rho_t'],pelsum.profiles['Te(tpel+)'])
     # plt.ylim([0.3e20,1.0e20])
-    plt.show()
-    plt.figure()
-    plt.plot(pelsum.profiles['rho_t'],pelsum.profiles['delta_ne'])
+    # plt.show()
+    fig = plt.figure()
+    ax1 = fig.add_subplot(111)
+    ax2 = ax1.twiny()
+    ax1.plot(pelsum.profiles['rho_t'],pelsum.profiles['delta_ne']*1.0e-20,'k-')
+    ax2.plot(pelsum.profiles['r_grid'][::-1],pelsum.profiles['delta_ne_drift']*1.0e-20,'r--')
+    ax1.set_xlim([min(pelsum.profiles['rho_t']), max(pelsum.profiles['rho_t'])])
+    ax2.set_xlim([min(pelsum.profiles['r_grid']), max(pelsum.profiles['r_grid'])])
     # plt.ylim([-1.0e18,5.0e19])
     plt.show()
-    print(integrate.trapezoid(pelsum.profiles['ne(tpel+)'],pelsum.profiles['rho_t']))
+    print(integrate.trapezoid(pelsum.profiles['delta_ne'],pelsum.profiles['rho_t']))
+    print(integrate.trapezoid(pelsum.profiles['delta_ne_drift'],pelsum.profiles['rho_t']))
 
 if dv_plot:
     count = 0

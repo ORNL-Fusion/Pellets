@@ -13,14 +13,14 @@ plot = 0
 ncplas = 105
 te0 = 3.0
 te1 = 0.075
-tetop = 3.0
+tetop = 1.0
 den0 = 5.0
-dentop = 5.0
+dentop = 3.0
 pedfrac = 0.7
 pedne = den0/2.0
 # pedne = dentop
 # den1 = 0.25*pedne
-den1 = 4.0
+den1 = 0.5
 pedte = tetop
 pedwid = 0.1
 print(den0/1.5)

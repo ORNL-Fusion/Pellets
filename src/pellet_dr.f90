@@ -137,6 +137,7 @@ REAL(KIND=rspec) :: &
   lam,                 &
   DelR,                &
   Del_drift,           &
+  rhor_check,          &
   prlqf                  !PRL q profile exponent q(r) = (qa-q0) + q0*(1-(r/a)^qf)
 !
 !
@@ -161,7 +162,7 @@ INTEGER :: &
   n_msg,n_sum,n_tmp
 
 INTEGER :: &
-  i,i0,idum(5),ii,j,n,n_c,n_p,nc,nefmax,nf,iflag, &
+  i,i0,idum(5),ii,j,jj,kk,n,n_c,n_p,nc,nefmax,nf,iflag, &
   nrho_ajax,ntheta_ajax,nzeta_ajax
 
 INTEGER, ALLOCATABLE :: &
@@ -185,7 +186,7 @@ REAL(KIND=rspec), ALLOCATABLE :: &
   t_p(:),s_p(:),te0_p(:),te1_p(:),den0_p(:),den1_p(:),rpel1_p(:), &
   src_p(:),rcyl_p(:,:),rflx_p(:,:),rho2r_temp(:,:),rho_temp(:,:),rho2r(:), &
   s_c(:), pedte1(:), pedte2(:), pedne1(:), pedne2(:), prlq_r(:), prldep(:), &
-  r_shifted(:,:),rho_r_shifted(:,:),dvol_r_point(:)
+  r_shifted(:,:),rho_r_shifted(:,:),dvol_r_point(:),rho_r_map(:),pden_r_shifted(:)
 
 !Physical constants, mathematical constants, conversion factors
 REAL(KIND=rspec), PARAMETER :: &
@@ -319,6 +320,7 @@ Sigma_0=0
 c_0_bar=0
 Psi_int=0
 DelR=0
+rhor_check=0
 
 !-------------------------------------------------------------------------------
 !Set the input namelist unit, open, read and close file
@@ -417,6 +419,8 @@ ALLOCATE(cur_rm(n), &
          dvol_r(n), &
          te_r(n), &
          pden_r(n), &
+         rho_r_map(n), &
+         pden_r_shifted(n), &
          rho_r(n), &
          rho_rm(n), &
 		 pedte1(n),  &
@@ -431,6 +435,8 @@ ALLOCATE(cur_rm(n), &
   dvol_r(:)=0
   te_r(:)=0
   pden_r(:)=0
+  pden_r_shifted(:)=0
+  rho_r_map(:)=0
   rho_r(:)=0
   rho_rm(:)=0
   pedte1(:)=0
@@ -866,6 +872,7 @@ ALLOCATE(irho_p(6*n), &
   dvol_r_point(:)=0
 
 rho_temp(1,:)=rho_r
+rho_temp(2,:)=3.0*z_pi/4.0
 
 ! PRINT *, "rho_r_shifted: ", rho_r_shifted
 ! PRINT *, "r_shifted: ", r_shifted
@@ -940,19 +947,19 @@ CALL PELLET(k_pel,amu_pel,r_pel,v_pel,nc,den_r,te_r,n_p-1,izone_p,s_p, &
             PRLINJANG=prlinjang, &
             PRLQ_R=prlq_r,   &
             PRLDEP=prldep, & 
-            ! DVOL_R_ARRAY=dvol_r)
-            DVOL_R_POINT=dvol_r_point, &
-            RHO_R_SHIFTED=rho_r_shifted, &
-            R_SHIFTED=r_shifted, &
-            K_DRIFT=k_drift, &
-            ALPHA=alpha, &
-            LAM=lam, &
-            KAPPA=kappa, &
-            DEL_DRIFT=del_drift, &
-            RHO_RM=rho_r, &
-            RHO2R=rho2r)
+            DVOL_R_ARRAY=dvol_r)
+            ! DVOL_R_POINT=dvol_r_point, &
+            ! RHO_R_SHIFTED=rho_r_shifted, &
+            ! R_SHIFTED=r_shifted, &
+            ! K_DRIFT=k_drift, &
+            ! ALPHA=alpha, &
+            ! LAM=lam, &
+            ! KAPPA=kappa, &
+            ! DEL_DRIFT=del_drift, &
+            ! RHO_RM=rho_r, &
+            ! RHO2R=rho2r)
 
-! PRINT *, "pden_r: ", pden_r
+PRINT *, "pden_r: ", pden_r
 
 !Check messages
 IF(iflag /= 0) THEN
@@ -963,6 +970,57 @@ IF(iflag /= 0) THEN
   message=''
 
 ENDIF
+
+! PRINT *, "v_pel, r_pel, den_r(1),te_r(1),ALPHA,LAM,A0,R0,BT0,KAPPA,Del_drift: "
+! PRINT *, v_pel,r_pel*1.0e3,den_r(1)*1.0e-19,te_r(1),ALPHA,LAM,A0,R0,BT0,KAPPA,Del_drift
+
+! CALL HPI2_DRIFT(v_pel,r_pel*1.0e3,den_r(1)*1.0e-19,te_r(1),ALPHA,LAM, &
+!                 a0,r0,bt0,KAPPA,Del_drift)
+
+! PRINT *, "q1: ", q1
+! PRINT *, "q_r: ", q_x
+
+! CALL BAYLOR_DRIFT(bt0,te_r(1),te_r(1),r_pel*1.0e1,5.7, &
+!                         Del_drift)
+
+! DO ii=1,n
+!   IF (pden_r(ii).NE.0) EXIT
+! ENDDO
+
+! PRINT *, "Index: ", ii
+! PRINT *, "rho(ii): ", rho_r(ii)
+! PRINT *, "R(ii): ", rho2r(ii)
+! PRINT *, "DeltaR: ", Del_drift 
+
+! rhor_check = rho2r(ii) + Del_drift
+
+! PRINT *, "R_new: ", rhor_check
+! PRINT *, "rho2r: ", rho2r 
+
+! DO jj=1,n
+!   IF (rho2r(jj)<rhor_check) EXIT
+! ENDDO
+
+! PRINT *, "Index new: ", jj
+! PRINT *, "rho2r new: ", rho2r(jj)
+! PRINT *, "rho_r new: ", rho_r(jj)
+
+! rho_r_map(ncplas:n) = rho_r(ncplas:n)
+
+! DO kk=jj,ncplas
+!   rho_r_map(kk) = rho_r(ncplas) + ((rho_r(kk) - rho_r(ncplas))/(rho_r(jj) - rho_r(ncplas)))*(rho_r(ii) - rho_r(ncplas))
+! ENDDO
+
+! PRINT *, "Rho mapped: ", rho_r_map
+
+! CALL LINEAR1_INTERP(ncplas,rho_r,pden_r,ncplas-jj+1,rho_r_map(jj:ncplas),pden_r_shifted(jj:ncplas),iflag,message)
+
+! pden_r_shifted(:) = (rho_r(ii) - rho_r(ncplas)) / (rho_r(jj) - rho_r(ncplas))*pden_r_shifted(:)
+
+! PRINT *, "dvol_r: ", dvol_r
+! PRINT *, "Old density: ", pden_r
+! PRINT *, "Shifted density: ", pden_r_shifted
+! PRINT *, "rho_r: ", rho_r
 
 !-------------------------------------------------------------------------------
 !Fractional radius and volume penetrated
@@ -1239,6 +1297,12 @@ descpro(npro)='Normalized toroidal flux grid - ' &
               //'proportional to square root toroidal flux'
 valpro(:,npro)=rho_r(:)
 
+npro=npro+1
+namepro(npro)='r_grid'
+unitpro(npro)='-'
+descpro(npro)='Radial grid'
+valpro(:,npro)=rho2r(:)
+
 !Geometry
 npro=npro+1
 namepro(npro)='dVol'
@@ -1332,6 +1396,12 @@ namepro(npro)='delta_ne'
 unitpro(npro)='/m**3'
 descpro(npro)='Electron density perturbation'
 valpro(:,npro)=pden_r(:)
+
+npro=npro+1
+namepro(npro)='delta_ne_drift'
+unitpro(npro)='/m**3'
+descpro(npro)='Shifted lectron density perturbation'
+valpro(:,npro)=pden_r_shifted(:)
 
 npro=npro+1
 namepro(npro)='Te(tpel+)'
@@ -1806,7 +1876,8 @@ q1=q_r(nr_r)
 
 ! PRINT *, "elong_r: ", elong_r
 
-
+PRINT *, "rho_r: ", rhot_r
+PRINT *, "q_r: ", q_r
 
 !Change grid normalization to a0
 fhat_r(:)=fhat_r(:)*a0

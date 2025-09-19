@@ -35,4 +35,5 @@ plt.contour(gR, gZ, psiRZn, [1], colors = 'k', linewidths = [2.0])
 # gf.plotProfile()
 # plt.show()
 
-print((gf.g['lcfs'][:,0]))
+# print((gf.g['lcfs'][:,0]))
+print(gf.help())

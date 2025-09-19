@@ -1,0 +1,3 @@
+/Users/gz6/Documents/pellets/code_dev/code/Pellets/src/CMakeFiles/xpellet.dir
+/Users/gz6/Documents/pellets/code_dev/code/Pellets/src/CMakeFiles/edit_cache.dir
+/Users/gz6/Documents/pellets/code_dev/code/Pellets/src/CMakeFiles/rebuild_cache.dir
