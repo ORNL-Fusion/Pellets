@@ -12,8 +12,8 @@ r_pel_input = [1.0,1.5,2.0]
 r_pel_input_scaled = np.divide(r_pel_input,pel_old)
 mass_scale = r_pel_input_scaled**3
 d_input = np.multiply(r_pel_input,2.0)
-# v_input = [1000,1250,1500]
-v_input = [200,300]
+v_input = [1000,1250,1500]
+# v_input = [200,300]
 
 den0 = [0.40,0.60,0.80,1.0,1.2,1.4]
 den0_scaled = np.multiply(den0,1.0e19)

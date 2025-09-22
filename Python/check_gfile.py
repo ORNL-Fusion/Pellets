@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import EFIT.equilParams_class as epc
 
 filepath = '/Users/gz6/Documents/pellets/code_dev/code/Pellets/src/'
-filename = 'g200201.00000'
+filename = 'st50010dn.eqdsk'
 gfile = filepath + filename
 gf = epc.equilParams(gfile)
 
