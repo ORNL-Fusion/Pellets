@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
 import PelletSumfile as PS
 from scipy import integrate
 
@@ -9,40 +10,40 @@ plt.rcParams.update({'font.size': 12})
 plt.rcParams.update({'mathtext.default': 'regular'})
 
 base_dir = "/Users/gz6/Documents/pellets/code_dev/code/Pellets/src/"
-# gfile = base_dir + "st50010dn.eqdsk"
-gfile = base_dir + "g200201.00000"
+gfile = base_dir + "st50010dn.eqdsk"
+# gfile = base_dir + "g200201.00000"
 
-dv_plot = 0
+dv_plot = 1
 dd_plot = 0
-single_plot = 1
+single_plot = 0
 
 v_plot = ['v200','v300']
 # v_plot = ['v1000','v1250','v1500']
 d_plot = ['d2.0','d3.0','d4.0']
-lines = ['--g','-.b','-+r']
+lines = ['--g','-.b','-.r']
+lines_2 = ['-xg','-+b','-+r']
 
 den_plot = ['den0_4e+18','den0_6e+18','den0_8e+18','den0_1e+19','den0_1.2e+19','den0_1.4e+19']
 
 if single_plot:
-    sumfile_loc = '/Users/gz6/Documents/pellets/code_dev/code/Pellets/src/build/sum_pellet_DIII-D_drift            .dat'
+    sumfile_loc = '/Users/gz6/Documents/pellets/code_dev/code/Pellets/src/build/sum_pellet_pellet_test_            .dat'
     pelsum = PS.PelletSumfile(sumfile_loc=sumfile_loc,gfile=gfile)
     # pelsum.plot_density_change()
-    # plt.figure()
-    # plt.plot(pelsum.profiles['rho_t'],pelsum.profiles['ne(tpel-)'])
-    # plt.plot(pelsum.profiles['rho_t'],pelsum.profiles['ne(tpel+)'])
-    # plt.show()
+    plt.figure()
+    plt.plot(pelsum.profiles['rho_t'],pelsum.profiles['ne(tpel-)'])
+    plt.plot(pelsum.profiles['rho_t'],pelsum.profiles['ne(tpel+)'])
+    plt.plot(pelsum.profiles['rho_t'],pelsum.profiles['ne_d(tpel+)'])
+    plt.show()
     # plt.figure()
     # plt.plot(pelsum.profiles['rho_t'],pelsum.profiles['Te(tpel-)'])
     # plt.plot(pelsum.profiles['rho_t'],pelsum.profiles['Te(tpel+)'])
     # plt.ylim([0.3e20,1.0e20])
     # plt.show()
-    fig = plt.figure()
-    ax1 = fig.add_subplot(111)
-    ax2 = ax1.twiny()
-    ax1.plot(pelsum.profiles['rho_t'],pelsum.profiles['delta_ne']*1.0e-20,'k-')
-    ax2.plot(pelsum.profiles['r_grid'][::-1],pelsum.profiles['delta_ne_drift']*1.0e-20,'r--')
-    ax1.set_xlim([min(pelsum.profiles['rho_t']), max(pelsum.profiles['rho_t'])])
-    ax2.set_xlim([min(pelsum.profiles['r_grid']), max(pelsum.profiles['r_grid'])])
+    plt.figure()
+    plt.plot(pelsum.profiles['rho_t'],pelsum.profiles['delta_ne']*1.0e-20,'k-')
+    plt.plot(pelsum.profiles['rho_t'],pelsum.profiles['delta_ne_drift']*1.0e-20,'r--')
+    # ax1.set_xlim([min(pelsum.profiles['rho_t']), max(pelsum.profiles['rho_t'])])
+    # ax2.set_xlim([min(pelsum.profiles['r_grid']), max(pelsum.profiles['r_grid'])])
     # plt.ylim([-1.0e18,5.0e19])
     plt.show()
     print(integrate.trapezoid(pelsum.profiles['delta_ne'],pelsum.profiles['rho_t']))
@@ -54,27 +55,33 @@ if dv_plot:
     for ii in d_plot:
         NP = 0
         for jj in v_plot:
-            sumfile_loc = '/Users/gz6/Documents/pellets/tokamak_energy/results/k0_NGS_ref/injection_angles/curved_centre/refined/' + d_plot[count] + '_' + v_plot[NP] + '/sum_pellet_pellet_test_.dat'
+            sumfile_loc = '/Users/gz6/Documents/pellets/tokamak_energy/results/k6_NGS_Parks_Q/injection_angles/curved_offcentre/' + d_plot[count] + '_' + v_plot[NP] + '/sum_pellet_pellet_test_.dat'
             pelsum = PS.PelletSumfile(sumfile_loc=sumfile_loc,gfile=gfile)
+            sumfile_loc_2 = '/Users/gz6/Documents/pellets/tokamak_energy/results/k6_NGS_Parks_Q/injection_angles/curved_offcentre/drift_baylor/' + d_plot[count] + '_' + v_plot[NP] + '/sum_pellet_pellet_test_.dat'
+            pelsum_2 = PS.PelletSumfile(sumfile_loc=sumfile_loc_2,gfile=gfile)
             if NP==0:
                 ax[count].plot(pelsum.profiles['rho_t'],pelsum.profiles['ne(tpel-)']*1e-19,'k-',label="Initial")    
             ax[count].plot(pelsum.profiles['rho_t'],pelsum.profiles['ne(tpel+)']*1e-19,lines[NP],label=jj + r' (ms$^{-1}$)')
+            ax[count].plot(pelsum_2.profiles['rho_t'],pelsum_2.profiles['ne_d(tpel+)']*1e-19,lines_2[NP],label=jj + r' (ms$^{-1}$) (Baylor)')
             NP += 1
         ax[count].grid(True)
-        if count==2:
+        if count==3:
             ax[count].set_xlabel('rho')
             
         ax[count].set_ylabel(r'$n_e$ ($1\times10^{19}$ m$^{-3}$)')
         ax[count].set_title('d = ' + d_plot[count] + ' (mm)')
         ax[count].legend()
         count += 1
-    plt.suptitle("Curved Injection (centre) \n Entry: R=2.9 (m), Z=1.9 (m) \n Exit: R=7.0 (m), Z=-1.25 (m)")
+    # plt.suptitle("Curved Injection (centre) \n Entry: R=2.9 (m), Z=1.9 (m) \n Exit: R=7.0 (m), Z=-1.25 (m)")
+    plt.suptitle("Curved Injection (off-centre) \n Entry: R=2.85 (m), Z=1.33 (m) \n Exit: R=5.6 (m), Z=-3.75 (m)")
     plt.tight_layout()
     plt.subplots_adjust(left=0.075, bottom=0.075, right=0.975, top=0.85, wspace=0.2, hspace=0.25)
     # fig_width, fig_height = plt.gcf().get_size_inches()
     # print(fig_width, fig_height)
     fig.set_size_inches(10.0,12.0)
     plt.show()
+    print(integrate.trapezoid(pelsum.profiles['ne(tpel+)'],pelsum.profiles['rho_t']))
+    print(integrate.trapezoid(pelsum_2.profiles['ne_d(tpel+)'],pelsum_2.profiles['rho_t']))
 
     pelsum = PS.PelletSumfile(sumfile_loc=sumfile_loc,gfile=gfile)
     # print(pelsum.pelpath['R'], pelsum.pelpath['Z'])
