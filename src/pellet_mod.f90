@@ -589,89 +589,91 @@ DO l=1,n_p
       ! PRINT *, "rp_old: ", rpold
       ! PRINT *, "k_drift: ", K_DRIFT
       ! PRINT *, "Counter: ", i
-      IF (PRESENT(K_DRIFT)) THEN
-        IF (.NOT. PRESENT(DVOL_R_POINT)) THEN
-          PRINT *, 'ERROR: RHO_R_SHIFTED present but DVOL_R_POINT not passed.'
-          RETURN
-        ENDIF
-        ! PRINT *, "Calculating point based dvol_r..."
-        IF (K_DRIFT == 3) THEN
-          PRINT *, "Entering drift calculation."
-          rp_HPI2 = rp*1.0e3
-          ne_HPI2 = den0_r(1)*1.0e-19
-          ! PRINT *, "rp_HPI2: ", rp_HPI2
-          ! PRINT *, "ne_HPI2: ", ne_HPI2
-          ! PRINT *, "vel_pl, rp, den0_r, te0_r, ALPHA, LAM, A0, R0, BT0, KAPPA: "
-          ! PRINT *, vpel_pl, rp_HPI2, ne_HPI2, te0_r(1), ALPHA, LAM, A0, R0, BT0, KAPPA
-          ! PRINT *, "Entering HPI2 drift calculation..."
-          ! PRINT *, "den0_r(1)", den0_r(1)
-          ! CALL HPI2_DRIFT(vpel_pl,rp_HPI2,ne_HPI2,te0_r(1),ALPHA,LAM,0.565,1.67,2.2,KAPPA,DEL_DRIFT)
-          CALL HPI2_DRIFT(vpel_pl,rp_HPI2,ne_HPI2,te0_r(1),ALPHA,LAM,A0,R0, &
-                          BT0,KAPPA,Del_drift)
-          PRINT *, "Exited HPI2 drift calculation with Del_drift = ", DEL_DRIFT
-          ! PRINT *, "Counter: ", i
-          ! PRINT *, "rho(i): ", RHO_RM(i)
-          PRINT *, "R: ", RHO2R
-          PRINT *, "RHO_R: ", RHO_RM
-          R_SHIFTED(1,:) = RHO2R + DEL_DRIFT
-          PRINT *, "R_SHIFTED: ", R_SHIFTED(1,:)
-          ! DO ii=1,(n_r+1)
-          !   CALL AJAX_FLX2CYL(rho_temp(1:3,ii),rho2r_temp(1:3,ii),iflag,message)
-          ! ENDDO
-          CALL AJAX_CYL2FLX(R_SHIFTED(1:3,i),RHO_R_SHIFTED(1:3,i),iflag,message)
-          PRINT *, "RHO_R_SHIFTED: ", RHO_R_SHIFTED(1,:)
-          ! RHO_R_SHIFTED = RHO_RM(i) - DEL_DRIFT/A0
-          ! PRINT *, "Shifted rho_r value: ", RHO_R_SHIFTED(1)
-          ! PRINT *, "del_drift: ", DEL_DRIFT
-          ! PRINT *, "rho_r: ", RHO_R
-          ! IF (RHO_R_SHIFTED(1) .LE. 1.1) THEN
-          !   CALL AJAX_FLUXAV_G_POINT(RHO_R_SHIFTED(:,i), DVOL_R_POINT, iflag, message)
-          ! ELSEIF (RHO_R_SHIFTED(1) .GE. 1.1) THEN
-          !   CALL AJAX_FLUXAV_G_POINT(RHO_RM(i), DVOL_R_POINT, iflag, message)
-          ! ENDIF
-          ! PRINT *, "Point dvol value: ", DVOL_R_POINT
-          CALL AJAX_FLUXAV_G(n_r+1,RHO_R_SHIFTED(1,:), iflag, message, DVOL_R=DVOL_R_POINT)
-          PRINT *, "DVOL_R_POINT(i): ", DVOL_R_POINT(i)
-          CALL PELLET_RK4(DVOL_R_POINT(i),dt, &
-                      t,rp,teold,denold, &
-                      srcp,iflag,message)
-          PRINT *, "srcp: ",srcp
-          ! pden_r(i)=pden_r(i)+srcp
-          IF (srcp .NE. srcp) THEN
-            CALL AJAX_FLUXAV_G(n_r+1,RHO_RM, iflag, message, DVOL_R=DVOL_R_POINT)
-            CALL PELLET_RK4(DVOL_R_POINT(i),dt, &
-                      t,rp,teold,denold, &
-                      srcp,iflag,message)
-            pden_r(i)=pden_r(i)+srcp
-          ELSE
-            pden_r(i)=pden_r(i)+srcp
-          ENDIF
-          dennew=den0_r(i)+pden_r(i)
-          tenew=(den0_r(i)*te0_r(i)-pden_r(i)*z_eion_pl/1.5)/dennew
-          ! PRINT *, "rp: ", rp
-        ENDIF
-      ELSEIF (.NOT. PRESENT(K_DRIFT)) THEN
-        IF (.NOT. PRESENT(DVOL_R_ARRAY)) THEN
-          PRINT *, 'ERROR: DVOL_R_ARRAY not passed.'
-          RETURN
-        ENDIF
-        PRINT *, "dvol array (i): ", DVOL_R_ARRAY(i)
-        CALL PELLET_RK4(DVOL_R_ARRAY(i),dt, &
-                      t,rp,teold,denold, &
-                      srcp,iflag,message)
-        PRINT *, "srcp: ",srcp
-        ! PRINT *, "rp: ", rp
-        pden_r(i)=pden_r(i)+srcp
-        dennew=den0_r(i)+pden_r(i)
-        tenew=(den0_r(i)*te0_r(i)-pden_r(i)*z_eion_pl/1.5)/dennew
-      ! PRINT *, "srcp: ", srcp
-      ENDIF
+      ! IF (PRESENT(K_DRIFT)) THEN
+      !   IF (.NOT. PRESENT(DVOL_R_POINT)) THEN
+      !     PRINT *, 'ERROR: RHO_R_SHIFTED present but DVOL_R_POINT not passed.'
+      !     RETURN
+      !   ENDIF
+      !   ! PRINT *, "Calculating point based dvol_r..."
+      !   IF (K_DRIFT == 3) THEN
+      !     PRINT *, "Entering drift calculation."
+      !     rp_HPI2 = rp*1.0e3
+      !     ne_HPI2 = den0_r(1)*1.0e-19
+      !     ! PRINT *, "rp_HPI2: ", rp_HPI2
+      !     ! PRINT *, "ne_HPI2: ", ne_HPI2
+      !     ! PRINT *, "vel_pl, rp, den0_r, te0_r, ALPHA, LAM, A0, R0, BT0, KAPPA: "
+      !     ! PRINT *, vpel_pl, rp_HPI2, ne_HPI2, te0_r(1), ALPHA, LAM, A0, R0, BT0, KAPPA
+      !     ! PRINT *, "Entering HPI2 drift calculation..."
+      !     ! PRINT *, "den0_r(1)", den0_r(1)
+      !     ! CALL HPI2_DRIFT(vpel_pl,rp_HPI2,ne_HPI2,te0_r(1),ALPHA,LAM,0.565,1.67,2.2,KAPPA,DEL_DRIFT)
+      !     CALL HPI2_DRIFT(vpel_pl,rp_HPI2,ne_HPI2,te0_r(1),ALPHA,LAM,A0,R0, &
+      !                     BT0,KAPPA,Del_drift)
+      !     PRINT *, "Exited HPI2 drift calculation with Del_drift = ", DEL_DRIFT
+      !     ! PRINT *, "Counter: ", i
+      !     ! PRINT *, "rho(i): ", RHO_RM(i)
+      !     PRINT *, "R: ", RHO2R
+      !     PRINT *, "RHO_R: ", RHO_RM
+      !     R_SHIFTED(1,:) = RHO2R + DEL_DRIFT
+      !     PRINT *, "R_SHIFTED: ", R_SHIFTED(1,:)
+      !     ! DO ii=1,(n_r+1)
+      !     !   CALL AJAX_FLX2CYL(rho_temp(1:3,ii),rho2r_temp(1:3,ii),iflag,message)
+      !     ! ENDDO
+      !     CALL AJAX_CYL2FLX(R_SHIFTED(1:3,i),RHO_R_SHIFTED(1:3,i),iflag,message)
+      !     PRINT *, "RHO_R_SHIFTED: ", RHO_R_SHIFTED(1,:)
+      !     ! RHO_R_SHIFTED = RHO_RM(i) - DEL_DRIFT/A0
+      !     ! PRINT *, "Shifted rho_r value: ", RHO_R_SHIFTED(1)
+      !     ! PRINT *, "del_drift: ", DEL_DRIFT
+      !     ! PRINT *, "rho_r: ", RHO_R
+      !     ! IF (RHO_R_SHIFTED(1) .LE. 1.1) THEN
+      !     !   CALL AJAX_FLUXAV_G_POINT(RHO_R_SHIFTED(:,i), DVOL_R_POINT, iflag, message)
+      !     ! ELSEIF (RHO_R_SHIFTED(1) .GE. 1.1) THEN
+      !     !   CALL AJAX_FLUXAV_G_POINT(RHO_RM(i), DVOL_R_POINT, iflag, message)
+      !     ! ENDIF
+      !     ! PRINT *, "Point dvol value: ", DVOL_R_POINT
+      !     CALL AJAX_FLUXAV_G(n_r+1,RHO_R_SHIFTED(1,:), iflag, message, DVOL_R=DVOL_R_POINT)
+      !     PRINT *, "DVOL_R_POINT(i): ", DVOL_R_POINT(i)
+      !     CALL PELLET_RK4(DVOL_R_POINT(i),dt, &
+      !                 t,rp,teold,denold, &
+      !                 srcp,iflag,message)
+      !     PRINT *, "srcp: ",srcp
+      !     ! pden_r(i)=pden_r(i)+srcp
+      !     IF (srcp .NE. srcp) THEN
+      !       CALL AJAX_FLUXAV_G(n_r+1,RHO_RM, iflag, message, DVOL_R=DVOL_R_POINT)
+      !       CALL PELLET_RK4(DVOL_R_POINT(i),dt, &
+      !                 t,rp,teold,denold, &
+      !                 srcp,iflag,message)
+      !       pden_r(i)=pden_r(i)+srcp
+      !     ELSE
+      !       pden_r(i)=pden_r(i)+srcp
+      !     ENDIF
+      !     dennew=den0_r(i)+pden_r(i)
+      !     tenew=(den0_r(i)*te0_r(i)-pden_r(i)*z_eion_pl/1.5)/dennew
+      !     ! PRINT *, "rp: ", rp
+      !   ENDIF
+      ! ELSEIF (.NOT. PRESENT(K_DRIFT)) THEN
+      !   IF (.NOT. PRESENT(DVOL_R_ARRAY)) THEN
+      !     PRINT *, 'ERROR: DVOL_R_ARRAY not passed.'
+      !     RETURN
+      !   ENDIF
+      !   PRINT *, "dvol array (i): ", DVOL_R_ARRAY(i)
+      !   CALL PELLET_RK4(DVOL_R_ARRAY(i),dt, &
+      !                 t,rp,teold,denold, &
+      !                 srcp,iflag,message)
+      !   PRINT *, "srcp: ",srcp
+      !   ! PRINT *, "rp: ", rp
+      !   pden_r(i)=pden_r(i)+srcp
+      !   dennew=den0_r(i)+pden_r(i)
+      !   tenew=(den0_r(i)*te0_r(i)-pden_r(i)*z_eion_pl/1.5)/dennew
+      ! ! PRINT *, "srcp: ", srcp
+      ! ENDIF
       ! PRINT *, "dvol = ", dvol_r(i)
-      
-      ! pden_r(i)=pden_r(i)+srcp
-      ! dennew=den0_r(i)+pden_r(i)
-      ! tenew=(den0_r(i)*te0_r(i)-pden_r(i)*z_eion_pl/1.5)/dennew
-      ! PRINT *, "srcp: ", srcp
+      CALL PELLET_RK4(DVOL_R_ARRAY(i),dt, &
+                      t,rp,teold,denold, &
+                      srcp,iflag,message)
+      pden_r(i)=pden_r(i)+srcp
+      dennew=den0_r(i)+pden_r(i)
+      tenew=(den0_r(i)*te0_r(i)-pden_r(i)*z_eion_pl/1.5)/dennew
+      PRINT *, "srcp: ", srcp
       IF(tenew < z_eion_pl) tenew=z_eion_pl
 
       !!Set optional output parameters along path
