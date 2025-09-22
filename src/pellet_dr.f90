@@ -473,6 +473,8 @@ IF(ncsol /= 0) THEN
 
 ENDIF
 
+! PRINT *, "RHO_R Check: ", rho_r
+
 !Interface/mid grid
 rho_rm(1)=0
 
@@ -872,7 +874,7 @@ ALLOCATE(irho_p(6*n), &
   dvol_r_point(:)=0
 
 rho_temp(1,:)=rho_r
-rho_temp(2,:)=3.0*z_pi/4.0
+rho_temp(2,:)=-3.0*z_pi/4.0
 
 ! PRINT *, "rho_r_shifted: ", rho_r_shifted
 ! PRINT *, "r_shifted: ", r_shifted
@@ -883,7 +885,7 @@ ENDDO
 
 rho2r(1:n) = rho2r_temp(1,1:n)
 ! PRINT *, "rho_r: ", rho_r
-! PRINT *, "rho2r: ", rho2r
+PRINT *, "rho2r: ", rho2r
 
 ! PRINT *, "n: ", n
 ! PRINT *, "rho_rm: ", rho_rm
@@ -971,56 +973,72 @@ IF(iflag /= 0) THEN
 
 ENDIF
 
+! IF (PRESENT(K_DRIFT)) THEN
+IF (K_DRIFT .NE. 0) THEN
+
+  IF (K_DRIFT == 2) THEN
+
+    CALL BAYLOR_DRIFT(bt0,25.0e3,3.5e3,r_pel*1.0e1,11.57, &
+                        Del_drift)
+    ! Del_drift = Del_drift * (0.5 * 0.538)
+    ! PRINT *, "q_r: ", q_x
+
+  ENDIF
+
+  IF (K_DRIFT == 3) THEN
+
 ! PRINT *, "v_pel, r_pel, den_r(1),te_r(1),ALPHA,LAM,A0,R0,BT0,KAPPA,Del_drift: "
 ! PRINT *, v_pel,r_pel*1.0e3,den_r(1)*1.0e-19,te_r(1),ALPHA,LAM,A0,R0,BT0,KAPPA,Del_drift
 
-! CALL HPI2_DRIFT(v_pel,r_pel*1.0e3,den_r(1)*1.0e-19,te_r(1),ALPHA,LAM, &
-!                 a0,r0,bt0,KAPPA,Del_drift)
+    CALL HPI2_DRIFT(v_pel,r_pel*1.0e3,den_r(1)*1.0e-19,te_r(1),ALPHA,LAM, &
+                    a0,r0,bt0,KAPPA,Del_drift)
 
 ! PRINT *, "q1: ", q1
-! PRINT *, "q_r: ", q_x
 
-! CALL BAYLOR_DRIFT(bt0,te_r(1),te_r(1),r_pel*1.0e1,5.7, &
-!                         Del_drift)
 
-! DO ii=1,n
-!   IF (pden_r(ii).NE.0) EXIT
-! ENDDO
+  ENDIF
 
-! PRINT *, "Index: ", ii
-! PRINT *, "rho(ii): ", rho_r(ii)
-! PRINT *, "R(ii): ", rho2r(ii)
-! PRINT *, "DeltaR: ", Del_drift 
+  DO ii=1,n
+    IF (pden_r(ii).NE.0) EXIT
+  ENDDO
 
-! rhor_check = rho2r(ii) + Del_drift
+  PRINT *, "Index: ", ii
+  PRINT *, "rho(ii): ", rho_r(ii)
+  PRINT *, "R(ii): ", rho2r(ii)
+  PRINT *, "DeltaR: ", Del_drift 
 
-! PRINT *, "R_new: ", rhor_check
-! PRINT *, "rho2r: ", rho2r 
+  rhor_check = rho2r(ii) + Del_drift
 
-! DO jj=1,n
-!   IF (rho2r(jj)<rhor_check) EXIT
-! ENDDO
+  PRINT *, "R_new: ", rhor_check
+  PRINT *, "rho2r: ", rho2r 
 
-! PRINT *, "Index new: ", jj
-! PRINT *, "rho2r new: ", rho2r(jj)
-! PRINT *, "rho_r new: ", rho_r(jj)
+  DO jj=1,n
+    IF (rho2r(jj)<rhor_check) EXIT
+  ENDDO
 
-! rho_r_map(ncplas:n) = rho_r(ncplas:n)
+  PRINT *, "Index new: ", jj
+  PRINT *, "rho2r new: ", rho2r(jj)
+  PRINT *, "rho_r new: ", rho_r(jj)
 
-! DO kk=jj,ncplas
-!   rho_r_map(kk) = rho_r(ncplas) + ((rho_r(kk) - rho_r(ncplas))/(rho_r(jj) - rho_r(ncplas)))*(rho_r(ii) - rho_r(ncplas))
-! ENDDO
+  rho_r_map(ncplas:n) = rho_r(ncplas:n)
 
-! PRINT *, "Rho mapped: ", rho_r_map
+  DO kk=jj,ncplas
+    rho_r_map(kk) = rho_r(ncplas) + ((rho_r(kk) - rho_r(ncplas))/(rho_r(jj) - rho_r(ncplas)))*(rho_r(ii) - rho_r(ncplas))
+  ENDDO
 
-! CALL LINEAR1_INTERP(ncplas,rho_r,pden_r,ncplas-jj+1,rho_r_map(jj:ncplas),pden_r_shifted(jj:ncplas),iflag,message)
+  PRINT *, "Rho mapped: ", rho_r_map
 
-! pden_r_shifted(:) = (rho_r(ii) - rho_r(ncplas)) / (rho_r(jj) - rho_r(ncplas))*pden_r_shifted(:)
+  CALL LINEAR1_INTERP(ncplas,rho_r,pden_r,ncplas-jj+1,rho_r_map(jj:ncplas),pden_r_shifted(jj:ncplas),iflag,message)
 
-! PRINT *, "dvol_r: ", dvol_r
-! PRINT *, "Old density: ", pden_r
-! PRINT *, "Shifted density: ", pden_r_shifted
-! PRINT *, "rho_r: ", rho_r
+  pden_r_shifted(:) = (rho_r(ii) - rho_r(ncplas)) / (rho_r(jj) - rho_r(ncplas))*pden_r_shifted(:)
+
+  PRINT *, "dvol_r: ", dvol_r
+  PRINT *, "Old density: ", pden_r
+  PRINT *, "Shifted density: ", pden_r_shifted
+  PRINT *, "rho_r: ", rho_r
+
+ENDIF
+! ENDIF
 
 !-------------------------------------------------------------------------------
 !Fractional radius and volume penetrated
@@ -1421,6 +1439,12 @@ valpro(:,npro)=den_r(:)+pden_r(:)
 ! write(10,*) den_r(:)+pden_r(:)
 ! close (10)
 
+npro=npro+1
+namepro(npro)='ne_d(tpel+)'
+unitpro(npro)='/m**3'
+descpro(npro)='Final electron density (drift)'
+valpro(:,npro)=den_r(:)+pden_r_shifted(:)
+
 !PRL Deposition
 if (k_prl > 0) then
     npro=npro+1
@@ -1801,7 +1825,7 @@ rm2_r(:)=0
 !-------------------------------------------------------------------------------
 !Get EFIT data
 !-------------------------------------------------------------------------------
-CALL READ_EFIT_EQDSK(nin,cnin,mxnx_xy,mxny_xy,mxn_lim,mxn_bdry, &
+CALL READ_EFIT_EQDSK(nin,cnin,mxnx_xy,mxny_xy,mxn_lim, &
                      bt0,cur,psimag,psilim,r0,rmag,zmag, &
                      nx_xy,ny_xy,x_xy,y_xy,psi_xy, &
                      f_x,ffp_x,psi_x,q_x,rhop_x, &
@@ -1863,6 +1887,8 @@ d1=triang_r(nr_r)
 q0=q_r(1)
 q1=q_r(nr_r)
 
+PRINT *, "q_r: ", q_r
+
 ! PRINT *, "rho_rm: ", rho_rm 
 ! PRINT *, "r0: ", r0 
 ! PRINT *, "a0: ", a0 
@@ -1899,7 +1925,7 @@ q_r(1:nr_r)=q_r(1:nr_r)*SIGN(1.0_rspec,bpout_r(nr_r)*btout_r(nr_r))
 
 END SUBROUTINE PELLET_EFIT
 
-SUBROUTINE READ_EFIT_EQDSK(nin,cnin,mxnx_xy,mxny_xy,mxn_lim,mxn_bdry, &
+SUBROUTINE READ_EFIT_EQDSK(nin,cnin,mxnx_xy,mxny_xy,mxn_lim, &
                            bt0,cur,psimag,psilim,r0,rmag,zmag, &
                            nx_xy,ny_xy,x_xy,y_xy,psi_xy, &
                            f_x,ffp_x,psi_x,q_x,rhop_x, &
@@ -1928,7 +1954,6 @@ INTEGER,INTENT(IN) :: &
   mxnx_xy,             & !maximum number of x points on psi(x,y) grid [-]
   mxny_xy,             & !maximum number of y points on psi(x,y) grid [-]
   mxn_lim,             & !maximum number of points on limiter surface [-]
-  mxn_bdry,            & !maximum number of points on boundary [-]
   nin                    !input unit number [-]
 
 !Declaration of output variables
@@ -1977,8 +2002,8 @@ REAL(KIND=rspec) :: &
   zmid,                & !vertical center of comoputational domain [m]
   rdim,                & !width of computational domain [m]
   zdim,                & !height of computational domain [m]
-  x_bdry(mxn_bdry),    & !horizontal positions of boundary points [m]
-  y_bdry(mxn_bdry),    & !vertical positions of boundary points [m]
+  x_bdry,              & !horizontal positions of boundary points [m]
+  y_bdry,              & !vertical positions of boundary points [m]
   p_x(mxnx_xy),        & !plasma kinetic pressure [N/m**2]
   pp_x(mxnx_xy)          !dp/dpsi on equilibrium psi grid [rad*N/m**2/Wb]
 
@@ -2089,7 +2114,7 @@ ENDIF
 
 ! PRINT *, "x_bdry before read: ", x_bdry
 
-READ(nin,'(5e16.9)') (x_bdry(i),y_bdry(i),i=1,n_bdry)
+READ(nin,'(5e16.9)') (x_bdry,y_bdry,i=1,n_bdry)
 READ(nin,'(5e16.9)') (x_lim(i),y_lim(i),i=1,n_lim)
 
 ! PRINT *, "x_lim: ", x_lim
