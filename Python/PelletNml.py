@@ -27,7 +27,7 @@ input_list = ['cn_runid', 'cn_eq', 'cn_prof', 'cn_device', 'k_equil', 'k_pel', '
               'den1', 'px_den', 'qx_den', 'rl_den', 'rvert', 'zhorz', 'pb', 'px_hb',
               'qx_hb', 'amu_b', 'eb0', 'amu_i', 'dn01', 'rl_dn0', 'pa', 'px_ha',
               'qx_ha', 'k_ped', 'k_prl', 'nprlcld', 'prlinjang', 'pedwid', 'pedte',
-              'prlq0', 'prlqa', 'prlqf', 'fpelprl', 'iprlcld']
+              'prlq0', 'prlqa', 'prlqf', 'fpelprl', 'iprlcld','k_drift','alpha','kappa','lam']
 
 # ----------------------------------------------------------------------
 
