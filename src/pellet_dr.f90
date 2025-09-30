@@ -177,7 +177,7 @@ INTEGER, PARAMETER :: &
 REAL(KIND=rspec) :: &
   drp,drso,frpen,fvpen,hnorm,pel_ions,ptemp,q1,raxis,rpen,rsoff,rtot, &
   rdum(5),r_flx(3),r_cyl(3),rseg_c(3,2),volp,volpen,dndlv(4,5),dndlh(4,5), &
-  timndl(4)
+  timndl(4),vR,vZ,alph,dvR,dvZ
 
 REAL(KIND=rspec), ALLOCATABLE :: &
   cur_rm(:),den_r(:),dvol_r(:),pden_r(:),rho_r(:),rho_rm(:),te_r(:), &
@@ -186,7 +186,8 @@ REAL(KIND=rspec), ALLOCATABLE :: &
   t_p(:),s_p(:),te0_p(:),te1_p(:),den0_p(:),den1_p(:),rpel1_p(:), &
   src_p(:),rcyl_p(:,:),rflx_p(:,:),rho2r_temp(:,:),rho_temp(:,:),rho2r(:), &
   s_c(:), pedte1(:), pedte2(:), pedne1(:), pedne2(:), prlq_r(:), prldep(:), &
-  r_shifted(:,:),rho_r_shifted(:,:),dvol_r_point(:),rho_r_map(:),pden_r_shifted(:)
+  r_shifted(:,:),rho_r_shifted(:,:),dvol_r_point(:),rho_r_map(:),pden_r_shifted(:), &
+  Rtraj(:),Ztraj(:),R2rho(:,:),Z2phi(:,:),conv_check(:,:),flx_check(:),cyl_check(:)
 
 !Physical constants, mathematical constants, conversion factors
 REAL(KIND=rspec), PARAMETER :: &
@@ -321,6 +322,11 @@ c_0_bar=0
 Psi_int=0
 DelR=0
 rhor_check=0
+vR=0
+vZ=0
+alph=0
+dvR=0
+dvZ=0
 
 !-------------------------------------------------------------------------------
 !Set the input namelist unit, open, read and close file
@@ -852,7 +858,14 @@ ALLOCATE(irho_p(6*n), &
          rho_r_shifted(3,n), &
          dvol_r_point(n), &
          rcyl_p(3,6*n), &
-         rflx_p(3,6*n))
+         rflx_p(3,6*n), &
+         Rtraj(n), &
+         Ztraj(n), &
+         R2rho(3,n), &
+         Z2phi(3,n), &
+         conv_check(3,n), &
+         flx_check(3), &
+         cyl_check(3))
 
   irho_p(:)=0
   izone_p(:)=0
@@ -872,9 +885,16 @@ ALLOCATE(irho_p(6*n), &
   r_shifted(:,:)=0
   rho_r_shifted(:,:)=0
   dvol_r_point(:)=0
+  Rtraj(:)=0
+  Ztraj(:)=0
+  R2rho(:,:)=0
+  Z2phi(:,:)=0
+  conv_check(:,:)=0
+  flx_check(:)=0
+  cyl_check(:)=0
 
 rho_temp(1,:)=rho_r
-rho_temp(2,:)=-3.0*z_pi/4.0
+rho_temp(2,:)=-0.75*z_pi
 
 ! PRINT *, "rho_r_shifted: ", rho_r_shifted
 ! PRINT *, "r_shifted: ", r_shifted
@@ -891,6 +911,38 @@ PRINT *, "rho2r: ", rho2r
 ! PRINT *, "rho_rm: ", rho_rm
 ! PRINT *, "rseg_p: ", rseg_p
 
+vR = rseg_p(1,2) - rseg_p(1,1)
+vZ = rseg_p(3,2) - rseg_p(3,1)
+alph = ATAN2(vZ,vR)
+PRINT *, "vR, vZ: ", vR, vZ
+PRINT *, "alpha test: ", alph
+
+dvR = vR/(n-1)
+dvZ = vZ/(n-1)
+
+Rtraj(1) = rseg_p(1,1)
+Ztraj(1) = rseg_p(3,1)
+
+DO ii=2,n
+  Rtraj(ii)=Rtraj(ii-1) + dvR
+  Ztraj(ii)=Ztraj(ii-1) + dvZ
+ENDDO
+
+PRINT *, "Rtraj: ", Rtraj
+PRINT *, "Ztraj: ", Ztraj
+
+R2rho(1,:) = Rtraj
+R2rho(3,:) = Ztraj
+
+DO ii=1,(n)
+  CALL AJAX_CYL2FLX(R2rho(1:3,ii),Z2phi(1:3,ii),iflag,message)
+ENDDO
+
+PRINT *, "CYL (R): ", R2rho(1,:)
+PRINT *, "CYL (Z): ", R2rho(3,:)
+PRINT *, "FLX (rho): ", Z2phi(1,:)
+PRINT *, "FLX (phi): ", Z2phi(2,:)
+
 !Get pellet path
 CALL TRACK(n,rho_rm,2,rseg_p, &
            n_p,irho_p,s_p,iflag,message, &
@@ -900,6 +952,11 @@ CALL TRACK(n,rho_rm,2,rseg_p, &
            RFLX_INT=rflx_p)
 
 PRINT *, "Finished TRACK."
+
+PRINT *, "rcyl_p (R): ", rcyl_p(1,:)
+PRINT *, "rcyl_p (Z): ", rcyl_p(3,:)
+PRINT *, "rflx_p (rho): ", rflx_p(1,:)
+PRINT *, "rflx_p (phi): ", rflx_p(2,:)
 
 ! PRINT *, "n, nc, n_p:", n, nc, n_p
 
@@ -1004,13 +1061,31 @@ IF (K_DRIFT .NE. 0) THEN
 
   PRINT *, "Index: ", ii
   PRINT *, "rho(ii): ", rho_r(ii)
+  PRINT *, "Rcyl(ii): ", rcyl_p(1,ncplas-2-ii)
   PRINT *, "R(ii): ", rho2r(ii)
   PRINT *, "DeltaR: ", Del_drift 
 
+  CALL LINEAR1_INTERP(n,rflx_p(1,n:1:-1),rcyl_p(1,n:1:-1),n,rho_r(n:1:-1),conv_check(1,n:1:-1),iflag,message)
+
+  ! rhor_check = conv_check(1,ii) + Del_drift
   rhor_check = rho2r(ii) + Del_drift
+
+  PRINT *, "Interp R: ", conv_check(1,ii)
+
+  CALL LINEAR1_INTERP(n,rcyl_p(1,:),rcyl_p(3,:),n,conv_check(1,n:1:-1),conv_check(3,n:1:-1),iflag,message)
+
+  PRINT *, "Interp Z: ", conv_check(3,ii)
 
   PRINT *, "R_new: ", rhor_check
   PRINT *, "rho2r: ", rho2r 
+
+  cyl_check(1) = rhor_check
+  cyl_check(3) = conv_check(3,ii)
+
+  CALL AJAX_CYL2FLX(cyl_check,flx_check,iflag,message)
+
+  PRINT *, "CYL_NEW: ", cyl_check
+  PRINT *, "FLX_NEW: ", flx_check
 
   DO jj=1,n
     IF (rho2r(jj)<rhor_check) EXIT
@@ -1024,6 +1099,7 @@ IF (K_DRIFT .NE. 0) THEN
 
   DO kk=jj,ncplas
     rho_r_map(kk) = rho_r(ncplas) + ((rho_r(kk) - rho_r(ncplas))/(rho_r(jj) - rho_r(ncplas)))*(rho_r(ii) - rho_r(ncplas))
+    ! rho_r_map(kk) = rho2r(ncplas) + ((rho2r(kk) - rho2r(ncplas))/(rho2r(jj) - rho2r(ncplas)))*(rho2r(ii) - rho_r(ncplas))
   ENDDO
 
   PRINT *, "Rho mapped: ", rho_r_map
@@ -1315,11 +1391,35 @@ descpro(npro)='Normalized toroidal flux grid - ' &
               //'proportional to square root toroidal flux'
 valpro(:,npro)=rho_r(:)
 
+! npro=npro+1
+! namepro(npro)='r_grid'
+! unitpro(npro)='-'
+! descpro(npro)='Radial grid'
+! valpro(:,npro)=rho2r(:)
+
+! npro=npro+1
+! namepro(npro)='R'
+! unitpro(npro)='[m]'
+! descpro(npro)='Radial grid'
+! valpro(:,npro)=R2rho(1,:)
+
+! npro=npro+1
+! namepro(npro)='Z'
+! unitpro(npro)='[m]'
+! descpro(npro)='Vertical grid'
+! valpro(:,npro)=R2rho(3,:)
+
 npro=npro+1
-namepro(npro)='r_grid'
-unitpro(npro)='-'
-descpro(npro)='Radial grid'
-valpro(:,npro)=rho2r(:)
+namepro(npro)='rho'
+unitpro(npro)='[-]'
+descpro(npro)='Trajectory rho grid'
+valpro(:,npro)=Z2phi(1,:)
+
+npro=npro+1
+namepro(npro)='phi'
+unitpro(npro)='[-]'
+descpro(npro)='Trajectory phi grid'
+valpro(:,npro)=Z2phi(2,:)
 
 !Geometry
 npro=npro+1
@@ -1876,7 +1976,7 @@ IF(iflag /= 0) THEN
 
 ENDIF
 
-! PRINT *, "Generated metrics from EFIT."
+! PRINT *, "phit_r: ", phit_r
 
 !Set 0-D quantities
 r0=(rout_r(nr_r)+rin_r(nr_r))/2
