@@ -168,7 +168,7 @@ INTEGER :: &
 INTEGER, ALLOCATABLE :: &
   irho_c(:),izone_c(:), &
   irho_p(:),izone_p(:), &
-  iz_f(:),ne_f(:)
+  iz_f(:),ne_f(:),idxMin(:)
 
 INTEGER, PARAMETER :: &
   nbg=17, &
@@ -913,7 +913,7 @@ PRINT *, "rho2r: ", rho2r
 
 vR = rseg_p(1,2) - rseg_p(1,1)
 vZ = rseg_p(3,2) - rseg_p(3,1)
-alph = ATAN2(vZ,vR)
+alpha = ATAN2(vZ,vR)
 PRINT *, "vR, vZ: ", vR, vZ
 PRINT *, "alpha test: ", alph
 
@@ -953,10 +953,29 @@ CALL TRACK(n,rho_rm,2,rseg_p, &
 
 PRINT *, "Finished TRACK."
 
+! ii=0
+
+ALLOCATE(idxMin(1))
+idxMin(:)=0
+
 PRINT *, "rcyl_p (R): ", rcyl_p(1,:)
 PRINT *, "rcyl_p (Z): ", rcyl_p(3,:)
-PRINT *, "rflx_p (rho): ", rflx_p(1,:)
+PRINT *, "rflx_p (rho): ", rflx_p(1,1:n_p)
 PRINT *, "rflx_p (phi): ", rflx_p(2,:)
+
+PRINT *, "Min flux coord in trajectory: ", MINVAL(rflx_p(1,1:n_p))
+idxMin = MINLOC(rflx_p(1,1:n_p))
+PRINT *, "Min coords at index: " 
+PRINT *, "R: ", rcyl_p(1,idxMin)
+PRINT *, "Z: ", rcyl_p(3,idxMin)
+PRINT *, "rho: ", rflx_p(1,idxMin)
+PRINT *, "phi: ", rflx_p(2,idxMin)
+
+lam = rflx_p(1,idxMin(1))
+
+PRINT *, "alpha, lamda, kappa: ", alpha, lam, e1
+
+! ii=0
 
 ! PRINT *, "n, nc, n_p:", n, nc, n_p
 
@@ -1055,63 +1074,70 @@ IF (K_DRIFT .NE. 0) THEN
 
   ENDIF
 
-  DO ii=1,n
-    IF (pden_r(ii).NE.0) EXIT
-  ENDDO
+  CALL APPLY_DRIFTS(ncplas,n,rho_r,rcyl_p,rflx_p,pden_r,Del_drift,pden_r_shifted,message,iflag)
 
-  PRINT *, "Index: ", ii
-  PRINT *, "rho(ii): ", rho_r(ii)
-  PRINT *, "Rcyl(ii): ", rcyl_p(1,ncplas-2-ii)
-  PRINT *, "R(ii): ", rho2r(ii)
-  PRINT *, "DeltaR: ", Del_drift 
+  ! ! DO ii=1,n
+  ! !   IF (pden_r(ii).NE.0) EXIT
+  ! ! ENDDO
 
-  CALL LINEAR1_INTERP(n,rflx_p(1,n:1:-1),rcyl_p(1,n:1:-1),n,rho_r(n:1:-1),conv_check(1,n:1:-1),iflag,message)
+  ! PRINT *, "Index: ", ii
+  ! PRINT *, "rho(ii): ", rho_r(ii)
+  ! PRINT *, "Rflx(ii): ", rflx_p(1,ncplas-ii-1)
+  ! PRINT *, "Rcyl(ii): ", rcyl_p(1,ncplas-ii-1)
+  ! ! PRINT *, "R(ii): ", rho2r(ii)
+  ! PRINT *, "DeltaR: ", Del_drift 
+
+  ! ! CALL LINEAR1_INTERP(n,rflx_p(1,n:1:-1),rcyl_p(1,n:1:-1),n,rho_r(n:1:-1),conv_check(1,n:1:-1),iflag,message)
+  ! ! CALL LINEAR1_INTERP(2,rflx_p(1,n:1:-1),rcyl_p(1,n:1:-1),n,rho_r(n:1:-1),conv_check(1,n:1:-1),iflag,message)
 
   ! rhor_check = conv_check(1,ii) + Del_drift
-  rhor_check = rho2r(ii) + Del_drift
+  ! ! rhor_check = rho2r(ii) + Del_drift
 
-  PRINT *, "Interp R: ", conv_check(1,ii)
+  ! PRINT *, "Interp R: ", conv_check(1,ii)
 
-  CALL LINEAR1_INTERP(n,rcyl_p(1,:),rcyl_p(3,:),n,conv_check(1,n:1:-1),conv_check(3,n:1:-1),iflag,message)
+  ! CALL LINEAR1_INTERP(n,rcyl_p(1,:),rcyl_p(3,:),n,conv_check(1,n:1:-1),conv_check(3,n:1:-1),iflag,message)
 
-  PRINT *, "Interp Z: ", conv_check(3,ii)
+  ! PRINT *, "Interp Z: ", conv_check(3,ii)
 
-  PRINT *, "R_new: ", rhor_check
-  PRINT *, "rho2r: ", rho2r 
+  ! PRINT *, "R_new: ", rhor_check
+  ! PRINT *, "rho2r: ", rho2r 
 
-  cyl_check(1) = rhor_check
-  cyl_check(3) = conv_check(3,ii)
+  ! cyl_check(1) = rhor_check
+  ! cyl_check(3) = conv_check(3,ii)
 
-  CALL AJAX_CYL2FLX(cyl_check,flx_check,iflag,message)
+  ! CALL AJAX_CYL2FLX(cyl_check,flx_check,iflag,message)
 
-  PRINT *, "CYL_NEW: ", cyl_check
-  PRINT *, "FLX_NEW: ", flx_check
+  ! PRINT *, "CYL_NEW: ", cyl_check
+  ! PRINT *, "FLX_NEW: ", flx_check
+  ! PRINT *, "RHO NEW: ", flx_check(1)
+  ! PRINT *, "rho_r: ", rho_r
 
-  DO jj=1,n
-    IF (rho2r(jj)<rhor_check) EXIT
-  ENDDO
+  ! DO jj=1,n
+  !   ! IF (rho2r(jj)<rhor_check) EXIT
+  !   IF (rho_r(jj)>flx_check(1)) EXIT
+  ! ENDDO
 
-  PRINT *, "Index new: ", jj
-  PRINT *, "rho2r new: ", rho2r(jj)
-  PRINT *, "rho_r new: ", rho_r(jj)
+  ! PRINT *, "Index new: ", jj
+  ! PRINT *, "rho2r new: ", rho2r(jj)
+  ! PRINT *, "rho_r new: ", rho_r(jj)
 
-  rho_r_map(ncplas:n) = rho_r(ncplas:n)
+  ! rho_r_map(ncplas:n) = rho_r(ncplas:n)
 
-  DO kk=jj,ncplas
-    rho_r_map(kk) = rho_r(ncplas) + ((rho_r(kk) - rho_r(ncplas))/(rho_r(jj) - rho_r(ncplas)))*(rho_r(ii) - rho_r(ncplas))
-    ! rho_r_map(kk) = rho2r(ncplas) + ((rho2r(kk) - rho2r(ncplas))/(rho2r(jj) - rho2r(ncplas)))*(rho2r(ii) - rho_r(ncplas))
-  ENDDO
+  ! DO kk=jj,ncplas
+  !   rho_r_map(kk) = rho_r(ncplas) + ((rho_r(kk) - rho_r(ncplas))/(rho_r(jj) - rho_r(ncplas)))*(rho_r(ii) - rho_r(ncplas))
+  !   ! rho_r_map(kk) = rho2r(ncplas) + ((rho2r(kk) - rho2r(ncplas))/(rho2r(jj) - rho2r(ncplas)))*(rho2r(ii) - rho_r(ncplas))
+  ! ENDDO
 
-  PRINT *, "Rho mapped: ", rho_r_map
+  ! PRINT *, "Rho mapped: ", rho_r_map
 
-  CALL LINEAR1_INTERP(ncplas,rho_r,pden_r,ncplas-jj+1,rho_r_map(jj:ncplas),pden_r_shifted(jj:ncplas),iflag,message)
+  ! CALL LINEAR1_INTERP(ncplas,rho_r,pden_r,ncplas-jj+1,rho_r_map(jj:ncplas),pden_r_shifted(jj:ncplas),iflag,message)
 
-  pden_r_shifted(:) = (rho_r(ii) - rho_r(ncplas)) / (rho_r(jj) - rho_r(ncplas))*pden_r_shifted(:)
+  ! pden_r_shifted(:) = (rho_r(ii) - rho_r(ncplas)) / (rho_r(jj) - rho_r(ncplas))*pden_r_shifted(:)
 
-  PRINT *, "dvol_r: ", dvol_r
-  PRINT *, "Old density: ", pden_r
-  PRINT *, "Shifted density: ", pden_r_shifted
-  PRINT *, "rho_r: ", rho_r
+  ! PRINT *, "dvol_r: ", dvol_r
+  ! PRINT *, "Old density: ", pden_r
+  ! PRINT *, "Shifted density: ", pden_r_shifted
+  ! PRINT *, "rho_r: ", rho_r
 
 ENDIF
 ! ENDIF
