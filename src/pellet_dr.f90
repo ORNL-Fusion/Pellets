@@ -139,9 +139,10 @@ REAL(KIND=rspec) :: &
   Del_drift,           &
   rhor_check,          &
   prlqf                  !PRL q profile exponent q(r) = (qa-q0) + q0*(1-(r/a)^qf)
-!
-!
-!
+
+LOGICAL :: &
+  output                 ! .true. : will write print statements to output file
+                         ! .false.: no additional (debug) print statements
 
 
 !-------------------------------------------------------------------------------
@@ -150,7 +151,7 @@ LOGICAL :: &
   l_fa,l_fb(3)
 
 CHARACTER(len=45) :: &
-  cn_msg,cn_sum,cn_tmp
+  cn_msg,cn_sum,cn_tmp,cn_out
 
 CHARACTER(len=120) :: &
   label,message
@@ -159,7 +160,7 @@ CHARACTER(len=1) :: &
   cb
 
 INTEGER :: &
-  n_msg,n_sum,n_tmp
+  n_msg,n_sum,n_tmp,n_out
 
 INTEGER :: &
   i,i0,idum(5),ii,j,jj,kk,n,n_c,n_p,nc,nefmax,nf,iflag, &
@@ -228,8 +229,8 @@ NAMELIST/indata/cn_eq,cn_prof, cn_runid, cn_device, &
                 rvert,zhorz, &
                 pb,px_hb,qx_hb,amu_b,eb0,amu_i,dn01,rl_dn0, &
                 pa,px_ha,qx_ha, k_prl, nprlcld, iprlcld, &
-				pedte, pedne, pedwid, k_ped, fpelprl, prlinjang, prlq0, prlqa, prlqf, &
-                k_drift, alpha, kappa, lam 
+				        pedte, pedne, pedwid, k_ped, fpelprl, prlinjang, prlq0, prlqa, prlqf, &
+                k_drift, alpha, kappa, lam, output 
                
 
 !-------------------------------------------------------------------------------
@@ -313,6 +314,9 @@ prlqf=0
 alpha=0
 kappa=0
 lam=0
+output=.true.
+
+
 beta_inf=0
 cA_inf=0
 kap_c=0
@@ -347,9 +351,17 @@ READ(n_tmp,indata)
 ! PRINT *, "exit: ", rseg_p(1:3,2)
 ! PRINT *, "dsol: ", dsol
 
-alpha = alpha*z_pi
-
 CLOSE(UNIT=n_tmp)
+
+IF(output) THEN
+  n_out = 17
+  cn_out = 'pellet.out'
+  OPEN(UNIT=n_out, &
+      FILE=cn_out, &
+      STATUS='unknown', &
+      FORM='formatted')
+ENDIF
+
 
 !-------------------------------------------------------------------------------
 !Open output files
@@ -571,6 +583,25 @@ ELSEIF(k_equil == 2) THEN
                    r0,a0,bt0,s0,e0,e1,d1,q0,q1,iflag,message)
 
   CLOSE(UNIT=n_tmp)
+
+  IF(output) THEN
+    WRITE(n_out,*) "*******************************************************************************"
+    WRITE(n_out,*) "* PARAMETERS READ FROM EQDSK FILE                                             *"
+    WRITE(n_out,*) "*******************************************************************************"
+    WRITE(n_out,*) "Read from                 : ", cn_eq
+    WRITE(n_out,*) "Major radius r0           : ", r0
+    WRITE(n_out,*) "Minor radius a0           : ", a0
+    WRITE(n_out,*) "Toroidal B field bt0      : ", bt0
+    WRITE(n_out,*) "Axis shift s0             : ", s0
+    WRITE(n_out,*) "Elongation at axis e0     : ", e0
+    WRITE(n_out,*) "Elongation at edge e1     : ", e1
+    WRITE(n_out,*) "Triangularity at edge d1  : ", d1
+    WRITE(n_out,*) "Safety factor at axis q0  : ", q0
+    WRITE(n_out,*) "Safety factor at edge q1  : ", q1
+    WRITE(n_out,*) "*******************************************************************************"
+    WRITE(n_out,*) "*-----------------------------------------------------------------------------*"
+    WRITE(n_out,*) "*******************************************************************************"
+  ENDIF
 
   ! PRINT *, "rho_rm: ", rho_rm 
   ! PRINT *, "r0: ", r0 
