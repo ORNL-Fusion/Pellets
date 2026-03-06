@@ -253,6 +253,8 @@ real(kind=rspec), intent(out) :: &
   DelR 
 
 DelR = B**(-0.15)*Te0**(-0.13)*Teped**(0.5)*r_pel**(0.76)*qa**(-0.15)
+! PRINT *, "Drift terms: B^-0.15; Te0^-0.13; Teped^0.5; r_pel^0.76; qa^-0.15"
+! PRINT *, B**(-0.15), Te0**(-0.13), Teped**(0.5), r_pel**(0.76), qa**(-0.15)
 
 ! open (unit=10,file="baylor_2007_test.txt",action="write")
 ! write(10,*) DelR
@@ -345,9 +347,11 @@ Del_drift = C1*((v_p/100)**C2)*(r_p**C3)*(ne0**C4) &
 
 END SUBROUTINE
 
-SUBROUTINE APPLY_DRIFTS(ncplas,n,rho_r,rcyl_p,rflx_p,pden_r,drift,pden_r_shifted,message,iflag)
+SUBROUTINE APPLY_DRIFTS(k_drift,ncplas,n,rho_r,rcyl_p,rflx_p,pden_r,drift,pden_r_shifted,message,iflag)
 
 INTEGER, INTENT(IN) :: &
+  k_drift,             &
+  !> flag for which drift scale used
   ncplas,              &
   !> number of points in plasma
   n
@@ -413,6 +417,7 @@ pden_r_shifted(:)=0
 DO ii=1,n
   IF (pden_r(ii).NE.0) EXIT
 ENDDO
+
 !> Find the first value of dne (density change) =/= 0...
 !> This will be the deposition depth.
 
@@ -423,8 +428,14 @@ CALL LINEAR1_INTERP(n,rflx_p(1,n:1:-1),rcyl_p(1,n:1:-1),n,rho_r(n:1:-1),interp_c
 
 PRINT *, "R(ii): ", interp_cyl(1,ii)
 
-new_R = interp_cyl(1,ii) + drift
+IF(k_drift==2) THEN
+  new_R = interp_cyl(1,ii) + drift
+ELSEIF(k_drift==3) THEN
+  new_R = interp_cyl(1,ii) + drift
+ENDIF
 !> Add the drift distance to R
+
+PRINT *, "Del R: ", drift
 
 PRINT *, "Rnew: ", new_R
 
