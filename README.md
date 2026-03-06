@@ -5,7 +5,7 @@ PELLET uses 0D ablation models to calculate the pellet ablation rate, and can tr
 
 
 > [!NOTE]
-> Active development of the PELLET code to include drift terms has moved to the branch `feature/include-gradb-drifts`
+> The `rlb-dev` branch will no longer be updated. Active development of the PELLET code to include drift terms (the purpose of the original branch) has moved to the branch `feature/include-gradb-drifts`
 
 ## STRUCTURE
 
