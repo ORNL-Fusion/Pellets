@@ -106,6 +106,8 @@ ELSE
                      VP_R=v2)
   phitot=r0*bt0/4/z_pi*rho(n_rho)*v1(n_rho)*v2(n_rho)
 
+  ! PRINT *, "phitot: ", phitot
+
   !Check messages
   IF(iflag > 0) THEN
 
