@@ -330,10 +330,6 @@ ELSEIF(amup_pl >= 9.0 .AND. &
 ENDIF
 
 
-! PRINT *, "denm_pl = ", denm_pl
-
-
-
 !!Internal data differing from default
 IF(k_pel_pl == 0) THEN
 
@@ -488,14 +484,10 @@ IF(PRESENT(TE1_P)) TE1_P(:)=0
 !!Set private pellet parameters for normalizations
 rhosrp0_pl=(2*amup_pl*z_protonmass*denm_pl)*rpel_pl
 
-! PRINT *, "rhosrp0_pl: ", rhosrp0_pl
-
 !!Initialize parameters at beginning of pellet trajectory
 t=0
 rp=rpel_pl
 xrhoro_pl=0
-
-! PRINT *, "rp: ", rp
 
 IF(PRESENT(K_DRIFT)) THEN
   ALLOCATE(R_SHIFTED(3,n_r+1), &
@@ -508,7 +500,6 @@ ENDIF
 
 
 PRINT *, "Shifted arrays initialised."
-
 
 
 IF(PRESENT(NPRLCLD)) THEN
@@ -526,7 +517,6 @@ ENDIF
 !!Optional output
 IF(PRESENT(PEL_IONS)) PEL_IONS=4*z_pi/3*rpel_pl**3*(2*denm_pl)
 
-! PRINT *, "CHECK DVOL_R: ", dvol_r
 
 !!-------------------------------------------------------------------------------
 !!Follow the pellet path and determine the ablation rate
@@ -537,21 +527,11 @@ l_inside=.FALSE.
 !!Flag to indicate whether pellet has entered and exited plasma
 l_inout=.FALSE.
 
-! PRINT *, "map_p: ", map_p
-! PRINT *, "n_p: ", n_p
-
 DO l=1,n_p
-
-  ! PRINT *, "Counter (l): ", l
-  ! PRINT *, "map_p: ", map_p
-  ! PRINT *, "rp: ", rp
-  ! PRINT *, "rpel_pl: ", rpel_pl
 
   IF(rp > 1.0e-6*rpel_pl) THEN
 
     i=map_p(l)
-    ! PRINT *, "Counter: ", i
-    ! PRINT *, "RHO2R(i): ", RHO2R(i)
 
     IF(((i <= 0) .OR. (i > n_r)) .AND. &
        (.NOT. l_inside)) THEN
@@ -560,14 +540,11 @@ DO l=1,n_p
       !!Increment parameters for path outside plasma
       dt=(s_p(l+1)-s_p(l))/vpel_pl
       t=t+dt
-      ! PRINT *, "t: ", t
-      ! PRINT *, "dt: ", dt
+
       IF(PRESENT(T_P)) T_P(l)=t
 
     ELSEIF((i > 0 .AND. i <= n_r) .AND. &
            (.NOT. l_inout)) THEN
-
-      ! PRINT *, "Entered ablation calculation."
 
       !!Pellet is inside plasma and never exited
       l_inside=.TRUE.
@@ -583,114 +560,24 @@ DO l=1,n_p
       ENDIF
 
       dt=(s_p(l+1)-s_p(l))/vpel_pl
-      ! PRINT *, "dt: ", dt
-      ! PRINT *, "DVOL_R_ARRAY: ", DVOL_R_ARRAY
       rpold=rp
-      ! PRINT *, "rp_old: ", rpold
-      ! PRINT *, "k_drift: ", K_DRIFT
-      ! PRINT *, "Counter: ", i
-      ! IF (PRESENT(K_DRIFT)) THEN
-      !   IF (.NOT. PRESENT(DVOL_R_POINT)) THEN
-      !     PRINT *, 'ERROR: RHO_R_SHIFTED present but DVOL_R_POINT not passed.'
-      !     RETURN
-      !   ENDIF
-      !   ! PRINT *, "Calculating point based dvol_r..."
-      !   IF (K_DRIFT == 3) THEN
-      !     PRINT *, "Entering drift calculation."
-      !     rp_HPI2 = rp*1.0e3
-      !     ne_HPI2 = den0_r(1)*1.0e-19
-      !     ! PRINT *, "rp_HPI2: ", rp_HPI2
-      !     ! PRINT *, "ne_HPI2: ", ne_HPI2
-      !     ! PRINT *, "vel_pl, rp, den0_r, te0_r, ALPHA, LAM, A0, R0, BT0, KAPPA: "
-      !     ! PRINT *, vpel_pl, rp_HPI2, ne_HPI2, te0_r(1), ALPHA, LAM, A0, R0, BT0, KAPPA
-      !     ! PRINT *, "Entering HPI2 drift calculation..."
-      !     ! PRINT *, "den0_r(1)", den0_r(1)
-      !     ! CALL HPI2_DRIFT(vpel_pl,rp_HPI2,ne_HPI2,te0_r(1),ALPHA,LAM,0.565,1.67,2.2,KAPPA,DEL_DRIFT)
-      !     CALL HPI2_DRIFT(vpel_pl,rp_HPI2,ne_HPI2,te0_r(1),ALPHA,LAM,A0,R0, &
-      !                     BT0,KAPPA,Del_drift)
-      !     PRINT *, "Exited HPI2 drift calculation with Del_drift = ", DEL_DRIFT
-      !     ! PRINT *, "Counter: ", i
-      !     ! PRINT *, "rho(i): ", RHO_RM(i)
-      !     PRINT *, "R: ", RHO2R
-      !     PRINT *, "RHO_R: ", RHO_RM
-      !     R_SHIFTED(1,:) = RHO2R + DEL_DRIFT
-      !     PRINT *, "R_SHIFTED: ", R_SHIFTED(1,:)
-      !     ! DO ii=1,(n_r+1)
-      !     !   CALL AJAX_FLX2CYL(rho_temp(1:3,ii),rho2r_temp(1:3,ii),iflag,message)
-      !     ! ENDDO
-      !     CALL AJAX_CYL2FLX(R_SHIFTED(1:3,i),RHO_R_SHIFTED(1:3,i),iflag,message)
-      !     PRINT *, "RHO_R_SHIFTED: ", RHO_R_SHIFTED(1,:)
-      !     ! RHO_R_SHIFTED = RHO_RM(i) - DEL_DRIFT/A0
-      !     ! PRINT *, "Shifted rho_r value: ", RHO_R_SHIFTED(1)
-      !     ! PRINT *, "del_drift: ", DEL_DRIFT
-      !     ! PRINT *, "rho_r: ", RHO_R
-      !     ! IF (RHO_R_SHIFTED(1) .LE. 1.1) THEN
-      !     !   CALL AJAX_FLUXAV_G_POINT(RHO_R_SHIFTED(:,i), DVOL_R_POINT, iflag, message)
-      !     ! ELSEIF (RHO_R_SHIFTED(1) .GE. 1.1) THEN
-      !     !   CALL AJAX_FLUXAV_G_POINT(RHO_RM(i), DVOL_R_POINT, iflag, message)
-      !     ! ENDIF
-      !     ! PRINT *, "Point dvol value: ", DVOL_R_POINT
-      !     CALL AJAX_FLUXAV_G(n_r+1,RHO_R_SHIFTED(1,:), iflag, message, DVOL_R=DVOL_R_POINT)
-      !     PRINT *, "DVOL_R_POINT(i): ", DVOL_R_POINT(i)
-      !     CALL PELLET_RK4(DVOL_R_POINT(i),dt, &
-      !                 t,rp,teold,denold, &
-      !                 srcp,iflag,message)
-      !     PRINT *, "srcp: ",srcp
-      !     ! pden_r(i)=pden_r(i)+srcp
-      !     IF (srcp .NE. srcp) THEN
-      !       CALL AJAX_FLUXAV_G(n_r+1,RHO_RM, iflag, message, DVOL_R=DVOL_R_POINT)
-      !       CALL PELLET_RK4(DVOL_R_POINT(i),dt, &
-      !                 t,rp,teold,denold, &
-      !                 srcp,iflag,message)
-      !       pden_r(i)=pden_r(i)+srcp
-      !     ELSE
-      !       pden_r(i)=pden_r(i)+srcp
-      !     ENDIF
-      !     dennew=den0_r(i)+pden_r(i)
-      !     tenew=(den0_r(i)*te0_r(i)-pden_r(i)*z_eion_pl/1.5)/dennew
-      !     ! PRINT *, "rp: ", rp
-      !   ENDIF
-      ! ELSEIF (.NOT. PRESENT(K_DRIFT)) THEN
-      !   IF (.NOT. PRESENT(DVOL_R_ARRAY)) THEN
-      !     PRINT *, 'ERROR: DVOL_R_ARRAY not passed.'
-      !     RETURN
-      !   ENDIF
-      !   PRINT *, "dvol array (i): ", DVOL_R_ARRAY(i)
-      !   CALL PELLET_RK4(DVOL_R_ARRAY(i),dt, &
-      !                 t,rp,teold,denold, &
-      !                 srcp,iflag,message)
-      !   PRINT *, "srcp: ",srcp
-      !   ! PRINT *, "rp: ", rp
-      !   pden_r(i)=pden_r(i)+srcp
-      !   dennew=den0_r(i)+pden_r(i)
-      !   tenew=(den0_r(i)*te0_r(i)-pden_r(i)*z_eion_pl/1.5)/dennew
-      ! ! PRINT *, "srcp: ", srcp
-      ! ENDIF
-      ! PRINT *, "dvol = ", dvol_r(i)
       CALL PELLET_RK4(DVOL_R_ARRAY(i),dt, &
                       t,rp,teold,denold, &
                       srcp,iflag,message)
       pden_r(i)=pden_r(i)+srcp
       dennew=den0_r(i)+pden_r(i)
       tenew=(den0_r(i)*te0_r(i)-pden_r(i)*z_eion_pl/1.5)/dennew
-      PRINT *, "srcp: ", srcp
       IF(tenew < z_eion_pl) tenew=z_eion_pl
 
       !!Set optional output parameters along path
       IF(PRESENT(T_P)) T_P(l)=t
       IF(PRESENT(RPEL1_P)) RPEL1_P(l)=rp
-      ! IF(PRESENT(SRC_P)) SRC_P(l)=srcp*dvol_r(i)/dt
       IF(PRESENT(DEN0_P)) DEN0_P(l)=denold
       IF(PRESENT(DEN1_P)) DEN1_P(l)=dennew
       IF(PRESENT(TE0_P)) TE0_P(l)=teold
       IF(PRESENT(TE1_P)) TE1_P(l)=tenew
 
-      IF (PRESENT(DVOL_R_ARRAY)) THEN
-        ! srcp_tot = srcp_tot + srcp*dvol_r(i)    !!  Lets total up the electrons put in plasma as a check
-        srcp_tot = srcp_tot + srcp*DVOL_R_ARRAY(i)
-      ELSEIF (PRESENT(DVOL_R_POINT)) THEN
-        srcp_tot = srcp_tot + srcp*DVOL_R_POINT(i)
-      ENDIF
+      srcp_tot = srcp_tot + srcp*DVOL_R_ARRAY(i)
 
       IF (K_PRL .gt.0 .and. PRESENT(NPRLCLD) .and. rp > 0.0) THEN   !! Call PRL drift model
 
@@ -706,15 +593,8 @@ DO l=1,n_p
           icld = icld + 1
           !! Do PRL calculation
           rgrid(1) = 0.0
-          !> set first cell of the rho grid to 0.0
-          !> rho grid is radial normalized to 0,1
 
           do ii=1,ngrid !!Profile generation
-            !> ngrid is specific to PRL: ngrid = N_R - NCSOL
-            !> N_R: number of radial cells
-            !> NCSOL: number of SOL grid points in N_R
-            !> so ngrid is the number of cells in the core part of
-            !> the domain.
             fi = float(ii)
             nfloat = float(ngrid)
             rgrid(ii) = fi/nfloat
@@ -2804,9 +2684,6 @@ fntmax=(te-temin)/(z_eion_pl*2/3+temin)
 ! PRINT *, "Max Dn/n = ", fntmax
 IF(fntmax <= 0.0) fntmax=0
 fnmax=MIN(20.0_rspec,fntmax)
-! PRINT *, "dvol = ", dvol
-! PRINT *, "den, denm_pl: ", den, denm_pl
-! PRINT *, "Max fn (?) = ", fnmax
 drp3=(3/(8*z_pi))*fnmax*dvol*(den/denm_pl)
 rp3=rp**3
 
@@ -2824,8 +2701,6 @@ ENDIF
 
 rdotmx=-(rp0-rpmin)/dt
 
-! PRINT *, "rdotmx: ", rdotmx
-
 !!-------------------------------------------------------------------------------
 !! PRINT *, "Advance pellet through time interval in cell using up to mstep time steps..."
 !!-------------------------------------------------------------------------------
@@ -2834,7 +2709,6 @@ step_loop: DO istep=1,mstep  !!Over time steps
   !!Initialize intermediate runge-kutta parameters and step flag
   rps=rp
   nstep=nstep+1
-  ! PRINT *, "dden: ", dden
 
   !!Employ 4th order Runge-Kutta scheme for each step
   DO i=1,4 !!Over RK steps
@@ -3004,8 +2878,6 @@ step_loop: DO istep=1,mstep  !!Over time steps
      (rp  <= 1.0e-6*rpel_pl)) GOTO 9999
 
 ENDDO step_loop
-
-! PRINT *, "dden: ", dden
 
 !!Exceeded maximum number of steps in cell
 iflag=1
