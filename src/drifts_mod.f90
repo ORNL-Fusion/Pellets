@@ -253,12 +253,6 @@ real(kind=rspec), intent(out) :: &
   DelR 
 
 DelR = B**(-0.15)*Te0**(-0.13)*Teped**(0.5)*r_pel**(0.76)*qa**(-0.15)
-! PRINT *, "Drift terms: B^-0.15; Te0^-0.13; Teped^0.5; r_pel^0.76; qa^-0.15"
-! PRINT *, B**(-0.15), Te0**(-0.13), Teped**(0.5), r_pel**(0.76), qa**(-0.15)
-
-! open (unit=10,file="baylor_2007_test.txt",action="write")
-! write(10,*) DelR
-! close (10)
 
 END SUBROUTINE
 
@@ -337,13 +331,6 @@ Del_drift = C1*((v_p/100)**C2)*(r_p**C3)*(ne0**C4) &
             *(Te0**C5)*((ABS(ABS(alpha) - C6) + C8)**C7) &
             *((1.0 - Lambda)**C9)*(a0**C10)*(R0**C11)*(B0**C12) &
             *(kappa**C13)
-
-! open (unit=50,file="HPI2_2012_test.txt",action="write")
-! write(50,*) "v_p, r_p, te0, ne0, alpha, lambda, kappa, a0, r0, B0\n"
-! write(50,*) v_p, r_p, Te0, ne0, alpha, lambda, kappa, a0, r0, B0
-! write(50,*) "Del_drift\n"
-! write(50,*) Del_drift
-! close (50)
 
 END SUBROUTINE
 
@@ -472,8 +459,8 @@ CALL LINEAR1_INTERP(ncplas,rho_r,pden_r,ncplas-jj+1,rho_r_map(jj:ncplas),pden_r_
 pden_r_shifted(:) = (rho_r(ii) - rho_r(ncplas)) / (rho_r(jj) - rho_r(ncplas))*pden_r_shifted(:)
 !> Normalised shifted dne
 
-PRINT *, "Old density change: ", pden_r
-PRINT *, "New density change: ", pden_r_shifted
+! PRINT *, "Old density change: ", pden_r
+! PRINT *, "New density change: ", pden_r_shifted
 
 END SUBROUTINE
 
