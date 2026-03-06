@@ -298,9 +298,6 @@ ELSE
 
 ENDIF
 
-! PRINT *, "rhomaxl, nr_rz, nk_lam, nthetal"
-! PRINT *, rhomaxl, nr_rz, nk_lam, nthetal
-
 !!Allocate and set poloidal mode information
 ALLOCATE(m(nk_lam), &     
          n(nk_lam))
@@ -341,8 +338,6 @@ ALLOCATE(rho_rz(nr_rz), &
 
 !!Set radial grid
 rho_rz(:)=(/ (REAL(i-1,rspec)/REAL(nr_rz-1,rspec),i=1,nr_rz) /)
-
-! PRINT *, "rho_rz: ", rho_rz
 
 !!Radial variation
 DO i=1,nr_rz !!Over radial nodes
@@ -651,8 +646,6 @@ ELSE
 
 ENDIF
 
-! PRINT *, "rhomax_3d: ", rhomax_3d
-
 !!Set the mode numbers of the (m,n)=(0,0) and (m,n)=(1,0) modes
 km0n0_3d=0
 km1n0_3d=0
@@ -791,11 +784,6 @@ DO k=1,krz_3d !!Over modes
     zmn(i,k)=zmn(i,k)/rho(i)**mabs_3d(k)
 
   ENDDO !!Over radial nodes
-
-! PRINT *, "rho: ", rho
-! PRINT *, "mabs_3d: ", mabs_3d
-! PRINT *, "rmn: ", rmn
-! PRINT *, "zmn: ", zmn
 
 !!Parabolic extrapolation to axis (user values ignored)
   rmn(1,k)=(rmn(2,k)*rho(3)**2-rmn(3,k)*rho(2)**2)/(rho(3)**2-rho(2)**2)
@@ -1218,8 +1206,6 @@ REAL(KIND=rspec) :: &
 iflag=0
 message=''
 
-! PRINT *, "Entered CYL2FLX."
-
 !!Coordinates and metrics for iteration
 r_flx0(:)=0
 g_cyl0(:)=0
@@ -1245,36 +1231,22 @@ tau0=0
 err0=0.1*z_large
 r_flx0(1:3)=r_flx(1:3)
 r_flx1(1:3)=r_flx(1:3)
-! PRINT *, "r_flx: ", r_flx
 
 !!Move rho away from axis if necessary
 IF(r_flx1(1) < rhores_3d) r_flx1(1)=rhores_3d
-
-! PRINT *, "r_flx1(1): ", r_flx1(1)
 
 !!-------------------------------------------------------------------------------
 !!Iterate to find flux coordinates
 !!-------------------------------------------------------------------------------
 DO it=1,itmax !!Over iteration
 
-  ! PRINT *, "iter: ", it
-
   !!Get cylindrical coordinates at point 1
   iflag=0
   message=''
-  ! PRINT *, "r_flx1(1): ", r_flx1(1)
-  ! PRINT *, "r_cyl1(1): ", r_cyl1(1)
   CALL AJAX_FLX2CYL(r_flx1,r_cyl1,iflag,message, &  
                     G_CYL=g_cyl1, &    
                     GSQRT=gsqrt1, &    
                     TAU=tau1)
-
-  
-  ! PRINT *, "Calc cylindrical coords at point 1 FLX2CYL."
-  IF(it==1) THEN
-    ! PRINT *, "r_flx1: ", r_flx1
-    ! PRINT *, "r_cyl1: ", r_cyl1
-  ENDIF
   ! 
                     !!Check messages
   IF(iflag /= 0) THEN
@@ -1287,22 +1259,12 @@ DO it=1,itmax !!Over iteration
   dr1=(r_cyl(1)-r_cyl1(1))
   dz1=(r_cyl(3)-r_cyl1(3))
   err1=(dr1**2+dz1**2)/r000_3d**2
-  ! PRINT *, "r_cyl, r_cyl1: ", r_cyl(1), r_cyl1(1)
-  ! PRINT *, "err0, err1: ", err0, err1
-
-  ! PRINT *, "dr1, dz1: ", dr1, dz1
-
-  ! PRINT *, "rhomax_3d: ", rhomax_3d
-  ! PRINT *, "r_flx1(1): ", r_flx1(1)
-  ! PRINT *, "tol*r000_3d: ", tol*r000_3d
-  ! PRINT *, "abs(err1-err0): ", ABS(err1-err0) 
 
   !!Check convergence
   IF((ABS(dr1) <= tol*r000_3d .AND. ABS(dz1) <= tol*r000_3d) & 
     .OR. (ABS(err1-err0) < 5.0e-6)) THEN
 
     !!Converged, but first check if solution is in the R,Z domain
-    ! PRINT *, "r_flx, rhomax_3d: ", r_flx1(1), rhomax_3d
     IF(r_flx1(1) > rhomax_3d) THEN
 
       iflag=-1
@@ -1321,8 +1283,6 @@ DO it=1,itmax !!Over iteration
     GOTO 9999
 
   ENDIF
-
-  ! PRINT *, "CYL2FLX r_flx(1): ", r_flx(1)
 
   !!Need improved estimate for rho and theta and get new Jacobian
   IF(r_flx1(1) < rhores_3d) r_flx1(1)=rhores_3d
@@ -1371,19 +1331,13 @@ DO it=1,itmax !!Over iteration
   !!Use empirical combination of last two steps to avoid oscillation
   !!0 and 1 may coincide here
   g_cylt(:)=0.75*g_cyl0(:)+0.25*g_cyl1(:)
-  ! PRINT *, "g_cylt: ", g_cylt
   taut=0.75*tau0+0.25*tau1
   dr=dr0/nh
   dz=dz0/nh
 
-  ! PRINT *, "dr, dz: ", dr, dz
-  ! PRINT *, "nh: ", nh
-
   !!Project to desired point using Jacobian information
   !!drho=(R_theta*dZ-Z_theta*dR)/tau
   drho=(g_cylt(2)*dz-g_cylt(5)*dr)/taut
-  ! PRINT *, "drho: ", drho
-  ! PRINT *, "drho: ", drho
   !!dtheta=(Z_rho*dR-R_rho*dZ)/tau
   dtheta=(g_cylt(4)*dr-g_cylt(1)*dz)/taut
   IF(ABS(dtheta) > z_pi/4) dtheta=SIGN(z_pi/4,dtheta)
@@ -1391,7 +1345,6 @@ DO it=1,itmax !!Over iteration
   !!Set flux coordinates for new point 1
   r_flx1(1)=r_flx0(1)+(drho)
   r_flx1(2)=r_flx0(2)+(dtheta)
-  ! PRINT *, "r_flx1: ", r_flx1
 
   IF(r_flx1(1) < 0.0) THEN
 
@@ -1483,8 +1436,6 @@ iflag=0
 message=''
 r_cyl(:)=0
 
-! PRINT *, "Entered FLX2CYL."
-
 !!Null local values
 g_cylt(:)=0
 value(:)=0
@@ -1494,9 +1445,6 @@ r_cyl(2)=r_flx(3)
 
 !!Limit to R,Z domain
 rho=MIN(r_flx(1),rhomax_3d)
-! PRINT *, "rhomax_3d: ", rhomax_3d
-! PRINT *, "r_flx(1): ", r_flx(1)
-! PRINT *, "rho: ", rho
 
 !!Axial resolution
 rho=MAX(rho,rhores_3d)
@@ -1511,10 +1459,7 @@ DO k=1,krz_3d !!Over modes
   ct=COS(m_3d(k)*r_flx(2)-n_3d(k)*r_flx(3))
   st=SIN(m_3d(k)*r_flx(2)-n_3d(k)*r_flx(3))
 
-  ! PRINT *, "RFLX CHECK: ", r_flx(1)
-
   !!Calculate rho**m and its derivative
-  ! PRINT *, "mabs_3d: ", mabs_3d(k)
   IF(mabs_3d(k) == 0) THEN
 
     !!rho**0
@@ -1535,7 +1480,6 @@ DO k=1,krz_3d !!Over modes
     !!Outside last closed surface, rhomax**|m|
     rhom=rhomax_3d**mabs_3d(k)
     drhom=0
-    ! PRINT *, "rhomax_3d, rhores_3d: ", rhomax_3d, rhores_3d
     ! PRINT *, "Outside."
 
   ENDIF
@@ -1551,16 +1495,8 @@ DO k=1,krz_3d !!Over modes
   zmnx=value(1)
   dzmnx=value(2)
 
-  ! IF(k==1) THEN
-  ! PRINT *, "k, rmnx, ct, rhom: ", k, rmnx, ct, rhom
-  ! ENDIF
   !!R = sum_mn [ R_mn * cos(m*theta-n*zeta) * rho**m ]
-  ! PRINT *, "RCYL old: ", r_cyl(1)
-  ! PRINT *, "RCYL new = r_cyl  ", r_cyl(1)
   r_cyl(1)=r_cyl(1)+rmnx*ct*rhom
-  ! PRINT *, "new r_cyl(1) inside FLX2CYL: ", r_cyl(1)
-  
-  ! PRINT *, "RCYL new + ", rmnx*ct*rhom
 
   !!Z = sum_mn [ Z_mn * sin(m*theta-n*zeta) * rho**m ]
   r_cyl(3)=r_cyl(3)+zmnx*st*rhom
@@ -1592,8 +1528,6 @@ DO k=1,krz_3d !!Over modes
 
 ENDDO !!Over modes
 
-! PRINT *, "r_flx: ", r_flx(1)
-
 !!Radial derivatives outside R,Z domain
 IF(r_flx(1) > rhomax_3d+rhores_3d) THEN
 
@@ -1608,9 +1542,6 @@ IF(r_flx(1) > rhomax_3d+rhores_3d) THEN
   g_cylt(4)=z_3d(1,nrho_3d,km1n0_3d)*st
   g_cylt(5)=g_cylt(5)+(r_flx(1)-rhomax_3d)*z_3d(1,nrho_3d,km1n0_3d)*ct & 
                       *m_3d(km1n0_3d)
-
-  ! PRINT *, "**** CHECK *****"
-  ! PRINT *, "g_cylt: ", g_cylt
 
 ENDIF
 
@@ -2744,7 +2675,6 @@ SUBROUTINE AJAX_FLUXAV_G_POINT(rho_p, dvol_p, iflag, message)
 
   iflag = 0
   message = ''
-  ! PRINT *, "l_fluxavg_3d: ", l_fluxavg_3d
 
   !!Check whether flux surface averaging arrays have been set
   IF(.NOT. l_fluxavg_3d) THEN
@@ -2763,10 +2693,6 @@ SUBROUTINE AJAX_FLUXAV_G_POINT(rho_p, dvol_p, iflag, message)
 
   dvol_p=0
 
-  ! PRINT *, "nrho_3d: ", nrho_3d
-  ! PRINT *, "rho_3d(1): ", rho_3d(1)
-  ! PRINT *, "rho_p: ", rho_p
-
   ! IF (rho_p < rho_3d(1) .OR. rho_p > rho_3d(nrho_3d)) THEN
   !    iflag = 1
   !    message = 'rho_p out of interpolation bounds in AJAX_DVOL_AT_POINT'
@@ -2777,26 +2703,17 @@ SUBROUTINE AJAX_FLUXAV_G_POINT(rho_p, dvol_p, iflag, message)
   ALLOCATE(v1(nrho_3d))
   v1(:)=0
 
-  ! PRINT *, "vp_3d: ", vp_3d(2:nrho_3d)
-
   !!Remove dominant radial dependence
   v1(2:nrho_3d)=vp_3d(2:nrho_3d)/rho_3d(2:nrho_3d)
-
-  ! PRINT *, "nrho_3d: ", nrho_3d
 
   !!Extrapolate to axis
   v1(1)=v1(2)-rho_3d(2)*(v1(3)-v1(2))/(rho_3d(3)-rho_3d(2))
 
   ! Find bracketing indices for rho_p
   DO ii = 1, nrho_3d - 1
-    ! PRINT *, "rho_p: ", rho_p
-    ! PRINT *, "rho_3d(ii): ", rho_3d(ii)
-    ! PRINT *, "rho_3d(ii+1): ", rho_3d(ii+1)
-    ! PRINT *, "ii: ", ii
      IF (rho_p >= rho_3d(ii) .AND. rho_p <= rho_3d(ii+1)) THEN
         weight = (rho_p - rho_3d(ii)) / (rho_3d(ii+1) - rho_3d(ii))
         vp_interp = v1(ii) * (1.0 - weight) + v1(ii+1) * weight
-        ! PRINT *, "vp_interp: ", vp_interp
         EXIT
      ENDIF
   END DO
@@ -2893,9 +2810,6 @@ LOOP_I: DO i=nrho_r,1,-1 !!Over nodes
 
 ENDDO LOOP_I !!Over nodes
 
-! PRINT *, "rho_3d: ", rho_3d
-! PRINT *, "rho_r: ", rho_r
-
 !!-------------------------------------------------------------------------------
 !!d(V)/d(rho) on user grid for area_r, dvol_r, vol_r and vp_r
 !!-------------------------------------------------------------------------------
@@ -2910,8 +2824,6 @@ IF(PRESENT(AREA_R) .OR. &
 
   !!Remove dominant radial dependence
   v1(2:nrho_3d)=vp_3d(2:nrho_3d)/rho_3d(2:nrho_3d)
-
-  ! PRINT *, "nrho_3d: ", nrho_3d
 
   !!Extrapolate to axis
   v1(1)=v1(2)-rho_3d(2)*(v1(3)-v1(2))/(rho_3d(3)-rho_3d(2))
@@ -4405,8 +4317,6 @@ IF(PRESENT(NRHO)) NRHO=nrho_3d
 IF(PRESENT(NTHETA)) NTHETA=ntheta_3d
 IF(PRESENT(NZETA)) NZETA=nzeta_3d
 
-! PRINT *, "RHOMAX: ", RHOMAX
-
 END SUBROUTINE AJAX_GLOBALS
 
 SUBROUTINE AJAX_MINMAX_RZ(l_rminmax, &
@@ -5127,10 +5037,6 @@ DO i=2,nrho_3d !!Over radial nodes
       CALL AJAX_FLX2CYL(r_flx,r_cyl,iflag,message, &  
                         G_CYL=gcyl_3d(1:6,i,j,k), &  
                         GSQRT=gsqrt_3d(i,j,k))
-      ! PRINT *, "r_flx after AJAX_FLX2CYL in INIT_FLUXAV_G: "
-      ! PRINT *, r_flx
-      ! PRINT *, "r_cyl after AJAX_FLX2CYL in INIT_FLUXAV_G: "
-      ! PRINT *, r_cyl
       !!Check messages
       IF(iflag /= 0) THEN
 
