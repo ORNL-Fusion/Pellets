@@ -43,7 +43,7 @@ message(STATUS "NetCDF library path is ${NETCDF_LIB_PATH}")
 
 # Make sure to link the library and set the include path
 link_directories(${NETCDF_LIB_PATH})
-include_directories(${NETCDF_INC_PATH})
+include_directories(${NETCDF_INC_PATH} ${CMAKE_Fortran_MODULE_DIRECTORY})
 
 # Searching for the required libraries
 find_library(NETCDF_F_LIB NAMES netcdff ${NETCDF_F_LIB_NAME} PATHS ${NETCDF_LIB_PATH})
@@ -69,6 +69,7 @@ set (pellet_sources
     pellet_mod.f90
     ajax_mod.f90
     fluxav_mod.f90
+    fluxav_vmec.f
     linear1_mod.f90
     mirth_mod.f90
     pellet_dr.f90
