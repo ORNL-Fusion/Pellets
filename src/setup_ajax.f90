@@ -81,7 +81,6 @@ ELSE
   !Load boundary values of R,Z and fill in with approximations
   iflag=0
   message=''
-  PRINT *, "Entering RZ boundary load."
   CALL AJAX_LOAD_RZBDY(r0,a0,s0,e0,e1,d1, &
                        iflag,message, &
                        NRHO_AJAX=nrho_ajax, &
@@ -105,8 +104,6 @@ ELSE
                      RM2_R=v1, &
                      VP_R=v2)
   phitot=r0*bt0/4/z_pi*rho(n_rho)*v1(n_rho)*v2(n_rho)
-
-  ! PRINT *, "phitot: ", phitot
 
   !Check messages
   IF(iflag > 0) THEN
