@@ -315,6 +315,10 @@ ENDIF
 xlim_f(1:nlim_f)=x_lim(1:nlim_f)
 ylim_f(1:nlim_f)=y_lim(1:nlim_f)
 
+PRINT *, "nlim_f: ", nlim_f
+PRINT *, "xlim_f: ", xlim_f
+PRINT *, "ylim_f: ", ylim_f
+
 !-------------------------------------------------------------------------------
 !Allocate 1-D flux surface arrays
 !-------------------------------------------------------------------------------
@@ -577,7 +581,7 @@ ELSE
   !Grid proportional to sqrt(toroidal flux)
   rinterp(:)=rhot_f(:)
   dpsidrho(1:nr_f)=ABS(phit_f(nr_f)*rhot_f(1:nr_f)/z_pi/q_f(1:nr_f))
-  PRINT *, "dpsi/drho: ", dpsidrho
+  ! PRINT *, "rhot_f: ", rhot_f
 
 ENDIF
 
@@ -1015,6 +1019,7 @@ IF(iflag /= 0) THEN
 ENDIF
 
 rin_r(1:nr_r)=value(1,1:nr_r)
+PRINT *, "rin_r: ", rin_r
 
 !-------------------------------------------------------------------------------
 !rm2=<1/R**2> 
@@ -1052,6 +1057,7 @@ IF(iflag /= 0) THEN
 ENDIF
 
 rout_r(1:nr_r)=value(1,1:nr_r)
+PRINT *, "rout_r: ", rout_r
 
 !-------------------------------------------------------------------------------
 !triang=average upper/lower triangularity
@@ -1458,6 +1464,8 @@ psiin=0
 bperrsave=bperr
 dbperr=bperr/2
 l_reset_psi=.FALSE.
+
+! PRINT *, "k_conv: ", k_conv
 
 !If min bp drops below bpmintol and l_auto=.TRUE., the contour is searched for
 !  for an x point
@@ -2934,10 +2942,18 @@ psifctr=0
 mpmin=50
 
 !Extremes of limiter positions
-xminlim_f=MINVAL(xlim_f(1:nlim_f))
-xmaxlim_f=MAXVAL(xlim_f(1:nlim_f))
-yminlim_f=MINVAL(ylim_f(1:nlim_f))
-ymaxlim_f=MAXVAL(ylim_f(1:nlim_f))
+! xminlim_f=MINVAL(xlim_f(1:nlim_f))
+! xmaxlim_f=MAXVAL(xlim_f(1:nlim_f))
+! yminlim_f=MINVAL(ylim_f(1:nlim_f))
+! ymaxlim_f=MAXVAL(ylim_f(1:nlim_f))
+
+xminlim_f = 2.5
+xmaxlim_f = 7.5
+yminlim_f = -7.0
+ymaxlim_f = 7.0
+
+! PRINT *, "xmin, xmax: ", xminlim_f, xmaxlim_f
+! PRINT *, "ymin, ymax: ", yminlim_f, ymaxlim_f
 
 !Check sign of poloidal flux
 l_flip_f=.FALSE.
@@ -3030,16 +3046,20 @@ tlim=30.0
       ELSE
 
         l_auto=.FALSE.
-        k_conv=0
+        k_conv=1
 
       ENDIF
 
       dang=(a*(psivlcpy(j)-psivlcpy(1))+taxis)*(kflarc+1)
       bperr=0.01
 
+      ! PRINT *, "k_conv, l_auto: ", k_conv, l_auto
+
       CALL FLUXAV_EC(k_conv,mxncon,arcl,dpsia, &
                      l_auto,psivlcpy(j),bperr, &
                      xp_f(:,j),yp_f(:,j),mp_f(j),bp_f(:,j),iflag,message)
+
+      PRINT *, "bp_f: ", bp_f(:,j)
 
       IF(iflag == 1) THEN
 
@@ -3397,6 +3417,8 @@ ENDDO
 !Toroidal flux grid
 !-------------------------------------------------------------------------------
 rhot_f(1:nr_f)=SQRT(phit_f(1:nr_f)/phit_f(nr_f))
+
+! PRINT *, "toroidal flux grid: ", rhot_f
 
 !-------------------------------------------------------------------------------
 !Cleanup and exit
