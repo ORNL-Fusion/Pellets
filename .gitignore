@@ -5,7 +5,7 @@
 ./src/build/modules/*
 
 # Ignore CMake/make files
-./src/build/CMakeFiles/
+./src/build/CMakeFiles/*
 ./src/build/CMakeCache.txt
 ./src/build/Makefile
 **/build/
@@ -17,6 +17,7 @@
 ./src/build/*.txt
 
 # Ignore local input files
+./src/nml_pellet.dat
 ./src/nml_pellet*.dat
 ./src/build/nml_pellet*.dat
 ./src/*.eqdsk
@@ -26,6 +27,7 @@
 ./Python/__pycache__/*
 ./Python/Pellet*.py
 ./Python/pellet.py
+./Python/*
 
 # Ignore vscode files
 .vscode

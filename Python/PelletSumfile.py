@@ -212,7 +212,7 @@ class PelletSumfile(object):
 
     # ----------------------------------------------------------------------
         
-    def plot_trajectory(self, contours = [1.0]):
+    def plot_trajectory(self, idr, title_string, contours = [1.0]):
         """
         Plot the pellet trajectory along with flux surfaces
         """
@@ -232,23 +232,44 @@ class PelletSumfile(object):
 
         Rtraj = self.pelpath['R']
         Ztraj = self.pelpath['Z']
+        psi_shape = np.shape(psiRZn)
+        print(psi_shape)
 
         fig = plt.figure()
         for w in range(len(wall[:, 0]) - 1):
             plt.plot([wall[w, 0], wall[w + 1, 0]], [wall[w, 1], wall[w + 1, 1]], 'k')
         # plt.plot(R_LCFS, Z_LCFS, 'r')
+        # idx = np.where(psiRZn==psiRZn.min())
+        idx = np.where(psiRZn > 0.0, psiRZn, np.inf)
+        print(idx)
+        print(idx.argmin())
+        idx_2d = np.unravel_index(idx.argmin(),psi_shape)
+        # idy = np.where(psiRZn[idx] == np.min(psiRZn[idx]))
+        print(idx_2d)
+        print(psiRZn[idx_2d[0],idx_2d[1]])
+        check = np.where(idx==np.min(idx))
+        print(check)
         
         if contours is not None:
+            fig = plt.figure()
             cont = plt.contour(gR, gZ, psiRZn, contours, cmap='plasma', linewidths = [1.0])
+            plt.clabel(cont,cont.levels)
         plt.contour(gR, gZ, psiRZn, [1], colors = 'k', linewidths = [2.0])
-        print(Rtraj,'\n',Ztraj)
-        
+        # plt.contour(gR, gZ, psiRZn, [0], colors = 'k', linewidths = [2.0])
+        # print(Rtraj,'\n',Ztraj)
         for tr in range(len(Rtraj)-1):
-            plt.plot([Rtraj[tr], Rtraj[tr+1]], [Ztraj[tr], Ztraj[tr+1]], 'b', lw = 2)
+        # for tr in range(idr-1):
+            plt.plot([Rtraj[tr], Rtraj[tr+1]], [Ztraj[tr], Ztraj[tr+1]], 'b*', lw = 2)
+        plt.plot(Rtraj[idr],Ztraj[idr],'r*')
+        plt.plot(self.gfile.g['RmAxis'],self.gfile.g['ZmAxis'],'k*')
         plt.xlabel('R (m)')
         plt.ylabel('Z (m)')
         # plt.axis('equal')
         plt.xlim([2.0, 8.0])
+        plt.title(title_string)
+        plt.gcf()
+        fig.set_size_inches(5.0,12.0,forward=True)
+        plt.tight_layout()
         # plt.ylim([-1.4, 1.4])
         plt.show(block = True)
             
