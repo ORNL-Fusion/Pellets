@@ -3,6 +3,10 @@
 
 PELLET uses 0D ablation models to calculate the pellet ablation rate, and can track the pellet path up to 3D. 
 
+
+> [!NOTE]
+> Active development of the PELLET code to include drift terms has moved to the branch `feature/include-gradb-drifts`
+
 ## STRUCTURE
 
 ```
