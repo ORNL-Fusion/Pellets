@@ -65,7 +65,7 @@
                   <a class="nav-link" href="../lists/namelists.html">Namelists</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="../program/pellet_dr.html">Program</a>
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
                 </li>
             </ul>
               <div class="d-flex align-items-end flex-grow-1">
@@ -91,7 +91,7 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title=" 5.8% of total for procedures.">268 statements</a>
+                 title=" 5.4% of total for procedures.">252 statements</a>
             </li>
 
             <li class="list-inline-item" id="source-file">
@@ -152,7 +152,7 @@
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2>public  subroutine PELLET(k_pel, amupel, rpel, vpel, n_r, den0_r, te0_r, n_p, map_p, s_p, pden_r, iflag, message, NF, NE_F, IZ_F, AMU_F, E_EF, VC_RF, DEN_REF, PEL_IONS, T_P, RPEL1_P, SRC_P, DEN0_P, DEN1_P, TE0_P, TE1_P, R0, A0, BT0, NCSOL, K_PRL, NPRLCLD, IPRLCLD, FPELPRL, PRLINJANG, PRLQ_R, PRLDEP, K_DRIFT, DVOL_R_ARRAY, DVOL_R_POINT, ALPHA, LAM, KAPPA, DEL_DRIFT, RHO_RM, RHO_R_SHIFTED)  
+    <h2>public  subroutine PELLET(k_pel, amupel, rpel, vpel, n_r, den0_r, te0_r, n_p, map_p, s_p, pden_r, iflag, message, NF, NE_F, IZ_F, AMU_F, E_EF, VC_RF, DEN_REF, PEL_IONS, T_P, RPEL1_P, SRC_P, DEN0_P, DEN1_P, TE0_P, TE1_P, R0, A0, BT0, NCSOL, K_PRL, NPRLCLD, IPRLCLD, FPELPRL, PRLINJANG, PRLQ_R, PRLDEP, K_DRIFT, DVOL_R_ARRAY, DVOL_R_POINT, ALPHA, LAM, KAPPA, DEL_DRIFT, RHO_RM, RHO2R, R_SHIFTED, RHO_R_SHIFTED)  
 </h2>
     
 
@@ -278,7 +278,7 @@ present</p>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-k_pel"></span>
+              <span class="anchor" id="variable-k_pel~2"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -324,7 +324,7 @@ pellet velocity [m/s]</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-rpel"></span>
+              <span class="anchor" id="variable-rpel~3"></span>
               real(kind=rspec),
             </td>
 <td>intent(in)</td>
@@ -342,7 +342,7 @@ pellet velocity [m/s]</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-vpel"></span>
+              <span class="anchor" id="variable-vpel~3"></span>
               real(kind=rspec),
             </td>
 <td>intent(in)</td>
@@ -360,7 +360,7 @@ pellet velocity [m/s]</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-n_r"></span>
+              <span class="anchor" id="variable-n_r~5"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -426,7 +426,7 @@ s_p(1) is the entry point and can be non-zero</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-n_p"></span>
+              <span class="anchor" id="variable-n_p~2"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -469,7 +469,7 @@ number of segments along pellet path [-]</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-s_p"></span>
+              <span class="anchor" id="variable-s_p~2"></span>
               real(kind=rspec),
             </td>
 <td>intent(in)</td>
@@ -488,7 +488,7 @@ s_p(1) is the entry point and can be non-zero</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-pden_r"></span>
+              <span class="anchor" id="variable-pden_r~3"></span>
               real(kind=rspec),
             </td>
 <td>intent(out)</td>
@@ -504,7 +504,7 @@ s_p(1) is the entry point and can be non-zero</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-iflag~3"></span>
+              <span class="anchor" id="variable-iflag~24"></span>
               integer,
             </td>
 <td>intent(out)</td>
@@ -522,7 +522,7 @@ s_p(1) is the entry point and can be non-zero</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-message~3"></span>
+              <span class="anchor" id="variable-message~24"></span>
               character(len=*),
             </td>
 <td>intent(out)</td>
@@ -636,6 +636,7 @@ PRL fraction of pellet mass to drift [-]
 PRL injection angle (LFS=0, HFS=pi) [radians]
 q profile for PRL model [-]
 rho original grid
+radial array from rho
 injection angle for HPI2 drift
 .. for HPI2 drift
 plasma elongation</p>
@@ -668,6 +669,7 @@ PRL fraction of pellet mass to drift [-]
 PRL injection angle (LFS=0, HFS=pi) [radians]
 q profile for PRL model [-]
 rho original grid
+radial array from rho
 injection angle for HPI2 drift
 .. for HPI2 drift
 plasma elongation</p>
@@ -700,6 +702,7 @@ PRL fraction of pellet mass to drift [-]
 PRL injection angle (LFS=0, HFS=pi) [radians]
 q profile for PRL model [-]
 rho original grid
+radial array from rho
 injection angle for HPI2 drift
 .. for HPI2 drift
 plasma elongation</p>
@@ -732,6 +735,7 @@ PRL fraction of pellet mass to drift [-]
 PRL injection angle (LFS=0, HFS=pi) [radians]
 q profile for PRL model [-]
 rho original grid
+radial array from rho
 injection angle for HPI2 drift
 .. for HPI2 drift
 plasma elongation</p>
@@ -773,7 +777,6 @@ electron density at exit from path cells [keV]
 electron temperature at entrance to path cells [keV]
 electron temperature at exit from path cells [keV]
 resulting density deposition from PRL [/m**3]
-rho location shifted by radial drift term
 drift calculated from HPI2 scaling</p>
             </td>
         </tr>
@@ -797,7 +800,6 @@ electron density at exit from path cells [keV]
 electron temperature at entrance to path cells [keV]
 electron temperature at exit from path cells [keV]
 resulting density deposition from PRL [/m**3]
-rho location shifted by radial drift term
 drift calculated from HPI2 scaling</p>
             </td>
         </tr>
@@ -821,7 +823,6 @@ electron density at exit from path cells [keV]
 electron temperature at entrance to path cells [keV]
 electron temperature at exit from path cells [keV]
 resulting density deposition from PRL [/m**3]
-rho location shifted by radial drift term
 drift calculated from HPI2 scaling</p>
             </td>
         </tr>
@@ -845,7 +846,6 @@ electron density at exit from path cells [keV]
 electron temperature at entrance to path cells [keV]
 electron temperature at exit from path cells [keV]
 resulting density deposition from PRL [/m**3]
-rho location shifted by radial drift term
 drift calculated from HPI2 scaling</p>
             </td>
         </tr>
@@ -869,7 +869,6 @@ electron density at exit from path cells [keV]
 electron temperature at entrance to path cells [keV]
 electron temperature at exit from path cells [keV]
 resulting density deposition from PRL [/m**3]
-rho location shifted by radial drift term
 drift calculated from HPI2 scaling</p>
             </td>
         </tr>
@@ -893,7 +892,6 @@ electron density at exit from path cells [keV]
 electron temperature at entrance to path cells [keV]
 electron temperature at exit from path cells [keV]
 resulting density deposition from PRL [/m**3]
-rho location shifted by radial drift term
 drift calculated from HPI2 scaling</p>
             </td>
         </tr>
@@ -917,7 +915,6 @@ electron density at exit from path cells [keV]
 electron temperature at entrance to path cells [keV]
 electron temperature at exit from path cells [keV]
 resulting density deposition from PRL [/m**3]
-rho location shifted by radial drift term
 drift calculated from HPI2 scaling</p>
             </td>
         </tr>
@@ -947,6 +944,7 @@ PRL fraction of pellet mass to drift [-]
 PRL injection angle (LFS=0, HFS=pi) [radians]
 q profile for PRL model [-]
 rho original grid
+radial array from rho
 injection angle for HPI2 drift
 .. for HPI2 drift
 plasma elongation</p>
@@ -979,6 +977,7 @@ PRL fraction of pellet mass to drift [-]
 PRL injection angle (LFS=0, HFS=pi) [radians]
 q profile for PRL model [-]
 rho original grid
+radial array from rho
 injection angle for HPI2 drift
 .. for HPI2 drift
 plasma elongation</p>
@@ -1011,6 +1010,7 @@ PRL fraction of pellet mass to drift [-]
 PRL injection angle (LFS=0, HFS=pi) [radians]
 q profile for PRL model [-]
 rho original grid
+radial array from rho
 injection angle for HPI2 drift
 .. for HPI2 drift
 plasma elongation</p>
@@ -1143,6 +1143,7 @@ PRL fraction of pellet mass to drift [-]
 PRL injection angle (LFS=0, HFS=pi) [radians]
 q profile for PRL model [-]
 rho original grid
+radial array from rho
 injection angle for HPI2 drift
 .. for HPI2 drift
 plasma elongation</p>
@@ -1175,6 +1176,7 @@ PRL fraction of pellet mass to drift [-]
 PRL injection angle (LFS=0, HFS=pi) [radians]
 q profile for PRL model [-]
 rho original grid
+radial array from rho
 injection angle for HPI2 drift
 .. for HPI2 drift
 plasma elongation</p>
@@ -1207,6 +1209,7 @@ PRL fraction of pellet mass to drift [-]
 PRL injection angle (LFS=0, HFS=pi) [radians]
 q profile for PRL model [-]
 rho original grid
+radial array from rho
 injection angle for HPI2 drift
 .. for HPI2 drift
 plasma elongation</p>
@@ -1233,7 +1236,6 @@ electron density at exit from path cells [keV]
 electron temperature at entrance to path cells [keV]
 electron temperature at exit from path cells [keV]
 resulting density deposition from PRL [/m**3]
-rho location shifted by radial drift term
 drift calculated from HPI2 scaling</p>
             </td>
         </tr>
@@ -1273,11 +1275,11 @@ drift calculated from HPI2 scaling</p>
               real(kind=rspec),
             </td>
 <td>intent(out),</td>
-              <td>optional</td>            <td>
-              
+              <td>optional,</td>            <td>
+              ALLOCATABLE
             </td>
             <td>::</td>
-            <td><strong>DVOL_R_POINT</strong></td>
+            <td><strong>DVOL_R_POINT</strong>(:)</td>
             <td>
                 <p>volume of plasma cell i [m**3]</p>
 <hr>
@@ -1310,6 +1312,7 @@ PRL fraction of pellet mass to drift [-]
 PRL injection angle (LFS=0, HFS=pi) [radians]
 q profile for PRL model [-]
 rho original grid
+radial array from rho
 injection angle for HPI2 drift
 .. for HPI2 drift
 plasma elongation</p>
@@ -1318,7 +1321,7 @@ plasma elongation</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-lam"></span>
+              <span class="anchor" id="variable-lam~2"></span>
               real(kind=rspec),
             </td>
 <td>intent(in),</td>
@@ -1342,6 +1345,7 @@ PRL fraction of pellet mass to drift [-]
 PRL injection angle (LFS=0, HFS=pi) [radians]
 q profile for PRL model [-]
 rho original grid
+radial array from rho
 injection angle for HPI2 drift
 .. for HPI2 drift
 plasma elongation</p>
@@ -1374,6 +1378,7 @@ PRL fraction of pellet mass to drift [-]
 PRL injection angle (LFS=0, HFS=pi) [radians]
 q profile for PRL model [-]
 rho original grid
+radial array from rho
 injection angle for HPI2 drift
 .. for HPI2 drift
 plasma elongation</p>
@@ -1400,7 +1405,6 @@ electron density at exit from path cells [keV]
 electron temperature at entrance to path cells [keV]
 electron temperature at exit from path cells [keV]
 resulting density deposition from PRL [/m**3]
-rho location shifted by radial drift term
 drift calculated from HPI2 scaling</p>
             </td>
         </tr>
@@ -1430,6 +1434,7 @@ PRL fraction of pellet mass to drift [-]
 PRL injection angle (LFS=0, HFS=pi) [radians]
 q profile for PRL model [-]
 rho original grid
+radial array from rho
 injection angle for HPI2 drift
 .. for HPI2 drift
 plasma elongation</p>
@@ -1438,26 +1443,67 @@ plasma elongation</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-rho_r_shifted"></span>
+              <span class="anchor" id="variable-rho2r"></span>
               real(kind=rspec),
             </td>
-<td>intent(out),</td>
+<td>intent(in),</td>
               <td>optional</td>            <td>
               
             </td>
             <td>::</td>
-            <td><strong>RHO_R_SHIFTED</strong></td>
+            <td><strong>RHO2R</strong>(:)</td>
             <td>
-                <p>time of pellet entry to path cells [s]
-pellet effective radius at exit from path cells [m]
-source rate in path cells [/s]
-electron density at entrance to path cells [keV]
-electron density at exit from path cells [keV]
-electron temperature at entrance to path cells [keV]
-electron temperature at exit from path cells [keV]
-resulting density deposition from PRL [/m**3]
-rho location shifted by radial drift term
-drift calculated from HPI2 scaling</p>
+                <p>atomic mass number of fast ions [-]
+energy group boundaries for fast ions [keV]
+E_EF(1,NF)= the birth energy
+E_EF(NE_F+1,NF)= energy where becomes thermal
+E_EF(j,NF) &gt; E_EF(j+1,NF)
+critical velocity profile for fast ions [m/s]
+density profile of fast ion per energy group [1/m**3]
+Major radius [m]
+Minor radius [m]
+Magnetic field on axis used by PRL [T]
+PRL fraction of pellet mass to drift [-]
+PRL injection angle (LFS=0, HFS=pi) [radians]
+q profile for PRL model [-]
+rho original grid
+radial array from rho
+injection angle for HPI2 drift
+.. for HPI2 drift
+plasma elongation</p>
+<p>Declaration of output variables</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-r_shifted"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(out),</td>
+              <td>optional,</td>            <td>
+              ALLOCATABLE
+            </td>
+            <td>::</td>
+            <td><strong>R_SHIFTED</strong>(:,:)</td>
+            <td>
+                <p>rho location shifted by radial drift term
+radial grid shift [cm]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rho_r_shifted"></span>
+              real(kind=rspec),
+            </td>
+<td>intent(out),</td>
+              <td>optional,</td>            <td>
+              ALLOCATABLE
+            </td>
+            <td>::</td>
+            <td><strong>RHO_R_SHIFTED</strong>(:,:)</td>
+            <td>
+                <p>rho location shifted by radial drift term
+radial grid shift [cm]</p>
             </td>
         </tr>
     </tbody>
@@ -1487,7 +1533,7 @@ drift calculated from HPI2 scaling</p>
           <div class="col">
             <p>
               PELLETS
-              &copy; 2025 
+              &copy; 2026 
 </p>
           </div>
           <div class="col">

@@ -65,7 +65,7 @@
                   <a class="nav-link" href="../lists/namelists.html">Namelists</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="../program/pellet_dr.html">Program</a>
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
                 </li>
             </ul>
               <div class="d-flex align-items-end flex-grow-1">
@@ -91,7 +91,7 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title=" 0.9% of total for modules and submodules.">56 statements</a>
+                 title=" 1.6% of total for modules and submodules.">102 statements</a>
             </li>
 
             <li class="list-inline-item" id="source-file">
@@ -146,6 +146,7 @@
             <a class="list-group-item" href="../module/drifts_mod.html#proc-parks_drift">PARKS_DRIFT</a>
             <a class="list-group-item" href="../module/drifts_mod.html#proc-baylor_drift">BAYLOR_DRIFT</a>
             <a class="list-group-item" href="../module/drifts_mod.html#proc-hpi2_drift">HPI2_DRIFT</a>
+            <a class="list-group-item" href="../module/drifts_mod.html#proc-apply_drifts">APPLY_DRIFTS</a>
         </div>
       </div>
     </div>
@@ -177,7 +178,9 @@
         <ul class="list-group list-group-flush">
             <li class="list-group-item">
               <ul class="list-inline">
+                  <li class="list-inline-item"><a href='linear1_mod.html'>LINEAR1_MOD</a></li>
                   <li class="list-inline-item"><a href='spec_kind_mod.html'>SPEC_KIND_MOD</a></li>
+                  <li class="list-inline-item"><a href='ajax_mod.html'>AJAX_MOD</a></li>
               </ul>
             </li>
         </ul>
@@ -219,7 +222,7 @@
         <tr>
             <td>
               <span class="anchor" id="variable-w"></span>
-              real(kind=rspec),
+              real(kind=RSPEC),
             </td>
 <td>intent(in)</td>
               <td></td>            <td>
@@ -254,7 +257,7 @@ PELLET: NA</p>
         <tr>
             <td>
               <span class="anchor" id="variable-r_p"></span>
-              real(kind=rspec),
+              real(kind=RSPEC),
             </td>
 <td>intent(in)</td>
               <td></td>            <td>
@@ -289,7 +292,7 @@ PELLET: NA</p>
         <tr>
             <td>
               <span class="anchor" id="variable-ne_inf"></span>
-              real(kind=rspec),
+              real(kind=RSPEC),
             </td>
 <td>intent(in)</td>
               <td></td>            <td>
@@ -324,7 +327,7 @@ PELLET: NA</p>
         <tr>
             <td>
               <span class="anchor" id="variable-te_inf"></span>
-              real(kind=rspec),
+              real(kind=RSPEC),
             </td>
 <td>intent(in)</td>
               <td></td>            <td>
@@ -358,8 +361,8 @@ PELLET: NA</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-r"></span>
-              real(kind=rspec),
+              <span class="anchor" id="variable-r~3"></span>
+              real(kind=RSPEC),
             </td>
 <td>intent(in)</td>
               <td></td>            <td>
@@ -394,7 +397,7 @@ PELLET: NA</p>
         <tr>
             <td>
               <span class="anchor" id="variable-b"></span>
-              real(kind=rspec),
+              real(kind=RSPEC),
             </td>
 <td>intent(in)</td>
               <td></td>            <td>
@@ -428,8 +431,8 @@ PELLET: NA</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-m0"></span>
-              real(kind=rspec),
+              <span class="anchor" id="variable-m0~3"></span>
+              real(kind=RSPEC),
             </td>
 <td>intent(in)</td>
               <td></td>            <td>
@@ -464,7 +467,7 @@ PELLET: NA</p>
         <tr>
             <td>
               <span class="anchor" id="variable-t0"></span>
-              real(kind=rspec),
+              real(kind=RSPEC),
             </td>
 <td>intent(in)</td>
               <td></td>            <td>
@@ -498,8 +501,8 @@ PELLET: NA</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-ca_inf"></span>
-              real(kind=rspec),
+              <span class="anchor" id="variable-ca_inf~2"></span>
+              real(kind=RSPEC),
             </td>
 <td>intent(out)</td>
               <td></td>            <td>
@@ -511,13 +514,13 @@ PELLET: NA</p>
 <p>Currently these out quantities are just to compare with
  the calculations in Parks et al. (2000)
 ------------------------------------------------------------------#
- background plasma beta</p><a href="../proc/parks_drift.html#variable-ca_inf" class="pull-right"><emph>Read more&hellip;</emph></a>
+ background plasma beta</p><a href="../proc/parks_drift.html#variable-ca_inf~2" class="pull-right"><emph>Read more&hellip;</emph></a>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-beta_inf"></span>
-              real(kind=rspec),
+              <span class="anchor" id="variable-beta_inf~2"></span>
+              real(kind=RSPEC),
             </td>
 <td>intent(out)</td>
               <td></td>            <td>
@@ -529,13 +532,13 @@ PELLET: NA</p>
 <p>Currently these out quantities are just to compare with
  the calculations in Parks et al. (2000)
 ------------------------------------------------------------------#
- background plasma beta</p><a href="../proc/parks_drift.html#variable-beta_inf" class="pull-right"><emph>Read more&hellip;</emph></a>
+ background plasma beta</p><a href="../proc/parks_drift.html#variable-beta_inf~2" class="pull-right"><emph>Read more&hellip;</emph></a>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-kap_c"></span>
-              real(kind=rspec),
+              <span class="anchor" id="variable-kap_c~2"></span>
+              real(kind=RSPEC),
             </td>
 <td>intent(out)</td>
               <td></td>            <td>
@@ -547,13 +550,13 @@ PELLET: NA</p>
 <p>Currently these out quantities are just to compare with
  the calculations in Parks et al. (2000)
 ------------------------------------------------------------------#
- background plasma beta</p><a href="../proc/parks_drift.html#variable-kap_c" class="pull-right"><emph>Read more&hellip;</emph></a>
+ background plasma beta</p><a href="../proc/parks_drift.html#variable-kap_c~2" class="pull-right"><emph>Read more&hellip;</emph></a>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-beta_ratio"></span>
-              real(kind=rspec),
+              <span class="anchor" id="variable-beta_ratio~2"></span>
+              real(kind=RSPEC),
             </td>
 <td>intent(out)</td>
               <td></td>            <td>
@@ -565,13 +568,13 @@ PELLET: NA</p>
 <p>Currently these out quantities are just to compare with
  the calculations in Parks et al. (2000)
 ------------------------------------------------------------------#
- background plasma beta</p><a href="../proc/parks_drift.html#variable-beta_ratio" class="pull-right"><emph>Read more&hellip;</emph></a>
+ background plasma beta</p><a href="../proc/parks_drift.html#variable-beta_ratio~2" class="pull-right"><emph>Read more&hellip;</emph></a>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-sigma_0"></span>
-              real(kind=rspec),
+              <span class="anchor" id="variable-sigma_0~2"></span>
+              real(kind=RSPEC),
             </td>
 <td>intent(out)</td>
               <td></td>            <td>
@@ -583,13 +586,13 @@ PELLET: NA</p>
 <p>Currently these out quantities are just to compare with
  the calculations in Parks et al. (2000)
 ------------------------------------------------------------------#
- background plasma beta</p><a href="../proc/parks_drift.html#variable-sigma_0" class="pull-right"><emph>Read more&hellip;</emph></a>
+ background plasma beta</p><a href="../proc/parks_drift.html#variable-sigma_0~2" class="pull-right"><emph>Read more&hellip;</emph></a>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-c_0_bar"></span>
-              real(kind=rspec),
+              <span class="anchor" id="variable-c_0_bar~2"></span>
+              real(kind=RSPEC),
             </td>
 <td>intent(out)</td>
               <td></td>            <td>
@@ -601,13 +604,13 @@ PELLET: NA</p>
 <p>Currently these out quantities are just to compare with
  the calculations in Parks et al. (2000)
 ------------------------------------------------------------------#
- background plasma beta</p><a href="../proc/parks_drift.html#variable-c_0_bar" class="pull-right"><emph>Read more&hellip;</emph></a>
+ background plasma beta</p><a href="../proc/parks_drift.html#variable-c_0_bar~2" class="pull-right"><emph>Read more&hellip;</emph></a>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-psi_int"></span>
-              real(kind=rspec),
+              <span class="anchor" id="variable-psi_int~2"></span>
+              real(kind=RSPEC),
             </td>
 <td>intent(out)</td>
               <td></td>            <td>
@@ -619,13 +622,13 @@ PELLET: NA</p>
 <p>Currently these out quantities are just to compare with
  the calculations in Parks et al. (2000)
 ------------------------------------------------------------------#
- background plasma beta</p><a href="../proc/parks_drift.html#variable-psi_int" class="pull-right"><emph>Read more&hellip;</emph></a>
+ background plasma beta</p><a href="../proc/parks_drift.html#variable-psi_int~2" class="pull-right"><emph>Read more&hellip;</emph></a>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-delr"></span>
-              real(kind=rspec),
+              <span class="anchor" id="variable-delr~2"></span>
+              real(kind=RSPEC),
             </td>
 <td>intent(out)</td>
               <td></td>            <td>
@@ -637,7 +640,7 @@ PELLET: NA</p>
 <p>Currently these out quantities are just to compare with
  the calculations in Parks et al. (2000)
 ------------------------------------------------------------------#
- background plasma beta</p><a href="../proc/parks_drift.html#variable-delr" class="pull-right"><emph>Read more&hellip;</emph></a>
+ background plasma beta</p><a href="../proc/parks_drift.html#variable-delr~2" class="pull-right"><emph>Read more&hellip;</emph></a>
             </td>
         </tr>
     </tbody>
@@ -668,7 +671,7 @@ PELLET: NA</p>
         <tr>
             <td>
               <span class="anchor" id="variable-b~2"></span>
-              real(kind=rspec),
+              real(kind=RSPEC),
             </td>
 <td>intent(in)</td>
               <td></td>            <td>
@@ -687,7 +690,7 @@ safety factor at the edge    </p>
         <tr>
             <td>
               <span class="anchor" id="variable-te0"></span>
-              real(kind=rspec),
+              real(kind=RSPEC),
             </td>
 <td>intent(in)</td>
               <td></td>            <td>
@@ -706,7 +709,7 @@ safety factor at the edge    </p>
         <tr>
             <td>
               <span class="anchor" id="variable-teped"></span>
-              real(kind=rspec),
+              real(kind=RSPEC),
             </td>
 <td>intent(in)</td>
               <td></td>            <td>
@@ -724,8 +727,8 @@ safety factor at the edge    </p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-r_pel"></span>
-              real(kind=rspec),
+              <span class="anchor" id="variable-r_pel~2"></span>
+              real(kind=RSPEC),
             </td>
 <td>intent(in)</td>
               <td></td>            <td>
@@ -743,8 +746,8 @@ safety factor at the edge    </p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-qa"></span>
-              real(kind=rspec),
+              <span class="anchor" id="variable-qa~3"></span>
+              real(kind=RSPEC),
             </td>
 <td>intent(in)</td>
               <td></td>            <td>
@@ -762,7 +765,7 @@ safety factor at the edge    </p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-delr~2"></span>
+              <span class="anchor" id="variable-delr~3"></span>
               real(kind=rspec),
             </td>
 <td>intent(out)</td>
@@ -938,7 +941,7 @@ no scaling needed</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-alpha"></span>
+              <span class="anchor" id="variable-alpha~2"></span>
               real(kind=rspec),
             </td>
 <td>intent(in)</td>
@@ -1006,7 +1009,7 @@ no scaling needed</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-a0"></span>
+              <span class="anchor" id="variable-a0~6"></span>
               real(kind=rspec),
             </td>
 <td>intent(in)</td>
@@ -1040,7 +1043,7 @@ no scaling needed</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-r0"></span>
+              <span class="anchor" id="variable-r0~6"></span>
               real(kind=rspec),
             </td>
 <td>intent(in)</td>
@@ -1108,7 +1111,7 @@ no scaling needed</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-kappa"></span>
+              <span class="anchor" id="variable-kappa~2"></span>
               real(kind=rspec),
             </td>
 <td>intent(in)</td>
@@ -1142,7 +1145,7 @@ no scaling needed</p>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-del_drift"></span>
+              <span class="anchor" id="variable-del_drift~2"></span>
               real(kind=rspec),
             </td>
 <td>intent(out)</td>
@@ -1153,6 +1156,228 @@ no scaling needed</p>
             <td><strong>Del_drift</strong></td>
             <td>
 <p>plasma elongation close to the separatrix [-]</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-apply_drifts"></span> <h3>public  subroutine <a href='../proc/apply_drifts.html'>APPLY_DRIFTS</a>(k_drift, ncplas, n, rho_r, rcyl_p, rflx_p, pden_r, drift, pden_r_shifted, message, iflag)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>rho mapped to new deposition array
+Allocate array sizes
+Initialise arrays
+Find the first value of dne (density change) =/= 0...
+This will be the deposition depth.</p><a href="../proc/apply_drifts.html" class="pull-right"><emph>Read more&hellip;</emph></a>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-k_drift~2"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>k_drift</strong></td>
+            <td>
+<p>flag for which drift scale used
+number of points in plasma</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ncplas~2"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ncplas</strong></td>
+            <td>
+<p>flag for which drift scale used
+number of points in plasma</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-n~9"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n</strong></td>
+            <td>
+<p>flag for which drift scale used
+number of points in plasma</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rho_r~12"></span>
+              real(kind=RSPEC),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>rho_r</strong>(:)</td>
+            <td>
+<p>number of points (plasma+sol)
+normalised rho array
+cylindrical coordinates of pellet trajectory
+flux coordinates of pellet trajectory
+density change due to injected pellet</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rcyl_p~2"></span>
+              real(kind=RSPEC),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>rcyl_p</strong>(:,:)</td>
+            <td>
+<p>number of points (plasma+sol)
+normalised rho array
+cylindrical coordinates of pellet trajectory
+flux coordinates of pellet trajectory
+density change due to injected pellet</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rflx_p~2"></span>
+              real(kind=RSPEC),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>rflx_p</strong>(:,:)</td>
+            <td>
+<p>number of points (plasma+sol)
+normalised rho array
+cylindrical coordinates of pellet trajectory
+flux coordinates of pellet trajectory
+density change due to injected pellet</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-pden_r~2"></span>
+              real(kind=RSPEC),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>pden_r</strong>(:)</td>
+            <td>
+<p>number of points (plasma+sol)
+normalised rho array
+cylindrical coordinates of pellet trajectory
+flux coordinates of pellet trajectory
+density change due to injected pellet</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-drift"></span>
+              real(kind=RSPEC),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>drift</strong></td>
+            <td>
+<p>number of points (plasma+sol)
+normalised rho array
+cylindrical coordinates of pellet trajectory
+flux coordinates of pellet trajectory
+density change due to injected pellet</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-pden_r_shifted~2"></span>
+              real(kind=RSPEC),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>pden_r_shifted</strong>(:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-message~23"></span>
+              character(len=*),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>message</strong></td>
+            <td>
+<p>total gradB drift in R
+Declaration of output variables
+warning or error message [character]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-iflag~23"></span>
+              integer,
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>iflag</strong></td>
+            <td>
+<p>error and warning flag [-]
+=-1 warning
+=0 no warnings or errors
+=1 error</p>
             </td>
         </tr>
     </tbody>
@@ -1178,7 +1403,7 @@ no scaling needed</p>
           <div class="col">
             <p>
               PELLETS
-              &copy; 2025 
+              &copy; 2026 
 </p>
           </div>
           <div class="col">

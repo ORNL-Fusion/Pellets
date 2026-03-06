@@ -1,4 +1,4 @@
-module DRIFTS_MOD
+MODULE DRIFTS_MOD
 !!-------------------------------------------------------------------------------
 !! DRIFTS_MOD is an F90 module of routines that calculates the change in 
 !! pellet penetraion depth based on three drift scaling laws.	
@@ -11,10 +11,12 @@ module DRIFTS_MOD
 !!  
 !!-------------------------------------------------------------------------------
 
-use SPEC_KIND_MOD
+USE SPEC_KIND_MOD
+USE LINEAR1_MOD
+USE AJAX_MOD
 IMPLICIT NONE
                      
-contains
+CONTAINS
 
 SUBROUTINE PARKS_DRIFT(W,r_p,ne_inf,Te_inf,R,B,M0, &
                        T0,cA_inf,beta_inf,kap_c, &
@@ -30,7 +32,7 @@ SUBROUTINE PARKS_DRIFT(W,r_p,ne_inf,Te_inf,R,B,M0, &
   !! corresponding PELLET parameters along with their units.
   !!------------------------------------------------------------------
 
-real(kind=rspec), parameter :: &
+REAL(KIND=RSPEC), PARAMETER :: &
 !> free space permeability [kg/s**2/A**2]
   mu0 = 1.25663706e-06,                 &
 !> Coloumb charge (eV --> J)
@@ -49,7 +51,7 @@ real(kind=rspec), parameter :: &
 !> scale /cm**3 --> /m**3
   ne_scale = 1.0e6
 
-real(kind=rspec) :: &
+REAL(KIND=RSPEC) :: &
 !> Coulomb log for electron-neutral interactions (?)
   lnLam_en,                        &
 !> Coloumb log for electron-electron interactions
@@ -89,43 +91,43 @@ real(kind=rspec) :: &
 !> have that computing capacity right now.)
   quant 
 
-  real(kind=rspec), intent(in) :: &
-    W,                            &
-      !! pellet mass in amu [-]
-      !! PELLET: amu_pel [-] 
-    r_p,                          &
-      !! pellet radius [cm]
-      !! PELLET: r0 [m]
-      !! scale input by 1.0E2
-    ne_inf,                       &
-      !! background plasma density [/cm**3]
-      !! PELLET: den0 [/m**3]
-      !! scale input by 1.0E6
-    Te_inf,                       &
-      !! background plasma temperature [keV]
-      !! PELLET: te0 [keV]
-      !! no scaling
-    R,                            &
-      !! major radius [m]
-      !! PELLET: r0 [m]
-      !! no scaling
-    B,                            &
-      !! toroidal magnetic field [T]
-      !! PELLET: bt0 [T]
-      !! no scaling
-    M0,                           &
-      !! mach number at the channel entrance [-]
-      !! PELLET: NA
-    T0                             
-      !! temperature at the channel entrance [eV]
-      !! PELLET: NA
+REAL(KIND=RSPEC), INTENT(IN) :: &
+  W,                            &
+    !! pellet mass in amu [-]
+    !! PELLET: amu_pel [-] 
+  r_p,                          &
+    !! pellet radius [cm]
+    !! PELLET: r0 [m]
+    !! scale input by 1.0E2
+  ne_inf,                       &
+    !! background plasma density [/cm**3]
+    !! PELLET: den0 [/m**3]
+    !! scale input by 1.0E6
+  Te_inf,                       &
+    !! background plasma temperature [keV]
+    !! PELLET: te0 [keV]
+    !! no scaling
+  R,                            &
+    !! major radius [m]
+    !! PELLET: r0 [m]
+    !! no scaling
+  B,                            &
+    !! toroidal magnetic field [T]
+    !! PELLET: bt0 [T]
+    !! no scaling
+  M0,                           &
+    !! mach number at the channel entrance [-]
+    !! PELLET: NA
+  T0                             
+    !! temperature at the channel entrance [eV]
+    !! PELLET: NA
 
 !>------------------------------------------------------------------#
 !> Currently these out quantities are just to compare with
 !> the calculations in Parks et al. (2000)
 !>------------------------------------------------------------------#
 
-real(kind=rspec), intent(out) :: &
+REAL(KIND=RSPEC), INTENT(OUT) :: &
 !> background plasma beta
   beta_inf,                      &
 !> 
@@ -160,6 +162,7 @@ beta_inf = 4.0*mu0*(ne_inf*ne_scale)*(Te_inf*e0)/B**2.0
 !>------------------------------------------------------------------
 
 beta_star_prime = 4.3e3*((W/quant)**(1./3.))*(Te_inf**(2./3.))*beta_inf
+PRINT *, "beta_star_prime: ", beta_star_prime
 T_star_prime = 1.88e-9*((W/Te_inf)**(1./3.))*(quant**(2./3.))
 
 !>------------------------------------------------------------------
@@ -222,18 +225,18 @@ Psi_int = 0.036*(Sigma_0**1.1)*((beta_ratio - 1.0)**2.64)
 beta_0 = beta_ratio*beta_inf
 DelR = 0.5*beta_0*kap_c*r_p*(cA_inf/c_0_bar)*Psi_int
 
-open (unit=10,file="parks_2000_test.txt",action="write")
-write(10,*) kap_c, &
+OPEN (UNIT=10,FILE="parks_2000_test.txt",ACTION="write")
+WRITE(10,*) kap_c, &
             beta_ratio,beta_0, &
             Sigma_0,Psi_int,DelR
-close (10)
+CLOSE (10)
 
 END SUBROUTINE PARKS_DRIFT
 
 SUBROUTINE BAYLOR_DRIFT(B,Te0,Teped,r_pel,qa, &
                         DelR)
 
-real(kind=rspec), intent(in) :: &
+REAL(KIND=RSPEC), intent(in) :: &
 !> magnetic field [T] 
   B,                            &
 !> central electron temp [keV]
@@ -250,10 +253,12 @@ real(kind=rspec), intent(out) :: &
   DelR 
 
 DelR = B**(-0.15)*Te0**(-0.13)*Teped**(0.5)*r_pel**(0.76)*qa**(-0.15)
+! PRINT *, "Drift terms: B^-0.15; Te0^-0.13; Teped^0.5; r_pel^0.76; qa^-0.15"
+! PRINT *, B**(-0.15), Te0**(-0.13), Teped**(0.5), r_pel**(0.76), qa**(-0.15)
 
-open (unit=10,file="baylor_2007_test.txt",action="write")
-write(10,*) DelR
-close (10)
+! open (unit=10,file="baylor_2007_test.txt",action="write")
+! write(10,*) DelR
+! close (10)
 
 END SUBROUTINE
 
@@ -339,6 +344,136 @@ Del_drift = C1*((v_p/100)**C2)*(r_p**C3)*(ne0**C4) &
 ! write(50,*) "Del_drift\n"
 ! write(50,*) Del_drift
 ! close (50)
+
+END SUBROUTINE
+
+SUBROUTINE APPLY_DRIFTS(k_drift,ncplas,n,rho_r,rcyl_p,rflx_p,pden_r,drift,pden_r_shifted,message,iflag)
+
+INTEGER, INTENT(IN) :: &
+  k_drift,             &
+  !> flag for which drift scale used
+  ncplas,              &
+  !> number of points in plasma
+  n
+  !> number of points (plasma+sol)
+
+REAL(KIND=RSPEC), INTENT(IN) :: &
+  rho_r(:),                     & 
+  !> normalised rho array
+  rcyl_p(:,:),                  & 
+  !> cylindrical coordinates of pellet trajectory
+  rflx_p(:,:),                  &
+  !> flux coordinates of pellet trajectory
+  pden_r(:),                    &
+  !> density change due to injected pellet
+  drift         
+  !> total gradB drift in R
+
+!!Declaration of output variables
+CHARACTER(len=*), INTENT(OUT) :: &
+  message                !!warning or error message [character]
+
+INTEGER, INTENT(OUT) :: &
+  iflag                  !!error and warning flag [-]
+                         !!=-1 warning
+                         !!=0 no warnings or errors
+                         !!=1 error
+
+REAL(KIND=RSPEC), INTENT(OUT) :: &
+  pden_r_shifted(:)
+  !> density change shifted due to gradB drift
+
+REAL(KIND=RSPEC) :: &
+  new_R                          
+  !> shfted R value
+
+INTEGER :: &
+  ii, jj, kk
+  !> counters
+
+REAL(KIND=RSPEC), ALLOCATABLE :: &
+  interp_cyl(:,:),               &
+  !> cylindrical coords at rho of deposition depth
+  new_cyl(:),                    &
+  !> cylindrical coordinates of shifted deposition
+  new_flx(:),                    &
+  !> flux coordinates of shifted deposition
+  rho_r_map(:)
+  !> rho mapped to new deposition array
+
+ALLOCATE(interp_cyl(3,n), &
+          new_cyl(3),    &
+          new_flx(3),    &
+          rho_r_map(n))
+          !> Allocate array sizes
+
+interp_cyl(:,:)=0
+new_cyl(:)=0
+new_flx(:)=0
+rho_r_map(:)=0
+pden_r_shifted(:)=0
+!> Initialise arrays
+
+DO ii=1,n
+  IF (pden_r(ii).NE.0) EXIT
+ENDDO
+
+!> Find the first value of dne (density change) =/= 0...
+!> This will be the deposition depth.
+
+PRINT *, "RHO_R(ii): ", rho_r(ii)
+
+CALL LINEAR1_INTERP(n,rflx_p(1,n:1:-1),rcyl_p(1,n:1:-1),n,rho_r(n:1:-1),interp_cyl(1,n:1:-1),iflag,message)
+!> Interpolate to find the R coord of rho
+
+PRINT *, "R(ii): ", interp_cyl(1,ii)
+
+IF(k_drift==2) THEN
+  new_R = interp_cyl(1,ii) + drift
+ELSEIF(k_drift==3) THEN
+  new_R = interp_cyl(1,ii) + drift
+ENDIF
+!> Add the drift distance to R
+
+PRINT *, "Del R: ", drift
+
+PRINT *, "Rnew: ", new_R
+
+CALL LINEAR1_INTERP(n,rcyl_p(1,:),rcyl_p(3,:),n,interp_cyl(1,n:1:-1),interp_cyl(3,n:1:-1),iflag,message)
+!> Interpolate to find the Z coord for the (R,Z) pair
+
+new_cyl(1) = new_R
+new_cyl(3) = interp_cyl(3,ii)
+!> Assign new cylindrical coords using shifted R but SAME Z
+
+CALL AJAX_CYL2FLX(new_cyl,new_flx,iflag,message)
+!> Calculate the rho coord for the shifted R location
+
+PRINT *, "CYL_NEW: ", new_cyl
+PRINT *, "FLX_NEW: ", new_flx
+
+DO jj=1,n
+  IF (rho_r(jj)>new_flx(1)) EXIT
+ENDDO
+!> Find closest rho in original array that matches the new shifted rho
+!> Could interp again to get exact...
+
+rho_r_map(ncplas:n) = rho_r(ncplas:n)
+!> Mapped SOL rho matches original rho array
+
+DO kk=jj,ncplas
+  rho_r_map(kk) = rho_r(ncplas) + ((rho_r(kk) - rho_r(ncplas))/(rho_r(jj) - rho_r(ncplas)))*(rho_r(ii) - rho_r(ncplas))
+ENDDO
+!> Mapping the shifted rho array
+
+CALL LINEAR1_INTERP(ncplas,rho_r,pden_r,ncplas-jj+1,rho_r_map(jj:ncplas),pden_r_shifted(jj:ncplas),iflag,message)
+!> Interpolating dne onto the mapped rho array
+
+pden_r_shifted(:) = (rho_r(ii) - rho_r(ncplas)) / (rho_r(jj) - rho_r(ncplas))*pden_r_shifted(:)
+!> Normalised shifted dne
+
+PRINT *, "Old density change: ", pden_r
+PRINT *, "New density change: ", pden_r_shifted
 
 END SUBROUTINE
 

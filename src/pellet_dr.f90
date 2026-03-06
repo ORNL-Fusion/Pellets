@@ -126,9 +126,7 @@ REAL(KIND=rspec) :: &
   fpelprl,             & !fraction of pellet mass unaffected by PRL drift model 
   prlinjang,           & !PRL injection angle
   prlq0,               & !PRL q0 value
-  prlqa,               & !PRL qa value
-  rho_r_shifted,       &
-  dvol_r_point,        &  
+  prlqa,               & !PRL qa value 
   beta_inf,            &
   cA_inf,kap_c,        &
   beta_ratio,          &
@@ -139,10 +137,12 @@ REAL(KIND=rspec) :: &
   lam,                 &
   DelR,                &
   Del_drift,           &
+  rhor_check,          &
   prlqf                  !PRL q profile exponent q(r) = (qa-q0) + q0*(1-(r/a)^qf)
-!
-!
-!
+
+LOGICAL :: &
+  output                 ! .true. : will write print statements to output file
+                         ! .false.: no additional (debug) print statements
 
 
 !-------------------------------------------------------------------------------
@@ -151,7 +151,7 @@ LOGICAL :: &
   l_fa,l_fb(3)
 
 CHARACTER(len=45) :: &
-  cn_msg,cn_sum,cn_tmp
+  cn_msg,cn_sum,cn_tmp,cn_out
 
 CHARACTER(len=120) :: &
   label,message
@@ -160,16 +160,16 @@ CHARACTER(len=1) :: &
   cb
 
 INTEGER :: &
-  n_msg,n_sum,n_tmp
+  n_msg,n_sum,n_tmp,n_out,ped_loc
 
 INTEGER :: &
-  i,i0,idum(5),ii,j,n,n_c,n_p,nc,nefmax,nf,iflag, &
+  i,i0,idum(5),ii,j,jj,kk,n,n_c,n_p,nc,nefmax,nf,iflag, &
   nrho_ajax,ntheta_ajax,nzeta_ajax
 
 INTEGER, ALLOCATABLE :: &
   irho_c(:),izone_c(:), &
   irho_p(:),izone_p(:), &
-  iz_f(:),ne_f(:)
+  iz_f(:),ne_f(:),idxMin(:)
 
 INTEGER, PARAMETER :: &
   nbg=17, &
@@ -178,22 +178,24 @@ INTEGER, PARAMETER :: &
 REAL(KIND=rspec) :: &
   drp,drso,frpen,fvpen,hnorm,pel_ions,ptemp,q1,raxis,rpen,rsoff,rtot, &
   rdum(5),r_flx(3),r_cyl(3),rseg_c(3,2),volp,volpen,dndlv(4,5),dndlh(4,5), &
-  timndl(4)
+  timndl(4),vR,vZ,alph,dvR,dvZ
 
 REAL(KIND=rspec), ALLOCATABLE :: &
   cur_rm(:),den_r(:),dvol_r(:),pden_r(:),rho_r(:),rho_rm(:),te_r(:), &
   dn0_r(:),zbr_r(:),amu_f(:),e0_f(:),p_f(:),e_ef(:,:),h_rf(:,:), &
   vc_rf(:,:),den_ref(:,:,:), &
   t_p(:),s_p(:),te0_p(:),te1_p(:),den0_p(:),den1_p(:),rpel1_p(:), &
-  src_p(:),rcyl_p(:,:),rflx_p(:,:), &
-  s_c(:), pedte1(:), pedte2(:), pedne1(:), pedne2(:), prlq_r(:), prldep(:)
+  src_p(:),rcyl_p(:,:),rflx_p(:,:),rho2r_temp(:,:),rho_temp(:,:),rho2r(:), &
+  s_c(:), pedte1(:), pedte2(:), pedne1(:), pedne2(:), prlq_r(:), prldep(:), &
+  r_shifted(:,:),rho_r_shifted(:,:),dvol_r_point(:),rho_r_map(:),pden_r_shifted(:), &
+  Rtraj(:),Ztraj(:),R2rho(:,:),Z2phi(:,:),conv_check(:,:),flx_check(:),cyl_check(:)
 
 !Physical constants, mathematical constants, conversion factors
 REAL(KIND=rspec), PARAMETER :: &
   z_eion=32.6e-3, &
   z_pi=3.141592654, &
   z_mu0=4.0e-7*z_pi, &
-  pi = 4.0*ATAN(1.0)   
+  pi = 4.0*ATAN(1.0)
 
 !PRL added variables
 REAL(KIND=rspec) :: &
@@ -227,8 +229,8 @@ NAMELIST/indata/cn_eq,cn_prof, cn_runid, cn_device, &
                 rvert,zhorz, &
                 pb,px_hb,qx_hb,amu_b,eb0,amu_i,dn01,rl_dn0, &
                 pa,px_ha,qx_ha, k_prl, nprlcld, iprlcld, &
-				pedte, pedne, pedwid, k_ped, fpelprl, prlinjang, prlq0, prlqa, prlqf, &
-                k_drift, alpha, kappa, lam 
+				        pedte, pedne, pedwid, k_ped, fpelprl, prlinjang, prlq0, prlqa, prlqf, &
+                k_drift, alpha, kappa, lam, output 
                
 
 !-------------------------------------------------------------------------------
@@ -312,6 +314,9 @@ prlqf=0
 alpha=0
 kappa=0
 lam=0
+output=.true.
+
+
 beta_inf=0
 cA_inf=0
 kap_c=0
@@ -320,14 +325,18 @@ Sigma_0=0
 c_0_bar=0
 Psi_int=0
 DelR=0
-dvol_r_point=0
+rhor_check=0
+vR=0
+vZ=0
+alph=0
+dvR=0
+dvZ=0
 
 !-------------------------------------------------------------------------------
 !Set the input namelist unit, open, read and close file
 !-------------------------------------------------------------------------------
-n_tmp=20
-cn_tmp='nml_pellet.dat'
-! PRINT *, "cn_tmp: ", cn_tmp
+n_tmp=100
+cn_tmp='../nml_pellet.dat'
 OPEN(UNIT=n_tmp, &
      FILE=cn_tmp, &
      STATUS='old', &
@@ -335,12 +344,27 @@ OPEN(UNIT=n_tmp, &
 
 READ(n_tmp,indata)
 
-PRINT *, "r_pel: ", r_pel
-PRINT *, "v_pel: ", v_pel
-
-alpha = alpha*z_pi
-
 CLOSE(UNIT=n_tmp)
+
+IF(output) THEN
+  n_out = 17
+  cn_out = 'pellet.out'
+  OPEN(UNIT=n_out, &
+      FILE=cn_out, &
+      STATUS='unknown', &
+      FORM='formatted')
+ENDIF
+
+!-------------------------------------------------------------------------------
+! Set obnoxious output message
+!-------------------------------------------------------------------------------
+
+IF(output) THEN
+  WRITE(n_out,*) "!!!!   Welcome to ORNL PELLET   !!!!"
+  WRITE(n_out,*) "                                    "
+  WRITE(n_out,*) "                                    "
+ENDIF
+
 
 !-------------------------------------------------------------------------------
 !Open output files
@@ -416,6 +440,8 @@ ALLOCATE(cur_rm(n), &
          dvol_r(n), &
          te_r(n), &
          pden_r(n), &
+         rho_r_map(n), &
+         pden_r_shifted(n), &
          rho_r(n), &
          rho_rm(n), &
 		 pedte1(n),  &
@@ -430,6 +456,8 @@ ALLOCATE(cur_rm(n), &
   dvol_r(:)=0
   te_r(:)=0
   pden_r(:)=0
+  pden_r_shifted(:)=0
+  rho_r_map(:)=0
   rho_r(:)=0
   rho_rm(:)=0
   pedte1(:)=0
@@ -546,6 +574,13 @@ IF(k_equil == 0 .OR. &
 
 ELSEIF(k_equil == 2) THEN
 
+  IF(output) THEN
+    WRITE(n_out,*) "*******************************************************************************"
+    WRITE(n_out,*) "* READING EQUILIBRIUM INFO FROM EQDSK                                         *"
+    WRITE(n_out,*) "*******************************************************************************"
+    WRITE(n_out,*) "Reading from              : ", cn_eq
+  ENDIF
+
   !Open data file for reading
   OPEN(UNIT=n_tmp, &
        FILE=cn_eq, &
@@ -557,17 +592,24 @@ ELSEIF(k_equil == 2) THEN
 
   CLOSE(UNIT=n_tmp)
 
-  ! PRINT *, "rho_rm: ", rho_rm 
-  ! PRINT *, "r0: ", r0 
-  ! PRINT *, "a0: ", a0 
-  ! PRINT *, "bt0: ", bt0 
-  ! PRINT *, "s0: ", s0 
-  ! PRINT *, "e0: ", e0 
-  ! PRINT *, "e1: ", e1 
-  ! PRINT *, "d1: ", d1 
-  ! PRINT *, "q0: ", q0 
-  ! PRINT *, "q1: ", q1
-
+  IF(output) THEN
+    WRITE(n_out,*) "... all done! :D"
+    WRITE(n_out,*) "*******************************************************************************"
+    WRITE(n_out,*) "* PARAMETERS READ FROM EQDSK FILE                                             *"
+    WRITE(n_out,*) "*******************************************************************************"
+    WRITE(n_out,*) "Major radius r0           : ", r0, " (m)"
+    WRITE(n_out,*) "Minor radius a0           : ", a0, " (m)"
+    WRITE(n_out,*) "Toroidal B field bt0      : ", bt0, " (T)"
+    WRITE(n_out,*) "Axis shift s0             : ", s0, " (-)"
+    WRITE(n_out,*) "Elongation at axis e0     : ", e0, " (-)"
+    WRITE(n_out,*) "Elongation at edge e1     : ", e1, " (-)"
+    WRITE(n_out,*) "Triangularity at edge d1  : ", d1, " (-)"
+    WRITE(n_out,*) "Safety factor at axis q0  : ", q0, " (-)"
+    WRITE(n_out,*) "Safety factor at edge q1  : ", q1, " (-)"
+    WRITE(n_out,*) "*******************************************************************************"
+    WRITE(n_out,*) "                                                                               "
+    WRITE(n_out,*) "                                                                               "
+  ENDIF
 
   !Check messages
   IF(iflag /= 0) THEN
@@ -578,6 +620,8 @@ ELSEIF(k_equil == 2) THEN
     message=''
 
   ENDIF
+
+  PRINT *, "Calling SETUP_AJAX."
 
   CALL SETUP_AJAX(k_equil,n_tmp,r0,a0,s0,e0,e1,d1,bt0,q0,q1,ncplas+1,rho_rm, &
                   nrho_ajax,ntheta_ajax,nzeta_ajax, &
@@ -608,15 +652,9 @@ ENDIF
 !Get geometric quantities
 iflag=0
 message=''
-! call HPI2_DRIFT(150.0,2.7,5.0,3.0,-PI/4.0,0.1,0.61,1.67, &
-!                       2.2,1.8,Del_drift)
-! Del_drift_rho = Del_drift/a0
 CALL AJAX_FLUXAV_G(n,rho_rm, &
                    iflag,message, &
                    DVOL_R=dvol_r)
-
-! PRINT *, "dvol_r: ", dvol_r
-! PRINT *, "n: ", n
 
 !Check messages
 IF(iflag /= 0) THEN
@@ -631,9 +669,36 @@ ENDIF
 !-------------------------------------------------------------------------------
 IF(k_readd == 1) THEN
 
+  IF(output) THEN
+    WRITE(n_out,*) "*******************************************************************************"
+    WRITE(n_out,*) "* READING PLASMA PROFILES FROM FILE                                           *"
+    WRITE(n_out,*) "*******************************************************************************"
+    WRITE(n_out,*) "Reading from                 : ", cn_prof
+  ENDIF
+
   !Get electron profiles from file
   CALL READ_PELLET_PRO(n_tmp,cn_prof,n,rho_r, &
                        den_r,te_r,iflag,message)
+
+  IF(output) THEN
+    IF(ANY(den_r <= 0.0).OR.ANY(te_r <= 0.0)) THEN
+      WRITE(n_out,*) "Density or temperature array has value <= 0.0."
+    ELSE
+      WRITE(n_out,*) "... all done! :D"
+      WRITE(n_out,*) "*******************************************************************************"
+      WRITE(n_out,*) "* PROFILE PARAMETERS                                                          *"
+      WRITE(n_out,*) "*******************************************************************************"
+      WRITE(n_out,*) "Central electron temperature te0     : ", te_r(1), " (keV)"
+      WRITE(n_out,*) "Separatrix electron temperature te1  : ", te_r(n), " (keV)"
+      WRITE(n_out,*) "Central electron density ne0         : ", den_r(1), " (/m**3)"
+      WRITE(n_out,*) "Separatrix electron density ne1      : ", den_r(n), " (/m**3)"
+      WRITE(n_out,*) "Pedestal location rho                : ", rho_r(59), " (-)"
+      WRITE(n_out,*) "Pedestal electron temperature teped  : ", te_r(59), " (keV)"
+      WRITE(n_out,*) "*******************************************************************************"
+      WRITE(n_out,*) "                                                                               "
+      WRITE(n_out,*) "                                                                               "
+    ENDIF
+  ENDIF
 
 ELSE
 
@@ -835,8 +900,21 @@ ALLOCATE(irho_p(6*n), &
          den1_p(6*n), &
          src_p(6*n), &
          rpel1_p(6*n), &
+         rho2r_temp(3,n), &
+         rho_temp(3,n), &
+         rho2r(n), &
+         r_shifted(3,n), &
+         rho_r_shifted(3,n), &
+         dvol_r_point(n), &
          rcyl_p(3,6*n), &
-         rflx_p(3,6*n))
+         rflx_p(3,6*n), &
+         Rtraj(n), &
+         Ztraj(n), &
+         R2rho(3,n), &
+         Z2phi(3,n), &
+         conv_check(3,n), &
+         flx_check(3), &
+         cyl_check(3))
 
   irho_p(:)=0
   izone_p(:)=0
@@ -850,9 +928,51 @@ ALLOCATE(irho_p(6*n), &
   rpel1_p(:)=0
   rcyl_p(:,:)=0
   rflx_p(:,:)=0
+  rho2r_temp(:,:)=0
+  rho_temp(:,:)=0
+  rho2r(:)=0
+  r_shifted(:,:)=0
+  rho_r_shifted(:,:)=0
+  dvol_r_point(:)=0
+  Rtraj(:)=0
+  Ztraj(:)=0
+  R2rho(:,:)=0
+  Z2phi(:,:)=0
+  conv_check(:,:)=0
+  flx_check(:)=0
+  cyl_check(:)=0
 
+rho_temp(1,:)=rho_r
+rho_temp(2,:)=-0.75*z_pi
 
-PRINT *, "rseg_p: ", rseg_p
+DO ii=1,(n)
+  CALL AJAX_FLX2CYL(rho_temp(1:3,ii),rho2r_temp(1:3,ii),iflag,message)
+ENDDO
+
+rho2r(1:n) = rho2r_temp(1,1:n)
+
+vR = rseg_p(1,2) - rseg_p(1,1)
+vZ = rseg_p(3,2) - rseg_p(3,1)
+alpha = ATAN2(vZ,vR)
+
+dvR = vR/(n-1)
+dvZ = vZ/(n-1)
+
+Rtraj(1) = rseg_p(1,1)
+Ztraj(1) = rseg_p(3,1)
+
+DO ii=2,n
+  Rtraj(ii)=Rtraj(ii-1) + dvR
+  Ztraj(ii)=Ztraj(ii-1) + dvZ
+ENDDO
+
+R2rho(1,:) = Rtraj
+R2rho(3,:) = Ztraj
+
+DO ii=1,(n)
+  CALL AJAX_CYL2FLX(R2rho(1:3,ii),Z2phi(1:3,ii),iflag,message)
+ENDDO
+
 !Get pellet path
 CALL TRACK(n,rho_rm,2,rseg_p, &
            n_p,irho_p,s_p,iflag,message, &
@@ -861,9 +981,29 @@ CALL TRACK(n,rho_rm,2,rseg_p, &
            RCYL_INT=rcyl_p, &
            RFLX_INT=rflx_p)
 
-! PRINT *, "n_p: ", n_p
-! PRINT *, "irho_p: ", irho_p
-! PRINT *, "s_p: ", s_p
+PRINT *, "Finished TRACK."
+
+! ii=0
+
+ALLOCATE(idxMin(1))
+idxMin(:)=0
+
+! PRINT *, "rcyl_p (R): ", rcyl_p(1,:)
+! PRINT *, "rcyl_p (Z): ", rcyl_p(3,:)
+! PRINT *, "rflx_p (rho): ", rflx_p(1,1:n_p)
+! PRINT *, "rflx_p (phi): ", rflx_p(2,:)
+
+! PRINT *, "Min flux coord in trajectory: ", MINVAL(rflx_p(1,1:n_p))
+idxMin = MINLOC(rflx_p(1,1:n_p))
+! PRINT *, "Min coords at index: " 
+! PRINT *, "R: ", rcyl_p(1,idxMin)
+! PRINT *, "Z: ", rcyl_p(3,idxMin)
+! PRINT *, "rho: ", rflx_p(1,idxMin)
+! PRINT *, "phi: ", rflx_p(2,idxMin)
+
+lam = rflx_p(1,idxMin(1))
+
+PRINT *, "alpha, lamda, kappa: ", alpha, lam, e1
 
 !Check messages
 IF(iflag /= 0) THEN
@@ -874,11 +1014,6 @@ IF(iflag /= 0) THEN
   message=''
 
 ENDIF
-
-! PRINT *, "a0, r0, bt0:", a0, r0, bt0
-! PRINT *, "dvol_r: ", dvol_r
-
-! PRINT *, "izone: ", izone_p
 
 !-------------------------------------------------------------------------------
 !Call PELLET
@@ -914,14 +1049,14 @@ CALL PELLET(k_pel,amu_pel,r_pel,v_pel,nc,den_r,te_r,n_p-1,izone_p,s_p, &
             DVOL_R_ARRAY=dvol_r)
             ! DVOL_R_POINT=dvol_r_point, &
             ! RHO_R_SHIFTED=rho_r_shifted, &
+            ! R_SHIFTED=r_shifted, &
             ! K_DRIFT=k_drift, &
             ! ALPHA=alpha, &
             ! LAM=lam, &
             ! KAPPA=kappa, &
             ! DEL_DRIFT=del_drift, &
-            ! RHO_RM=rho_rm)
-
-! PRINT *, "pden_r: ", pden_r
+            ! RHO_RM=rho_r, &
+            ! RHO2R=rho2r)
 
 !Check messages
 IF(iflag /= 0) THEN
@@ -930,6 +1065,60 @@ IF(iflag /= 0) THEN
 ! IF(iflag > 0) GOTO 9999
   iflag=0
   message=''
+
+ENDIF
+
+! IF (PRESENT(K_DRIFT)) THEN
+IF (K_DRIFT .NE. 0) THEN
+
+  IF (output) THEN
+
+    WRITE(n_out,*) "*******************************************************************************"
+    WRITE(n_out,*) "* ENTERING DRIFT CALCULATION WITH K_DRIFT = ", k_drift, "                     *"
+    WRITE(n_out,*) "*******************************************************************************"
+    
+
+  ENDIF
+
+
+  IF (K_DRIFT == 2) THEN
+
+    ped_loc = 185
+
+    CALL BAYLOR_DRIFT(bt0,te_r(1)*1.0e3,te_r(ped_loc)*1.0e3,r_pel*1.0e1,q1, &
+                        Del_drift)
+
+    IF(output) THEN
+
+      WRITE(n_out,*) "* DIII-D DRIFT SCALING, L.R. Baylor etal 2007 Nucl.Fusion 47 1598             *"
+      WRITE(n_out,*) "* Eq (2): Delta R ~ B^(-0.15)*Te0^(-0.13)*Teped^(0.5)*r_pel^(0.76)*qa^(-0.15) *"
+      WRITE(n_out,*) "*******************************************************************************"
+      WRITE(n_out,*) "*******************************************************************************"
+      WRITE(n_out,*) "* PARAMETERS USED IN DRIFT SCALING                                            *"
+      WRITE(n_out,*) "*******************************************************************************"
+      WRITE(n_out,*) "Magnetic field B                       : ", bt0, " (T)"
+      WRITE(n_out,*) "Central electron temperature Te0       : ", te_r(1)*1.0e3, " (eV)"
+      WRITE(n_out,*) "Pedestal electron temperature Teped    : ", te_r(ped_loc)*1.0e3, " (eV)"
+      WRITE(n_out,*) "Pellet radius r_ped                    : ", r_pel*1.0e1, " (cm)"
+      WRITE(n_out,*) "Edge safety factor q                   : ", q1, " (-)"
+      WRITE(n_out,*) "*******************************************************************************"
+
+      WRITE(n_out,*) "Drift distance in major radius Delta R : ", Del_drift, " (m)"
+
+    ENDIF
+
+  ENDIF
+
+  IF (K_DRIFT == 3) THEN
+
+
+    CALL HPI2_DRIFT(v_pel,r_pel*1.0e3,den_r(1)*1.0e-19,te_r(1),ALPHA,LAM, &
+                    a0,r0,bt0,KAPPA,Del_drift)
+
+
+  ENDIF
+
+  CALL APPLY_DRIFTS(k_drift,ncplas,n,rho_r,rcyl_p,rflx_p,pden_r,Del_drift,pden_r_shifted,message,iflag)
 
 ENDIF
 
@@ -951,10 +1140,6 @@ IF(iflag /= 0) THEN
   message=''
 
 ENDIF
-
-!call PARKS_DRIFT(2.0,0.05,7.0e13,1.3e3,107.0,3.0,0.8,2.0, &
-!                  cA_inf,beta_inf,kap_c,beta_ratio, &
-!                  Sigma_0,c_0_bar,Psi_int,DelR)
 
 raxis=r_cyl(1)
 
@@ -1208,17 +1393,24 @@ descpro(npro)='Normalized toroidal flux grid - ' &
               //'proportional to square root toroidal flux'
 valpro(:,npro)=rho_r(:)
 
+npro=npro+1
+namepro(npro)='rho'
+unitpro(npro)='[-]'
+descpro(npro)='Trajectory rho grid'
+valpro(:,npro)=Z2phi(1,:)
+
+npro=npro+1
+namepro(npro)='phi'
+unitpro(npro)='[-]'
+descpro(npro)='Trajectory phi grid'
+valpro(:,npro)=Z2phi(2,:)
+
 !Geometry
 npro=npro+1
 namepro(npro)='dVol'
 unitpro(npro)='m**3'
 descpro(npro)='Cell volume'
 valpro(:,npro)=dvol_r(:) 
-
-! open (unit=10,file="print_out_test.txt",action="write")
-! write(10,*) "dVol"
-! write(10,*) dvol_r(:)
-! close (10)
 
 !Temperatures
 npro=npro+1
@@ -1234,7 +1426,6 @@ unitpro(npro)='/m**3'
 descpro(npro)='Initial electron density'
 valpro(:,npro)=den_r(:)
 
-! PRINT *, "nf: ", nf
 !Fast ions and neutrals
 IF(nf > 0) THEN
 
@@ -1303,6 +1494,12 @@ descpro(npro)='Electron density perturbation'
 valpro(:,npro)=pden_r(:)
 
 npro=npro+1
+namepro(npro)='delta_ne_drift'
+unitpro(npro)='/m**3'
+descpro(npro)='Shifted lectron density perturbation'
+valpro(:,npro)=pden_r_shifted(:)
+
+npro=npro+1
 namepro(npro)='Te(tpel+)'
 unitpro(npro)='keV'
 descpro(npro)='Final electron temperature'
@@ -1314,11 +1511,12 @@ namepro(npro)='ne(tpel+)'
 unitpro(npro)='/m**3'
 descpro(npro)='Final electron density'
 valpro(:,npro)=den_r(:)+pden_r(:)
-! PRINT *, "den_r_final: ", (den_r(:)+pden_r(:))
-! open (unit=10,file="print_out_density_test.txt",action="write")
-! write(10,*) "Final electron density"
-! write(10,*) den_r(:)+pden_r(:)
-! close (10)
+
+npro=npro+1
+namepro(npro)='ne_d(tpel+)'
+unitpro(npro)='/m**3'
+descpro(npro)='Final electron density (drift)'
+valpro(:,npro)=den_r(:)+pden_r_shifted(:)
 
 !PRL Deposition
 if (k_prl > 0) then
@@ -1536,7 +1734,7 @@ ALLOCATE(xr(nxr), &
 !-------------------------------------------------------------------------------
 !Read profile data and interpolate to external grid
 !-------------------------------------------------------------------------------
-READ(nin,*) (xr(i),denxr(i),texr(i),tixr, i=1,nxr)
+READ(nin,*) (xr(i),denxr(i),texr(i), i=1,nxr)
 
 !Change density to 10^19 /m^3 units
 denxr(:)=denxr(:)*(1e19)
@@ -1615,6 +1813,7 @@ REAL(KIND=rspec), INTENT(OUT) :: &
   q1,                  & !edge sagety factor [-]
   r0,                  & !major radius, center of boundary flux suface [m]
   s0                     !axis shift normalized to a0 [-]
+  
 
 !-------------------------------------------------------------------------------
 !Declaration of local variables
@@ -1623,7 +1822,7 @@ INTEGER, PARAMETER :: &
   mxny_xy=300,  &
   mxnr_r=300, &
   mxn_lim=500, &
-  mxn_bdry=1500
+  mxn_bdry=300
 
 REAL(KIND=rspec), PARAMETER :: &
   z_mu0=1.2566e-06, &
@@ -1671,7 +1870,7 @@ REAL(KIND=rspec) :: &
   x_xy(1:mxnx_xy),y_xy(1:mxny_xy),psi_xy(1:mxnx_xy,1:mxny_xy), &
   x_lim(1:mxn_lim),y_lim(1:mxn_lim)
 
-PRINT *, "Entering PELLET_EFIT."
+! PRINT *, "Entering PELLET_EFIT."
 
 !-------------------------------------------------------------------------------
 !Initialization
@@ -1703,7 +1902,7 @@ CALL READ_EFIT_EQDSK(nin,cnin,mxnx_xy,mxny_xy,mxn_lim, &
                      iflag,message)
 
 
-PRINT *, "Finished loading EQDSK."
+! PRINT *, "Finished loading EQDSK."
 !Check messages
 IF(iflag /= 0) THEN
 
@@ -1712,7 +1911,9 @@ IF(iflag /= 0) THEN
 
 ENDIF
 
-PRINT *, "Current: ", cur
+r0 = a0*2.31907
+PRINT *, "r0: ", r0
+bt0 = bt0*(1.0/(r0 - 0.4)**2)
 
 !-------------------------------------------------------------------------------
 !Call FLUXAV to generate metrics from EFIT MHD equilibrium
@@ -1746,7 +1947,7 @@ IF(iflag /= 0) THEN
 
 ENDIF
 
-PRINT *, "Generated metrics from EFIT."
+PRINT *, "q_r: ", q_r
 
 !Set 0-D quantities
 r0=(rout_r(nr_r)+rin_r(nr_r))/2
@@ -1756,21 +1957,6 @@ e1=elong_r(nr_r)
 d1=triang_r(nr_r)
 q0=q_r(1)
 q1=q_r(nr_r)
-
-! PRINT *, "rho_rm: ", rho_rm 
-PRINT *, "r0: ", r0 
-PRINT *, "a0: ", a0 
-PRINT *, "bt0: ", bt0 
-PRINT *, "s0: ", s0 
-PRINT *, "e0: ", e0 
-PRINT *, "e1: ", e1 
-PRINT *, "d1: ", d1 
-PRINT *, "q0: ", q0 
-PRINT *, "q1: ", q1
-
-PRINT *, "elong_r: ", elong_r
-
-
 
 !Change grid normalization to a0
 fhat_r(:)=fhat_r(:)*a0
@@ -1855,7 +2041,7 @@ REAL(KIND=rspec), INTENT(OUT) :: &
   q_x(mxnx_xy),              & !safety factor on equilibrium psi grid [-]
   rhop_x(mxnx_xy),           & !normalized poloidal flux grid proportional to psi [-]
   x_lim(mxn_lim),            & !horizontal positions of limiter points [m]
-  y_lim(mxn_lim)               !vertical positions of limiter points [m]
+  y_lim(mxn_lim)               !vertical positions of limiter points [m]              
 
 !-------------------------------------------------------------------------------
 !Declaration of local variables
@@ -1881,6 +2067,8 @@ INTEGER :: &
 REAL(KIND=rspec) :: &
   dum
 
+CHARACTER(len=256) :: line
+
 !-------------------------------------------------------------------------------
 !Initialization
 !-------------------------------------------------------------------------------
@@ -1901,9 +2089,6 @@ OPEN(UNIT=nin, &
 !-------------------------------------------------------------------------------
 !Point data - dum values are duplicate information or not used
 READ(nin,'(52x,2i4)') nx_xy,ny_xy
-
-! PRINT *, "mxnx_xy, mxny_xy: ", mxnx_xy, mxny_xy
-! PRINT *, "nx_xy, ny_xy: ", nx_xy, ny_xy
 
 !Check if x dimension is exceeded
 IF(nx_xy > mxnx_xy) THEN
@@ -1930,8 +2115,6 @@ READ(nin,'(5e16.9)') rmag,zmag,psimag,psilim,bt0
 READ(nin,'(5e16.9)') cur
 READ(nin,'(5e16.9)') dum
 
-PRINT *, "r0, rmin, zmid: ", r0, rmin, zmid
-
 !Read 1-D and 2-D data, radial grid is equally spaced in poloidal flux (1:nx_xy)
 READ(nin,'(5e16.9)') (f_x(i),i=1,nx_xy)
 READ(nin,'(5e16.9)') (p_x(i),i=1,nx_xy)
@@ -1939,10 +2122,6 @@ READ(nin,'(5e16.9)') (ffp_x(i),i=1,nx_xy)
 READ(nin,'(5e16.9)') (pp_x(i),i=1,nx_xy)
 READ(nin,'(5e16.9)') ((psi_xy(i,j),i=1,nx_xy),j=1,ny_xy)
 READ(nin,'(5e16.9)') (q_x(i),i=1,nx_xy)
-
-! ['line0', 'ecase', 'mw', 'mh', 'xdim', 'zdim', 'rzero', 'rgrid1', 'zmid', 'rmaxis', 'zmaxis', 
-! 'ssimag', 'ssibry', 'bcentr', 'cpasma', 'fpol', 'pres', 'ffprim', 'pprime', 'psirz', 'qpsi', 'nbdry', 'limitr', 'bdry', 
-! 'rbdry', 'zbdry', 'lim', 'rlim', 'zlim', 'dR', 'dZ', 'R', 'Z', 'pn', 'ip_sign', 'fpol_coeffs', 'psi_bicub_coeffs_inv']
 
 !Boundary and limiter data
 READ(nin,'(2i5)') n_bdry,n_lim
@@ -1956,9 +2135,6 @@ READ(nin,'(2i5)') n_bdry,n_lim
 !  GOTO 9999
 !
 !ENDIF
-
-! PRINT *, "n_lim: ", n_lim
-! PRINT *, "mxn_lim: ", mxn_lim
 
 !Check if limiter dimension is exceeded
 IF(n_lim > mxn_lim) THEN
@@ -1977,15 +2153,10 @@ READ(nin,'(5e16.9)') (x_lim(i),y_lim(i),i=1,n_lim)
 !2D grid
 x_xy(1:nx_xy)=rmin+rdim*(/ (i-1,i=1,nx_xy) /)/(nx_xy-1)
 y_xy(1:ny_xy)=zmid-zdim/2+zdim*(/ (i-1,i=1,ny_xy) /)/(ny_xy-1)
-PRINT *, "y_xy: ", y_xy
-
-! PRINT *, "x_xy: ", x_xy
 
 !1D radial grid and poloidal flux
 psi_x(1:nx_xy)=psimag+(psilim-psimag)*(/ (i-1,i=1,nx_xy) /)/(nx_xy-1)
 rhop_x(1:nx_xy)=(psi_x(1:nx_xy)-psi_x(1))/(psi_x(nx_xy)-psi_x(1))
-
-! PRINT *, "rhop_x: ", rhop_x
 
 !-------------------------------------------------------------------------------
 !Cleanup and exit
