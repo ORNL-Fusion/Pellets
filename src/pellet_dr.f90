@@ -230,7 +230,7 @@ NAMELIST/indata/cn_eq,cn_prof, cn_runid, cn_device, &
                 pb,px_hb,qx_hb,amu_b,eb0,amu_i,dn01,rl_dn0, &
                 pa,px_ha,qx_ha, k_prl, nprlcld, iprlcld, &
 				        pedte, pedne, pedwid, k_ped, fpelprl, prlinjang, prlq0, prlqa, prlqf, &
-                k_drift, alpha, kappa, lam, output 
+                k_drift, output 
                
 
 !-------------------------------------------------------------------------------
@@ -905,7 +905,6 @@ ALLOCATE(irho_p(6*n), &
          rho2r(n), &
          r_shifted(3,n), &
          rho_r_shifted(3,n), &
-         dvol_r_point(n), &
          rcyl_p(3,6*n), &
          rflx_p(3,6*n), &
          Rtraj(n), &
@@ -933,7 +932,6 @@ ALLOCATE(irho_p(6*n), &
   rho2r(:)=0
   r_shifted(:,:)=0
   rho_r_shifted(:,:)=0
-  dvol_r_point(:)=0
   Rtraj(:)=0
   Ztraj(:)=0
   R2rho(:,:)=0
@@ -1002,8 +1000,9 @@ idxMin = MINLOC(rflx_p(1,1:n_p))
 ! PRINT *, "phi: ", rflx_p(2,idxMin)
 
 lam = rflx_p(1,idxMin(1))
+kappa = e1
 
-PRINT *, "alpha, lamda, kappa: ", alpha, lam, e1
+PRINT *, "alpha, lamda, kappa: ", alpha, lam, kappa
 
 !Check messages
 IF(iflag /= 0) THEN
@@ -1047,16 +1046,6 @@ CALL PELLET(k_pel,amu_pel,r_pel,v_pel,nc,den_r,te_r,n_p-1,izone_p,s_p, &
             PRLQ_R=prlq_r,   &
             PRLDEP=prldep, & 
             DVOL_R_ARRAY=dvol_r)
-            ! DVOL_R_POINT=dvol_r_point, &
-            ! RHO_R_SHIFTED=rho_r_shifted, &
-            ! R_SHIFTED=r_shifted, &
-            ! K_DRIFT=k_drift, &
-            ! ALPHA=alpha, &
-            ! LAM=lam, &
-            ! KAPPA=kappa, &
-            ! DEL_DRIFT=del_drift, &
-            ! RHO_RM=rho_r, &
-            ! RHO2R=rho2r)
 
 !Check messages
 IF(iflag /= 0) THEN
@@ -1114,6 +1103,30 @@ IF (K_DRIFT .NE. 0) THEN
 
     CALL HPI2_DRIFT(v_pel,r_pel*1.0e3,den_r(1)*1.0e-19,te_r(1),ALPHA,LAM, &
                     a0,r0,bt0,KAPPA,Del_drift)
+                    
+    IF(output) THEN
+
+      WRITE(n_out,*) "* HPI2 DRIFT SCALING,                                                         *"
+      WRITE(n_out,*) "*  *"
+      WRITE(n_out,*) "*******************************************************************************"
+      WRITE(n_out,*) "*******************************************************************************"
+      WRITE(n_out,*) "* PARAMETERS USED IN DRIFT SCALING                                            *"
+      WRITE(n_out,*) "*******************************************************************************"
+      WRITE(n_out,*) "Pellet velocity v_pel                  : ", v_pel, " [m/s]"
+      WRITE(n_out,*) "Pellet radius r_pel                    : ", r_pel*1.0e3, " [mm]"
+      WRITE(n_out,*) "Axis electron density den_r            : ", den_r(1)*1.0e-19, " [10^19 1/m^3]"
+      WRITE(n_out,*) "Axis electron temperature te_r         : ", te_r(1), " [eV]"
+      WRITE(n_out,*) "Alpha                                  : ", ALPHA, " [-]"
+      WRITE(n_out,*) "Lambda                                 : ", LAM, " [-]"
+      WRITE(n_out,*) "Kappa                                  : ", KAPPA, " [-]"
+      WRITE(n_out,*) "Minor radius a0                        : ", a0, " [m]"
+      WRITE(n_out,*) "Major radius r0                        : ", r0, " [m]"
+      WRITE(n_out,*) "Magnetic field B                       : ", bt0, " [-]"
+      WRITE(n_out,*) "*******************************************************************************"
+
+      WRITE(n_out,*) "Drift distance in major radius Delta R : ", Del_drift, " (m)"
+
+    ENDIF
 
 
   ENDIF
