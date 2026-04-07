@@ -576,6 +576,7 @@ ELSEIF(k_equil == 2) THEN
 
   IF(output) THEN
     WRITE(n_out,*) "*******************************************************************************"
+    WRITE(n_out,*) "* Equilibrium flag k_equil == 2:                                              *"
     WRITE(n_out,*) "* READING EQUILIBRIUM INFO FROM EQDSK                                         *"
     WRITE(n_out,*) "*******************************************************************************"
     WRITE(n_out,*) "Reading from              : ", cn_eq
@@ -597,15 +598,15 @@ ELSEIF(k_equil == 2) THEN
     WRITE(n_out,*) "*******************************************************************************"
     WRITE(n_out,*) "* PARAMETERS READ FROM EQDSK FILE                                             *"
     WRITE(n_out,*) "*******************************************************************************"
-    WRITE(n_out,*) "Major radius r0           : ", r0, " (m)"
-    WRITE(n_out,*) "Minor radius a0           : ", a0, " (m)"
-    WRITE(n_out,*) "Toroidal B field bt0      : ", bt0, " (T)"
-    WRITE(n_out,*) "Axis shift s0             : ", s0, " (-)"
-    WRITE(n_out,*) "Elongation at axis e0     : ", e0, " (-)"
-    WRITE(n_out,*) "Elongation at edge e1     : ", e1, " (-)"
-    WRITE(n_out,*) "Triangularity at edge d1  : ", d1, " (-)"
-    WRITE(n_out,*) "Safety factor at axis q0  : ", q0, " (-)"
-    WRITE(n_out,*) "Safety factor at edge q1  : ", q1, " (-)"
+    WRITE(n_out,*) "Major radius r0           : ", r0, " [m]"
+    WRITE(n_out,*) "Minor radius a0           : ", a0, " [m]"
+    WRITE(n_out,*) "Toroidal B field bt0      : ", bt0, " [T]"
+    WRITE(n_out,*) "Axis shift s0             : ", s0, " [-]"
+    WRITE(n_out,*) "Elongation at axis e0     : ", e0, " [-]"
+    WRITE(n_out,*) "Elongation at edge e1     : ", e1, " [-]"
+    WRITE(n_out,*) "Triangularity at edge d1  : ", d1, " [-]"
+    WRITE(n_out,*) "Safety factor at axis q0  : ", q0, " [-]"
+    WRITE(n_out,*) "Safety factor at edge q1  : ", q1, " [-]"
     WRITE(n_out,*) "*******************************************************************************"
     WRITE(n_out,*) "                                                                               "
     WRITE(n_out,*) "                                                                               "
@@ -621,7 +622,11 @@ ELSEIF(k_equil == 2) THEN
 
   ENDIF
 
-  PRINT *, "Calling SETUP_AJAX."
+  IF(output) THEN
+    WRITE(n_out,*) "*******************************************************************************"
+    WRITE(n_out,*) "* CALLING SETUP_AJAX MODULE                                                   *"
+    WRITE(n_out,*) "*******************************************************************************"
+  ENDIF
 
   CALL SETUP_AJAX(k_equil,n_tmp,r0,a0,s0,e0,e1,d1,bt0,q0,q1,ncplas+1,rho_rm, &
                   nrho_ajax,ntheta_ajax,nzeta_ajax, &
@@ -637,7 +642,16 @@ ELSEIF(k_equil == 2) THEN
 
   ENDIF
 
-  PRINT *, "Called SETUP_AJAX."
+  IF(output) THEN
+    IF(iflag == 0) THEN
+      WRITE(n_out,*) "*******************************************************************************"
+      WRITE(n_out,*) "* SETUP_AJAX exited normally.                                                 *"
+      WRITE(n_out,*) "*******************************************************************************"
+      WRITE(n_out,*) "                                                                               "
+      WRITE(n_out,*) "                                                                               "
+    ENDIF
+  ENDIF
+
 
 ELSE
 
@@ -688,12 +702,12 @@ IF(k_readd == 1) THEN
       WRITE(n_out,*) "*******************************************************************************"
       WRITE(n_out,*) "* PROFILE PARAMETERS                                                          *"
       WRITE(n_out,*) "*******************************************************************************"
-      WRITE(n_out,*) "Central electron temperature te0     : ", te_r(1), " (keV)"
-      WRITE(n_out,*) "Separatrix electron temperature te1  : ", te_r(n), " (keV)"
-      WRITE(n_out,*) "Central electron density ne0         : ", den_r(1), " (/m**3)"
-      WRITE(n_out,*) "Separatrix electron density ne1      : ", den_r(n), " (/m**3)"
-      WRITE(n_out,*) "Pedestal location rho                : ", rho_r(59), " (-)"
-      WRITE(n_out,*) "Pedestal electron temperature teped  : ", te_r(59), " (keV)"
+      WRITE(n_out,*) "Central electron temperature te0     : ", te_r(1), " [keV]"
+      WRITE(n_out,*) "Separatrix electron temperature te1  : ", te_r(n), " [keV]"
+      WRITE(n_out,*) "Central electron density ne0         : ", den_r(1), " [1/m**3]"
+      WRITE(n_out,*) "Separatrix electron density ne1      : ", den_r(n), " [1/m**3]"
+      WRITE(n_out,*) "Pedestal location rho                : ", rho_r(59), " [-]"
+      WRITE(n_out,*) "Pedestal electron temperature teped  : ", te_r(59), " [keV]"
       WRITE(n_out,*) "*******************************************************************************"
       WRITE(n_out,*) "                                                                               "
       WRITE(n_out,*) "                                                                               "
@@ -1085,14 +1099,14 @@ IF (K_DRIFT .NE. 0) THEN
       WRITE(n_out,*) "*******************************************************************************"
       WRITE(n_out,*) "* PARAMETERS USED IN DRIFT SCALING                                            *"
       WRITE(n_out,*) "*******************************************************************************"
-      WRITE(n_out,*) "Magnetic field B                       : ", bt0, " (T)"
-      WRITE(n_out,*) "Central electron temperature Te0       : ", te_r(1)*1.0e3, " (eV)"
-      WRITE(n_out,*) "Pedestal electron temperature Teped    : ", te_r(ped_loc)*1.0e3, " (eV)"
-      WRITE(n_out,*) "Pellet radius r_ped                    : ", r_pel*1.0e1, " (cm)"
-      WRITE(n_out,*) "Edge safety factor q                   : ", q1, " (-)"
+      WRITE(n_out,*) "Magnetic field B                       : ", bt0, " [T]"
+      WRITE(n_out,*) "Central electron temperature Te0       : ", te_r(1)*1.0e3, " [eV]"
+      WRITE(n_out,*) "Pedestal electron temperature Teped    : ", te_r(ped_loc)*1.0e3, " [eV]"
+      WRITE(n_out,*) "Pellet radius r_ped                    : ", r_pel*1.0e1, " [cm]"
+      WRITE(n_out,*) "Edge safety factor q                   : ", q1, " [-]"
       WRITE(n_out,*) "*******************************************************************************"
 
-      WRITE(n_out,*) "Drift distance in major radius Delta R : ", Del_drift, " (m)"
+      WRITE(n_out,*) "Drift distance in major radius Delta R : ", Del_drift, " [m]"
 
     ENDIF
 
@@ -1106,8 +1120,12 @@ IF (K_DRIFT .NE. 0) THEN
                     
     IF(output) THEN
 
-      WRITE(n_out,*) "* HPI2 DRIFT SCALING,                                                         *"
-      WRITE(n_out,*) "*  *"
+      WRITE(n_out,*) "* HPI2 DRIFT SCALING, Köchl, Florian, et al. EUROfusion Preprint              *"
+      WRITE(n_out,*) "*                     EFDA-JET-PR (12) 57 (2012)                              *"
+      WRITE(n_out,*) "* Eq (7.1): C1*((v_p/100)**C2)*(r_p**C3)*(ne0**C4)*(Te0**C5)                  *"
+      WRITE(n_out,*) "*           *((ABS(ABS(alpha) - C6)+C8)**C7)*((1.0 - Lambda)**C9)             *" 
+      WRITE(n_out,*) "*           *(a0**C10)*(R0**C11)*(B0**C12)*(kappa**C13)                       *"
+      WRITE(n_out,*) "* See Table 4 for C1-13 coefficients.                                         *"
       WRITE(n_out,*) "*******************************************************************************"
       WRITE(n_out,*) "*******************************************************************************"
       WRITE(n_out,*) "* PARAMETERS USED IN DRIFT SCALING                                            *"
@@ -1116,15 +1134,15 @@ IF (K_DRIFT .NE. 0) THEN
       WRITE(n_out,*) "Pellet radius r_pel                    : ", r_pel*1.0e3, " [mm]"
       WRITE(n_out,*) "Axis electron density den_r            : ", den_r(1)*1.0e-19, " [10^19 1/m^3]"
       WRITE(n_out,*) "Axis electron temperature te_r         : ", te_r(1), " [eV]"
-      WRITE(n_out,*) "Alpha                                  : ", ALPHA, " [-]"
-      WRITE(n_out,*) "Lambda                                 : ", LAM, " [-]"
-      WRITE(n_out,*) "Kappa                                  : ", KAPPA, " [-]"
+      WRITE(n_out,*) "Pellet injection angle alpha           : ", ALPHA, " [rad]"
+      WRITE(n_out,*) "Impact parameter Lambda                : ", LAM, " [-]"
       WRITE(n_out,*) "Minor radius a0                        : ", a0, " [m]"
       WRITE(n_out,*) "Major radius r0                        : ", r0, " [m]"
       WRITE(n_out,*) "Magnetic field B                       : ", bt0, " [-]"
+      WRITE(n_out,*) "Plasma elongation close to sep kappa   : ", KAPPA, " [-]"
       WRITE(n_out,*) "*******************************************************************************"
 
-      WRITE(n_out,*) "Drift distance in major radius Delta R : ", Del_drift, " (m)"
+      WRITE(n_out,*) "Drift distance in major radius Delta R : ", Del_drift, " [m]"
 
     ENDIF
 
