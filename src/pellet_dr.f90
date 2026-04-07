@@ -1132,7 +1132,7 @@ IF (K_DRIFT .NE. 0) THEN
       WRITE(n_out,*) "*******************************************************************************"
       WRITE(n_out,*) "Pellet velocity v_pel                  : ", v_pel, " [m/s]"
       WRITE(n_out,*) "Pellet radius r_pel                    : ", r_pel*1.0e3, " [mm]"
-      WRITE(n_out,*) "Axis electron density den_r            : ", den_r(1)*1.0e-19, " [10^19 1/m^3]"
+      WRITE(n_out,*) "Axis electron density den_r            : ", den_r(1)*1.0e-19, " [10**19 1/m**3]"
       WRITE(n_out,*) "Axis electron temperature te_r         : ", te_r(1), " [eV]"
       WRITE(n_out,*) "Pellet injection angle alpha           : ", ALPHA, " [rad]"
       WRITE(n_out,*) "Impact parameter Lambda                : ", LAM, " [-]"
