@@ -336,7 +336,8 @@ dvZ=0
 !Set the input namelist unit, open, read and close file
 !-------------------------------------------------------------------------------
 n_tmp=100
-cn_tmp='../nml_pellet.dat'
+cn_tmp='./nml_pellet.dat'
+! PRINT *, "Reading nml file..."
 OPEN(UNIT=n_tmp, &
      FILE=cn_tmp, &
      STATUS='old', &
@@ -345,6 +346,8 @@ OPEN(UNIT=n_tmp, &
 READ(n_tmp,indata)
 
 CLOSE(UNIT=n_tmp)
+
+! PRINT *, "rp, vp: ", r_pel, v_pel
 
 IF(output) THEN
   n_out = 17
@@ -359,11 +362,32 @@ ENDIF
 ! Set obnoxious output message
 !-------------------------------------------------------------------------------
 
-IF(output) THEN
-  WRITE(n_out,*) "!!!!   Welcome to ORNL PELLET   !!!!"
-  WRITE(n_out,*) "                                    "
-  WRITE(n_out,*) "                                    "
-ENDIF
+
+IF (output) THEN
+    IF (output) THEN
+    WRITE(n_out,'(A)') '================================================================================'
+    WRITE(n_out,'(A)') '                        ___    ____    _   _   _                                '
+    WRITE(n_out,'(A)') '                       / _ \  |  _  \ | \ | | | |                               '
+    WRITE(n_out,'(A)') '                      | | | | | ( )_/ |  \| | | |                               '
+    WRITE(n_out,'(A)') '                      | |_| | | |\ \  | |\  | | |___                            '
+    WRITE(n_out,'(A)') '                       \___/  |_| \_\ |_| \_| |_____|                           '
+    WRITE(n_out,'(A)') '                                                                                '
+    WRITE(n_out,'(A)') '            _____     ______   _        _        ______   _______               '
+    WRITE(n_out,'(A)') '           |  __ \   |  ____| | |      | |      |  ____| |__   __|              '
+    WRITE(n_out,'(A)') '           | |__) |  | |__    | |      | |      | |__       | |                 '
+    WRITE(n_out,'(A)') '           |  ___/   |  __|   | |      | |      |  __|      | |                 '
+    WRITE(n_out,'(A)') '           | |       | |____  | |____  | |____  | |____     | |                 '
+    WRITE(n_out,'(A)') '           |_|       |______| |______| |______| |______|    |_|                 '
+    WRITE(n_out,'(A)') '                                                                                '
+    WRITE(n_out,'(A)') '                   O R N L   P E L L E T   O U T P U T                          '
+    WRITE(n_out,'(A)') '================================================================================'
+    WRITE(n_out,'(A)') '                   !!!!   Welcome to ORNL PELLET    !!!!                        '
+    WRITE(n_out,'(A)') '================================================================================'
+    ! WRITE(n_out,'(A)') ' Some very cool definitely suave descriptive words about what this              '
+    ! WRITE(n_out,'(A)') ' implementation of the PELLET algorithm does :)                                 '
+    WRITE(n_out,'(A)') '================================================================================'
+    WRITE(n_out,'(///)')
+END IF
 
 
 !-------------------------------------------------------------------------------
@@ -467,6 +491,11 @@ ALLOCATE(cur_rm(n), &
   prlq_r(:)=0
   prldep(:)=0
 
+IF(output) THEN
+  WRITE(n_out,*) "*******************************************************************************"
+  WRITE(n_out,*) "* Creating normalized rho grid with ", nc, " points and...                    *"
+ENDIF
+
 !Set cell grid sizes and first node outside core (ghost or SOL)
 IF(ncsol == 0) THEN
 
@@ -485,12 +514,20 @@ ENDIF
 
 !Main grid
 !Core
+IF(output .and. ncsol == 0) THEN
+  WRITE(n_out,*) "* ...WITHOUT SOL                                                            *"
+ENDIF
 rho_r(1:ncplas)=(/ (i-1,i=1,ncplas) /)*drp
 
 !SOL
 IF(ncsol /= 0) THEN
 
   rho_r(ncplas+2:n)=rho_r(ncplas+1)+(/ (i,i=1,ncsol) /)*drso
+  IF(output) THEN
+    WRITE(n_out,*) "* ...WITH SOL                                                               *"
+    WRITE(n_out,*) "* SOL thickness: ", dsol, "                                                 *"
+    WRITE(n_out,*) "* Additional points: ", ncsol, "                                            *"
+  ENDIF
 
 ENDIF
 
@@ -506,6 +543,11 @@ ENDDO !Over radial nodes
 !-------------------------------------------------------------------------------
 !Set up MHD equilibrium information
 !-------------------------------------------------------------------------------
+IF(output) THEN
+  WRITE(n_out,*) "*******************************************************************************"
+  WRITE(n_out,*) "* Equilibrium flag k_equil = ", k_equil, "                                    *"
+ENDIF
+
 IF(k_equil == 0 .OR. &
    k_equil == 1) THEN
 
@@ -576,8 +618,7 @@ ELSEIF(k_equil == 2) THEN
 
   IF(output) THEN
     WRITE(n_out,*) "*******************************************************************************"
-    WRITE(n_out,*) "* Equilibrium flag k_equil == 2:                                              *"
-    WRITE(n_out,*) "* READING EQUILIBRIUM INFO FROM EQDSK                                         *"
+    WRITE(n_out,*) "* ---> READ EQUILIBRIUM INFO FROM EQDSK                                       *"
     WRITE(n_out,*) "*******************************************************************************"
     WRITE(n_out,*) "Reading from              : ", cn_eq
   ENDIF
@@ -594,7 +635,7 @@ ELSEIF(k_equil == 2) THEN
   CLOSE(UNIT=n_tmp)
 
   IF(output) THEN
-    WRITE(n_out,*) "... all done! :D"
+    WRITE(n_out,*) "... all done!"
     WRITE(n_out,*) "*******************************************************************************"
     WRITE(n_out,*) "* PARAMETERS READ FROM EQDSK FILE                                             *"
     WRITE(n_out,*) "*******************************************************************************"
@@ -608,8 +649,7 @@ ELSEIF(k_equil == 2) THEN
     WRITE(n_out,*) "Safety factor at axis q0  : ", q0, " [-]"
     WRITE(n_out,*) "Safety factor at edge q1  : ", q1, " [-]"
     WRITE(n_out,*) "*******************************************************************************"
-    WRITE(n_out,*) "                                                                               "
-    WRITE(n_out,*) "                                                                               "
+    WRITE(n_out,'(///)') 
   ENDIF
 
   !Check messages
@@ -625,7 +665,8 @@ ELSEIF(k_equil == 2) THEN
   IF(output) THEN
     WRITE(n_out,*) "*******************************************************************************"
     WRITE(n_out,*) "* CALLING SETUP_AJAX MODULE                                                   *"
-    WRITE(n_out,*) "*******************************************************************************"
+    WRITE(n_out,'(///)')
+    WRITE(n_out,*) "* SETUP_AJAX sets up the equilibrium information for AJAX                     *"
   ENDIF
 
   CALL SETUP_AJAX(k_equil,n_tmp,r0,a0,s0,e0,e1,d1,bt0,q0,q1,ncplas+1,rho_rm, &
@@ -644,11 +685,10 @@ ELSEIF(k_equil == 2) THEN
 
   IF(output) THEN
     IF(iflag == 0) THEN
-      WRITE(n_out,*) "*******************************************************************************"
+      WRITE(n_out,*) "* ...                                                                         *"
       WRITE(n_out,*) "* SETUP_AJAX exited normally.                                                 *"
       WRITE(n_out,*) "*******************************************************************************"
-      WRITE(n_out,*) "                                                                               "
-      WRITE(n_out,*) "                                                                               "
+      WRITE(n_out,'(///)') 
     ENDIF
   ENDIF
 
@@ -657,7 +697,7 @@ ELSE
 
   !Illegal choice of k_equil
   iflag=1
-  message='PELLET_DR/ERROR:illegal k_equil (use 0,1)'
+  message='PELLET_DR/ERROR:illegal k_equil (use 0,1,2)'
   CALL WRITE_LINE(n_msg,message,1,1)
   GOTO 9999
 
@@ -681,6 +721,11 @@ ENDIF
 !-------------------------------------------------------------------------------
 !Plasma profiles
 !-------------------------------------------------------------------------------
+IF(output) THEN
+  WRITE(n_out,*) "*******************************************************************************"
+  WRITE(n_out,*) "* Plasma profiles flag k_readd = ", k_readd, "                                *"
+ENDIF
+
 IF(k_readd == 1) THEN
 
   IF(output) THEN
@@ -709,8 +754,7 @@ IF(k_readd == 1) THEN
       WRITE(n_out,*) "Pedestal location rho                : ", rho_r(59), " [-]"
       WRITE(n_out,*) "Pedestal electron temperature teped  : ", te_r(59), " [keV]"
       WRITE(n_out,*) "*******************************************************************************"
-      WRITE(n_out,*) "                                                                               "
-      WRITE(n_out,*) "                                                                               "
+      WRITE(n_out,'(///)') 
     ENDIF
   ENDIF
 
@@ -993,7 +1037,7 @@ CALL TRACK(n,rho_rm,2,rseg_p, &
            RCYL_INT=rcyl_p, &
            RFLX_INT=rflx_p)
 
-PRINT *, "Finished TRACK."
+! PRINT *, "Finished TRACK."
 
 ! ii=0
 
@@ -1016,7 +1060,7 @@ idxMin = MINLOC(rflx_p(1,1:n_p))
 lam = rflx_p(1,idxMin(1))
 kappa = e1
 
-PRINT *, "alpha, lamda, kappa: ", alpha, lam, kappa
+! PRINT *, "alpha, lamda, kappa: ", alpha, lam, kappa
 
 !Check messages
 IF(iflag /= 0) THEN
@@ -1071,13 +1115,18 @@ IF(iflag /= 0) THEN
 
 ENDIF
 
+IF(output) THEN
+  WRITE(n_out,*) "*******************************************************************************"
+  WRITE(n_out,*) "* gradB drift flag k_drift = ", k_drift, "                                    *"
+ENDIF
+
 ! IF (PRESENT(K_DRIFT)) THEN
 IF (K_DRIFT .NE. 0) THEN
 
   IF (output) THEN
 
     WRITE(n_out,*) "*******************************************************************************"
-    WRITE(n_out,*) "* ENTERING DRIFT CALCULATION WITH K_DRIFT = ", k_drift, "                     *"
+    WRITE(n_out,*) "* ENTERING DRIFT CALCULATION                                                  *"
     WRITE(n_out,*) "*******************************************************************************"
     
 
@@ -1122,7 +1171,7 @@ IF (K_DRIFT .NE. 0) THEN
 
       WRITE(n_out,*) "* HPI2 DRIFT SCALING, Köchl, Florian, et al. EUROfusion Preprint              *"
       WRITE(n_out,*) "*                     EFDA-JET-PR (12) 57 (2012)                              *"
-      WRITE(n_out,*) "* Eq (7.1): C1*((v_p/100)**C2)*(r_p**C3)*(ne0**C4)*(Te0**C5)                  *"
+      WRITE(n_out,*) "* Eq (7.1): Delta R ~ C1*((v_p/100)**C2)*(r_p**C3)*(ne0**C4)*(Te0**C5)        *"
       WRITE(n_out,*) "*           *((ABS(ABS(alpha) - C6)+C8)**C7)*((1.0 - Lambda)**C9)             *" 
       WRITE(n_out,*) "*           *(a0**C10)*(R0**C11)*(B0**C12)*(kappa**C13)                       *"
       WRITE(n_out,*) "* See Table 4 for C1-13 coefficients.                                         *"
@@ -1150,6 +1199,16 @@ IF (K_DRIFT .NE. 0) THEN
   ENDIF
 
   CALL APPLY_DRIFTS(k_drift,ncplas,n,rho_r,rcyl_p,rflx_p,pden_r,Del_drift,pden_r_shifted,message,iflag)
+
+ELSE
+
+  IF (output) THEN
+
+    WRITE(n_out,*) "*******************************************************************************"
+    WRITE(n_out,*) "* NO GRADB DRIFT INCLUDED                                                     *"
+    WRITE(n_out,*) "*******************************************************************************"
+
+  ENDIF
 
 ENDIF
 
@@ -1536,6 +1595,13 @@ unitpro(npro)='keV'
 descpro(npro)='Final electron temperature'
 valpro(:,npro)=(den_r(:)*te_r(:)-pden_r(:)*(2.0/3.0) &
                  *z_eion)/(den_r(:)+pden_r(:))
+
+npro=npro+1
+namepro(npro)='Te_d(tpel+)'
+unitpro(npro)='keV'
+descpro(npro)='Final electron temperature (drift)'
+valpro(:,npro)=(den_r(:)*te_r(:)-pden_r_shifted(:)*(2.0/3.0) &
+                 *z_eion)/(den_r(:)+pden_r_shifted(:))
 
 npro=npro+1
 namepro(npro)='ne(tpel+)'
@@ -1942,9 +2008,9 @@ IF(iflag /= 0) THEN
 
 ENDIF
 
-r0 = a0*2.31907
-PRINT *, "r0: ", r0
-bt0 = bt0*(1.0/(r0 - 0.4)**2)
+! r0 = a0*2.31907
+! PRINT *, "r0: ", r0
+! bt0 = bt0*(1.0/(r0 - 0.4)**2)
 
 !-------------------------------------------------------------------------------
 !Call FLUXAV to generate metrics from EFIT MHD equilibrium
@@ -1978,7 +2044,7 @@ IF(iflag /= 0) THEN
 
 ENDIF
 
-PRINT *, "q_r: ", q_r
+! PRINT *, "q_r: ", q_r
 
 !Set 0-D quantities
 r0=(rout_r(nr_r)+rin_r(nr_r))/2
@@ -2107,7 +2173,7 @@ CHARACTER(len=256) :: line
 iflag=0
 message=''
 
-PRINT *, "Reading EQDSK."
+! PRINT *, "Reading EQDSK."
 
 !Open the EQDSK file
 OPEN(UNIT=nin, &
