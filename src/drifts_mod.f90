@@ -408,12 +408,17 @@ ENDDO
 !> Find the first value of dne (density change) =/= 0...
 !> This will be the deposition depth.
 
-PRINT *, "RHO_R(ii): ", rho_r(ii)
+! PRINT *, "RHO_R(ii): ", rho_r(ii)
+
+! PRINT *, "rlfx_p: ", rflx_p(1,n:1:-1)
+! PRINT *, "rcyl_p: ", rcyl_p(1,n:1:-1)
+! PRINT *, "n: ", n
+! PRINT *, "rho_r: ", rho_r(n:1:-1)
 
 CALL LINEAR1_INTERP(n,rflx_p(1,n:1:-1),rcyl_p(1,n:1:-1),n,rho_r(n:1:-1),interp_cyl(1,n:1:-1),iflag,message)
 !> Interpolate to find the R coord of rho
 
-PRINT *, "R(ii): ", interp_cyl(1,ii)
+! PRINT *, "R(ii): ", interp_cyl(1,ii)
 
 IF(k_drift==2) THEN
   new_R = interp_cyl(1,ii) + drift
@@ -422,9 +427,9 @@ ELSEIF(k_drift==3) THEN
 ENDIF
 !> Add the drift distance to R
 
-PRINT *, "Del R: ", drift
+! PRINT *, "Del R: ", drift
 
-PRINT *, "Rnew: ", new_R
+! PRINT *, "Rnew: ", new_R
 
 CALL LINEAR1_INTERP(n,rcyl_p(1,:),rcyl_p(3,:),n,interp_cyl(1,n:1:-1),interp_cyl(3,n:1:-1),iflag,message)
 !> Interpolate to find the Z coord for the (R,Z) pair
@@ -436,8 +441,8 @@ new_cyl(3) = interp_cyl(3,ii)
 CALL AJAX_CYL2FLX(new_cyl,new_flx,iflag,message)
 !> Calculate the rho coord for the shifted R location
 
-PRINT *, "CYL_NEW: ", new_cyl
-PRINT *, "FLX_NEW: ", new_flx
+! PRINT *, "CYL_NEW: ", new_cyl
+! PRINT *, "FLX_NEW: ", new_flx
 
 DO jj=1,n
   IF (rho_r(jj)>new_flx(1)) EXIT
