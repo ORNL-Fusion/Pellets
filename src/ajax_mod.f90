@@ -3364,7 +3364,7 @@ REAL(KIND=rspec), ALLOCATABLE :: &
 iflag=0
 message=''
 
-PRINT *, "Entered AJAX_I."
+! PRINT *, "Entered AJAX_I."
 
 !!Allocate covariant B field array
 ALLOCATE(b_co(3,ntheta_3d,nzeta_3d))
@@ -3573,7 +3573,7 @@ REAL(KIND=rspec) :: &
 iflag=0
 message=''
 
-PRINT *, "Entered AJAX_MAGFLUX."
+! PRINT *, "Entered AJAX_MAGFLUX."
 
 !!Internal values
 phiprm_t(:)=0
@@ -3763,7 +3763,7 @@ REAL(KIND=rspec) :: &
 iflag=0
 message=''
 
-PRINT *, "Entered AJAX_SHAPE."
+! PRINT *, "Entered AJAX_SHAPE."
 
 !!Null local values
 r_flx(:)=0
@@ -4302,7 +4302,7 @@ REAL(KIND=rspec), INTENT(OUT), OPTIONAL :: &
 !!Null output
 iflag=0
 message=''
-PRINT *, "Entered AJAX_GLOBALS."
+! PRINT *, "Entered AJAX_GLOBALS."
 !!-------------------------------------------------------------------------------
 !!Return values
 !!-------------------------------------------------------------------------------
@@ -4367,7 +4367,7 @@ REAL(KIND=rspec) :: &
 !!Null output
 iflag=0
 message=''
-PRINT *, "Entered AJAX_MINMAX_RZ."
+! PRINT *, "Entered AJAX_MINMAX_RZ."
 
 !!Null local values
 r_flx0(:)=0
@@ -4476,7 +4476,7 @@ z_large=HUGE(1.0_rspec)
 z_precision=EPSILON(1.0_rspec)
 z_small=TINY(1.0_rspec)
 
-PRINT *, "Entered AJAX_INIT."
+! PRINT *, "Entered AJAX_INIT."
 
 !!Resolution of rho
 rhores_3d=1.0e-3*rhomax_3d
@@ -4823,7 +4823,7 @@ r_flx(:)=0
 eltheta_3d(:,:,:)=0
 elzeta_3d(:,:,:)=0
 
-PRINT *, "Entered AJAX_INIT_FLUXAV_B."
+! PRINT *, "Entered AJAX_INIT_FLUXAV_B."
 
 !!Fill arrays
 DO i=2,nrho_3d !!Over radial nodes
@@ -4962,7 +4962,7 @@ REAL(KIND=rspec) :: &
 !!Error flag and message
 iflag=0
 message=''
-PRINT *, "Entered AJAX_INIT_FLUXAV_G."
+! PRINT *, "Entered AJAX_INIT_FLUXAV_G."
 
 !!-------------------------------------------------------------------------------
 !!Load R,Z and other geometric data for flux surface averaging
@@ -5103,7 +5103,7 @@ lam_3d(:,:,:)=0
 g1(:)=0
 g2(:)=0
 
-PRINT *, "Entered AJAX_INIT_LAMBDA."
+! PRINT *, "Entered AJAX_INIT_LAMBDA."
 
 !!-------------------------------------------------------------------------------
 !!Calculate lambda values
@@ -5202,7 +5202,7 @@ REAL(KIND=rspec), ALLOCATABLE :: &
 iflag=0
 message=''
 
-PRINT *, "Entered AJAX_LOAD_LAMBDA."
+! PRINT *, "Entered AJAX_LOAD_LAMBDA."
 
 !!Stream function
 lam_3d(:,:,:)=0
