@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from subprocess import call
 import subprocess
 # from scipy import interpolate
+import time
 
 import EFIT.equilParams_class as epc
 import PelletNml as pnml
@@ -721,6 +722,7 @@ def scan_pellet_mass_velocity(top_folder, device = 'SPARC', runid_prefix = 'PFR'
     os.chdir(top_folder)
 
     existing_nml = top_folder + 'nml_pellet.dat'
+    print("Existing nml_fileloc")
     profile_fileloc = []
     
     for f in os.listdir(top_folder):
@@ -752,7 +754,7 @@ def scan_pellet_mass_velocity(top_folder, device = 'SPARC', runid_prefix = 'PFR'
             if runid_prefix is None:
                 runid = '_pellet_test_'
             else:
-                runid = runid_prefix + '_' + new_folder
+                runid = runid_prefix
         
             os.mkdir(new_folder)
             call(['cp', equilib_fileloc, new_folder])
@@ -770,9 +772,11 @@ def scan_pellet_mass_velocity(top_folder, device = 'SPARC', runid_prefix = 'PFR'
                                 existing_nml_fileloc = existing_nml)
                 
             nml.write_nml('nml_pellet.dat', input_dict = {'v_pel': v, 'r_pel' : r_pel_in})
-        
             with open("output_d"+str(d)+'_v'+str(v)+'.out',"w") as output:
+                start = time.time()
                 subprocess.run([pellet_executable_loc],stdout=output)
+            stop = time.time()
+            print("Execution time: ", stop - start)
             rename_output_files_without_spaces()
             os.remove(equilib_fileloc)
             if profile_fileloc:
@@ -1009,6 +1013,13 @@ def diameter_to_spherical_radius(diameter):
     # Assume cylinder with same length as diameter
     # 4/3 pi r**3 = d pi (d/2)**2
     srad = diameter * (3.0/16)**(1.0/3)
+    return srad
+
+# ----------------------------------------------------------------------
+
+def cylinder_to_sphere_radius(diameter,length):
+    # Allow for a cylinder with length =/= diameter. 
+    srad = ((3.0 * length * diameter**2)/16.0)**(1.0/3.0)
     return srad
 
 # ----------------------------------------------------------------------

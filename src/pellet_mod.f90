@@ -267,7 +267,7 @@ REAL(KIND=rspec), ALLOCATABLE :: &
 
 INTEGER :: icld, ngrid
 
-PRINT *, "Entered pellet ablation module."
+! PRINT *, "Entered pellet ablation module."
 ! PRINT *, "DVOL_R_ARRAY: ", DVOL_R_ARRAY
 
 !!-------------------------------------------------------------------------------
@@ -499,7 +499,7 @@ IF(PRESENT(K_DRIFT)) THEN
 ENDIF
 
 
-PRINT *, "Shifted arrays initialised."
+! PRINT *, "Shifted arrays initialised."
 
 
 IF(PRESENT(NPRLCLD)) THEN
@@ -529,7 +529,7 @@ l_inout=.FALSE.
 
 DO l=1,n_p
 
-  IF(rp > 1.0e-6*rpel_pl) THEN
+  IF(rp > 1.0e-3*rpel_pl) THEN
 
     i=map_p(l)
 
@@ -560,10 +560,12 @@ DO l=1,n_p
       ENDIF
 
       dt=(s_p(l+1)-s_p(l))/vpel_pl
+      ! PRINT *, "sp(l+1), sp(l), dt: ", s_p(l+1), s_p(l), dt
       rpold=rp
       CALL PELLET_RK4(DVOL_R_ARRAY(i),dt, &
                       t,rp,teold,denold, &
                       srcp,iflag,message)
+      ! PRINT *, "Exit message: ", l, message
       pden_r(i)=pden_r(i)+srcp
       dennew=den0_r(i)+pden_r(i)
       tenew=(den0_r(i)*te0_r(i)-pden_r(i)*z_eion_pl/1.5)/dennew
@@ -698,7 +700,7 @@ if (PRESENT(NPRLCLD) .and. fcld > 1 ) then !! Done with PRL - determine prldep
 !!	  endif
 endif
 
-PRINT *, "Finished pellet module."
+! PRINT *, "Finished pellet module."
 
 write(*,*) ' Total electrons: ',srcp_tot
 
@@ -2111,6 +2113,9 @@ dndt=5.0586e7*Coef*Q**0.333*(amup_pl**(-0.333)*dinf**(0.333)*rpcm**(1.333)* &
 !!Compute dr/dt in m/s
 rdot=-dndt/((2*denm_pl)*4*z_pi*rp**2)
 
+PRINT *, "dndt: ", dndt
+PRINT *, "rdot: ", rdot
+
 
 !!-------------------------------------------------------------------------------
 !!Cleanup and exit
@@ -2645,10 +2650,10 @@ REAL(KIND=rspec), INTENT(OUT) :: &
 !!-------------------------------------------------------------------------------
 !!Declaration of local variables
 LOGICAL :: &
-  l_newcell
+  l_newcell, converged
 
 INTEGER, PARAMETER :: &
-  mstep=5000
+  mstep=1000
 
 INTEGER :: &
   i,istep,nstep
@@ -2659,7 +2664,7 @@ REAL(KIND=rspec), PARAMETER :: &
 REAL(KIND=rspec) :: &
   adfac,areac,areap,ce,ddens,dens,dnte,drav,drp3,dtold,dts,endot, &
   fdts,fioncn,fnmax,fntmax,fte,rdot,rdotav,rdotmx,rp0,rp3,rpmin, &
-  rps,tcl,temin,tes,tfd,tnew,told
+  rps,tcl,temin,tes,tfd,tnew,told,rp_min,dt_min,dts_new
 
 REAL(KIND=rspec) :: &
   dr(4)
@@ -2671,6 +2676,7 @@ REAL(KIND=rspec) :: &
 !!-------------------------------------------------------------------------------
 !!Set parameters assuming a single step through the cell
 l_newcell=.TRUE.
+converged=.FALSE.
 told=t
 tnew=told+dt
 dts=dt
@@ -2678,6 +2684,8 @@ rp0=rp
 dden=0
 temin=z_eion_pl
 nstep=0
+rp_min=1.0e-2*rpel_pl
+dt_min=1.0e-7
 
 ! PRINT *, "Set maximum delta(n)/n, pellet size at that max, and the max ablation rate..."
 fntmax=(te-temin)/(z_eion_pl*2/3+temin)
@@ -2700,7 +2708,7 @@ ELSE
 ENDIF
 
 rdotmx=-(rp0-rpmin)/dt
-
+! PRINT *, "tnew: ", tnew
 !!-------------------------------------------------------------------------------
 !! PRINT *, "Advance pellet through time interval in cell using up to mstep time steps..."
 !!-------------------------------------------------------------------------------
@@ -2710,8 +2718,12 @@ step_loop: DO istep=1,mstep  !!Over time steps
   rps=rp
   nstep=nstep+1
 
+  ! PRINT *, "Iteration: ", istep
+
   !!Employ 4th order Runge-Kutta scheme for each step
   DO i=1,4 !!Over RK steps
+
+    ! PRINT *, "ii: ", i
 
     !!Adiabatic self-limiting ablation for large perturbations
     dden=2*denm_pl*4*z_pi/3/dvol*(rp0**3-rps**3)
@@ -2774,6 +2786,7 @@ step_loop: DO istep=1,mstep  !!Over time steps
       !!Parks hydrogenic model for arbitrary heating coef Q
       CALL PELLET_PARKSQ(rps,tes,dens, &
                         rdot)
+      ! PRINT *, "CALLED PELLET PARKSQ."
 
     !!Impurity pellets
     ELSEIF(k_pel_pl == 10) THEN
@@ -2823,16 +2836,21 @@ step_loop: DO istep=1,mstep  !!Over time steps
     ENDIF
 
     dr(i)=dts*rdot
+    ! PRINT *, "dts: ", dts
+    ! PRINT *, "rdot: ", rdot
+    ! PRINT *, "dr: ", dr(i)
 
     IF(i <= 2) THEN
 
       IF((rp+dr(i)/2) < rpmin) dr(i)=2*(rpmin-rp)
       rps=rp+dr(i)/2
+      ! PRINT *, "i <= 2."
 
     ELSE
 
       IF((rp+dr(i)) < rpmin) dr(i)=rpmin-rp
       rps=rp+dr(i)
+      ! PRINT *, "i > 2."
 
     ENDIF
 
@@ -2843,14 +2861,28 @@ step_loop: DO istep=1,mstep  !!Over time steps
       ddens=2*denm_pl*z_pl/dvol*4*z_pi/3 *(rp**3-rps**3)
       dnte=2*ddens/3*z_eion_pl
       fte=2*(ddens+dnte/tes)/(dens+2*ddens)
+      ! PRINT *, "ddens: ", ddens
+      ! PRINT *, "dnte: ", dnte
+      ! PRINT *, "fte: ", fte
       fdts=1
       IF(fte /= 0.0) fdts=z_tolt/fte
 
       IF(fdts < 1.0) THEN
 
-        !!Reduce time step size and try again
-        dts=0.9*fdts*dts
-        CYCLE step_loop
+        dts = MAX(0.9*fdts*dts, dt_min)
+        ! !!Reduce time step size and try again
+        ! dts_new=0.9*fdts*dts
+
+        !   IF(dts_new <= dt_min) THEN
+        !     dts = dts_min
+        !     EXIT step_loop
+        !     ! converged = .TRUE.
+        !     ! rp = 0.0
+        !     ! GOTO 9999
+        !   ENDIF
+
+        ! dts = dts_new
+        ! CYCLE step_loop
 
       ENDIF
 
@@ -2864,24 +2896,34 @@ step_loop: DO istep=1,mstep  !!Over time steps
 
   IF((rp+drav) < (z_tolr*rpel_pl))THEN
 
-    dts=-rp/rdotav
-    drav=-rp
+    ! dts=-rp/rdotav
+    ! drav=-rp
+    rp = 0.0
+    GOTO 9999
 
   ENDIF
 
   rp=rp+drav
   dden=2*denm_pl*z_pl/dvol*4*z_pi/3*(rp0**3-rp**3)    !! Note:    2*denm_pl is atomic density
   t=t+dts
-  dts=tnew-t
+  dts=MAX(tnew-t,dt_min)
 
-  IF((dts <= 1.0e-6*tnew   ) .OR. &
-     (rp  <= 1.0e-6*rpel_pl)) GOTO 9999
+
+  ! PRINT *, "dts: ", dts, " : STOP FOR ", dt_min
+  ! PRINT *, "rp: ", rp, " : STOP FOR ", rp_min
+
+  IF((dts <= dt_min   ) .OR. &
+     (rp  <= rp_min)) GOTO 9999
 
 ENDDO step_loop
 
 !!Exceeded maximum number of steps in cell
+! IF(.NOT. converged) THEN
 iflag=1
 message='PELLET_RK4/ERROR(2):exceeded max iterations'
+! ENDIF
+
+! PRINT *, "message: ", message
 
 !!-------------------------------------------------------------------------------
 !!Cleanup and exit
