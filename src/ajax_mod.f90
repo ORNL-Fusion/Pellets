@@ -1249,7 +1249,10 @@ DO it=1,itmax !!Over iteration
                     TAU=tau1)
   ! 
                     !!Check messages
+
   IF(iflag /= 0) THEN
+
+    PRINT *, "iflag: ", iflag
 
     message='AJAX_CYL2FLX(1)/'//message
     IF(iflag > 0) GOTO 9999
@@ -1303,6 +1306,7 @@ DO it=1,itmax !!Over iteration
 
     !!Bad data
     iflag=1
+    PRINT *, "iflag: ", iflag
     message='AJAX_CYL2FLX(4)/ERROR:bad Jacobian'
     GOTO 9999
 
@@ -2790,6 +2794,7 @@ message=''
 !!Check whether flux surface averaging arrays have been set
 IF(.NOT. l_fluxavg_3d) THEN
 
+  PRINT *, "Initializing FLUXAV_G."
   CALL AJAX_INIT_FLUXAV_G(iflag,message)
 
   !!Check messages
@@ -2806,9 +2811,15 @@ ENDIF
 LOOP_I: DO i=nrho_r,1,-1 !!Over nodes
 
   nr=i
-  IF(rho_r(nr) < rhomax_3d+rhores_3d) EXIT LOOP_I
+  IF(rho_r(nr) < rhomax_3d+rhores_3d) THEN
+    ! PRINT *, "Values outside R,Z requested at index: ", nr
+    ! PRINT *, "rho_r(nr): ", rho_r(nr)
+    ! PRINT *, "rhomax, rhores, sum: ", rhomax_3d,rhores_3d,rhomax_3d+rhores_3d
+    EXIT LOOP_I
+  ENDIF
 
 ENDDO LOOP_I !!Over nodes
+
 
 !!-------------------------------------------------------------------------------
 !!d(V)/d(rho) on user grid for area_r, dvol_r, vol_r and vp_r
@@ -2824,9 +2835,15 @@ IF(PRESENT(AREA_R) .OR. &
 
   !!Remove dominant radial dependence
   v1(2:nrho_3d)=vp_3d(2:nrho_3d)/rho_3d(2:nrho_3d)
+  IF(v1(nrho_3d)<0) THEN
+    v1(nrho_3d)=0.0
+  ENDIF
 
   !!Extrapolate to axis
   v1(1)=v1(2)-rho_3d(2)*(v1(3)-v1(2))/(rho_3d(3)-rho_3d(2))
+  ! PRINT *, "vp_3d array: ", vp_3d
+  ! PRINT *, "v1 array: ", v1
+  ! PRINT *, "nrho_3d, v1, vp_3d, rho_3d: ", nrho_3d, v1(nrho_3d), vp_3d(nrho_3d), rho_3d(nrho_3d)
 
   !!Interpolate to user grid inside R,Z domain
   iflag=0
@@ -2936,12 +2953,14 @@ IF(PRESENT(DVOL_R)) THEN
 
     !!First node is off axis
     k=1
+    ! PRINT *, "First node is off axis."
 
   ELSE
 
     !!First node is on axis
     k=2
     DVOL_R(1)=vp(2)*rho_r(2)/2
+    ! PRINT *, "First node is on axis, DVOL_R(1) = ", DVOL_R(1)
 
   ENDIF
 
@@ -2949,11 +2968,14 @@ IF(PRESENT(DVOL_R)) THEN
 
     DVOL_R(i)=(vp(i)/rho_r(i)+vp(i+1)/rho_r(i+1))/2 &
               *(rho_r(i+1)**2-rho_r(i)**2)/2
+    ! PRINT *, "DVOL_R(i) = ", DVOL_R(i)
 
   ENDDO !!Over radial nodes
 
   !!Set ghost node value equal to last node
+  ! PRINT *, "vp, rho_r: ", vp(nrho_r-1), rho_r(nrho_r-1)
   DVOL_R(nrho_r)=DVOL_R(nrho_r-1)
+  ! PRINT *, "DVOL_R(nrho_r), (nrho_r-1) = ", DVOL_R(nrho_r), DVOL_R(nrho_r-1)
 
 ENDIF
 
@@ -5048,6 +5070,12 @@ DO i=2,nrho_3d !!Over radial nodes
       rcyl_3d(i,j,k)=r_cyl(1)
       zcyl_3d(i,j,k)=r_cyl(3)
 
+      ! PRINT *,'================================================================================'
+      ! PRINT *,'AJAX READ'
+      ! PRINT *,'================================================================================'
+      ! PRINT *, "rcyl_3d: ", rcyl_3d
+      ! PRINT *, "zcyl_3d: ", zcyl_3d
+
     ENDDO !!Over toroidal nodes
 
   ENDDO !!Over poloidal nodes
@@ -5065,6 +5093,7 @@ DO i=2,nrho_3d !!Over radial nodes
   ENDDO !!Over toroidal nodes
 
   vp_3d(i)=SUM(wzeta_3d*az_3d) !!Over toroidal nodes
+  ! PRINT *, "wzeta_3d, az_3d: ", wzeta_3d, az_3d
 
 ENDDO !!Over radial nodes
 
