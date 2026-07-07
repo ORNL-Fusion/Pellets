@@ -59,7 +59,7 @@ REAL(KIND=rspec), PARAMETER :: &
 !-------------------------------------------------------------------------------
 !Get data
 !-------------------------------------------------------------------------------
-PRINT *, "Running AJAX setup..."
+! PRINT *, "Running AJAX setup..."
 !Read inverse coordinate expansion
 IF(k_equil == 1) THEN
 
