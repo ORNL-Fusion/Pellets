@@ -141,16 +141,17 @@ REAL(KIND=rspec), INTENT(OUT), OPTIONAL :: &
 !-------------------------------------------------------------------------------
 !Declaration of local variables
 INTEGER :: &
-  i,ilo,ihit,k,mhalf
+  i,ilo,ihit,k,mhalf,j
 
 REAL(KIND=rspec) :: &
   d0,d1,dseg,drds0,drds1,drds1f,drds_min,drho_min,ds,ds_max,ds_min,r000, &
-  rhomax,sseg,tau,tol,tol1
+  rhomax,sseg,tau,tol,tol1,theta_geom,theta_test,zeta_test
 
 REAL(KIND=rspec) :: &
   r_car0(1:3),r_cyl0(1:3),r_flx0(1:3),g_cyl0(1:6), &
   r_car1(1:3),r_cyl1(1:3),r_flx1(1:3),g_cyl1(1:6), &
-  r_cars(1:3),g_cars(1:3),r_cylc(1:3,1:n_seg),b_car(1:3)
+  r_cars(1:3),g_cars(1:3),r_cylc(1:3,1:n_seg),b_car(1:3), &
+  r_test(1:3),r_cyl_test(1:3)
 
 !-------------------------------------------------------------------------------
 !Initialization
@@ -238,7 +239,7 @@ ELSEIF(k == 2) THEN
 ELSE
 
   !Default cylindrical
-  PRINT *, "Default cylindrical."
+  ! PRINT *, "Default cylindrical."
   r_cylc(1:3,1:n_seg)=r_seg(1:3,1:n_seg)
 
 ENDIF
@@ -265,16 +266,36 @@ CALL AJAX_CYL2FLX(r_cyl0, &
                   r_flx0,iflag,message, &
                   G_CYL=g_cyl0)
 
-!Check messages
-IF(iflag > 0) THEN
 
-  !Assume starting point is outside plasma with bad Jacobian and proceed
-  r_flx0(1)=1.2*rhomax
-  r_flx0(2)=ATAN2(-r_cyl0(3),r_cyl0(1)-r000)
-  r_flx0(3)=r_cyl0(2)
-  g_cyl0(:)=(/1.0,0.0,0.0,0.0,-1.2*rhomax,0.0/)
-  iflag=0
-  message=''
+!Check messages
+! IF(iflag > 0) THEN
+
+!   PRINT *, "iflag: ", iflag
+
+!   !Assume starting point is outside plasma with bad Jacobian and proceed
+!   r_flx0(1)=1.2*rhomax
+!   r_flx0(2)=ATAN2(-r_cyl0(3),r_cyl0(1)-r000)
+!   r_flx0(3)=r_cyl0(2)
+!   g_cyl0(:)=(/1.0,0.0,0.0,0.0,-1.2*rhomax,0.0/)
+!   iflag=0
+!   message=''
+
+! ENDIF
+
+IF(iflag > 0 .OR. tau < 0.0) THEN
+
+  ! Assume d0 is outside plasma with bad Jacobian and proceed,
+  ! but preserve geometric angular/toroidal coordinates.
+  r_flx0(1) = 1.1_rspec*rhomax
+  r_flx0(2) = ATAN2(-r_cyl0(3), r_cyl0(1)-r000)
+  r_flx0(3) = r_cyl0(2)
+
+  g_cyl0(:) = (/1.0_rspec, 0.0_rspec, 0.0_rspec, &
+                0.0_rspec, -1.1_rspec*rhomax, 0.0_rspec/)
+
+  drds0 = 0.0_rspec
+  iflag = 0
+  message = ''
 
 ENDIF
 
@@ -354,6 +375,12 @@ ENDIF
 
 !Initialize flux coordinates at 1
 r_flx1(:)=r_flx0(:)
+
+PRINT *, "======================================================="
+PRINT *, "Entering TRACK "
+PRINT *, "See manual for details on each possible case: "
+PRINT *, "TRACK 2.0 W.A. Houlberg, P.I. Strand, July 1, 2002 "
+PRINT *, "======================================================="
 !-------------------------------------------------------------------------------
 !Loop over segments
 !-------------------------------------------------------------------------------
@@ -378,15 +405,22 @@ DO i=1,n_seg-1 !Over segments
   !Make sure gradient exceeds minimum
   IF(ABS(drds0) <= drds_min) drds0=SIGN(1.0_rspec,drds0)*tol1*drds_min
 
+
+
   !Check messages
   IF(iflag > 0 .OR. &
      tau < 0.0) THEN
 
-    !Assume d0 is outside plasma with bad Jacobian and proceed
-    r_flx0(:)=(/1.1*rhomax,0.0,0.0/)
-    drds0=0
-    iflag=0
-    message=''
+    ! !Assume d0 is outside plasma with bad Jacobian and proceed
+    ! r_flx0(:)=(/1.1*rhomax,0.0,0.0/)
+    ! drds0=0
+    ! iflag=0
+    ! message=''
+
+    r_flx1(1) = 1.1_rspec*rhomax
+    r_flx1(2) = ATAN2(-r_cyl1(3), r_cyl1(1)-r000)
+    r_flx1(3) = r_cyl1(2)
+    drds1 = 0.0_rspec
 
   ENDIF
 
@@ -459,6 +493,7 @@ DO i=1,n_seg-1 !Over segments
 
     ENDIF
 
+
     !Check restrictions on step size
     ds=MIN(ds,dseg-d0,ds_max)
     ds=ds/REAL(2**mhalf,rspec)
@@ -475,18 +510,44 @@ DO i=1,n_seg-1 !Over segments
                  r_flx1, &
                  r_car1,r_cyl1,drds1,g_cyl1,tau,iflag,message)
 
+
+    theta_geom = ATAN2(-r_cyl1(3), r_cyl1(1)-r000)
+
+    theta_test = -1.7235_rspec
+    zeta_test  = 0.0_rspec
+
+    DO j = 1, n_rho
+      r_test(1) = rho(j)
+      r_test(2) = theta_test
+      r_test(3) = zeta_test
+
+      iflag = 0
+      message = ''
+      CALL AJAX_FLX2CYL(r_test, r_cyl_test, iflag, message)
+    ENDDO
+
     !Make sure gradient exceeds minimum
     IF(ABS(drds1) <= drds_min) drds1=SIGN(1.0_rspec,drds1)*tol1*drds_min
 
     !Check messages
-    IF(iflag > 0 .OR. &
-       tau < 0.0) THEN
+    ! IF(iflag > 0 .OR. &
+    !    tau < 0.0) THEN
 
-      !Assume d1 is outside plasma with bad Jacobian and proceed
-      r_flx1(:)=(/1.1*rhomax,0.0,r_cyl1(2)/)
-      drds1=0
-      iflag=0
-      message=''
+    !   !Assume d1 is outside plasma with bad Jacobian and proceed
+    !   r_flx1(:)=(/1.1*rhomax,0.0,r_cyl1(2)/)
+    !   drds1=0
+    !   iflag=0
+    !   message=''
+
+    ! ENDIF
+    IF(iflag > 0 .OR. tau < 0.0) THEN
+
+      r_flx1(1) = 1.1_rspec*rhomax
+      r_flx1(2) = ATAN2(-r_cyl1(3), r_cyl1(1)-r000)
+      r_flx1(3) = r_cyl1(2)
+      drds1 = 0.0_rspec
+      iflag = 0
+      message = ''
 
     ENDIF
 
@@ -526,7 +587,7 @@ DO i=1,n_seg-1 !Over segments
 !Case I.B&C.2: Crossed target surface
           !Reduce step size to get good data point outside plasma
           ihit=0
-          mhalf=1
+          mhalf=mhalf+1
 
           PRINT *, "I.B&C.2"
 
