@@ -334,139 +334,444 @@ Del_drift = C1*((v_p/100)**C2)*(r_p**C3)*(ne0**C4) &
 
 END SUBROUTINE
 
-SUBROUTINE APPLY_DRIFTS(k_drift,ncplas,n,rho_r,rcyl_p,rflx_p,pden_r,drift,pden_r_shifted,message,iflag)
+! SUBROUTINE APPLY_DRIFTS(k_drift,ncplas,n,rho_r,rcyl_p,rflx_p,shift_flag,pden_r,drift,shifted_pro,message,iflag,DVOL_R,DRP,DS_R)
 
-INTEGER, INTENT(IN) :: &
-  k_drift,             &
-  !> flag for which drift scale used
-  ncplas,              &
-  !> number of points in plasma
-  n
-  !> number of points (plasma+sol)
+! INTEGER, INTENT(IN) :: &
+!   k_drift,             &
+!   !> flag for which drift scale used
+!   ncplas,              &
+!   !> number of points in plasma
+!   n,                   &
+!   !> number of points (plasma+sol)
+!   shift_flag
+!   !> apply shift to pden_r or source rate dS_r
+!   !> 0 for pden_r, 1 for dS_r
 
-REAL(KIND=RSPEC), INTENT(IN) :: &
-  rho_r(:),                     & 
-  !> normalised rho array
-  rcyl_p(:,:),                  & 
-  !> cylindrical coordinates of pellet trajectory
-  rflx_p(:,:),                  &
-  !> flux coordinates of pellet trajectory
-  pden_r(:),                    &
-  !> density change due to injected pellet
-  drift         
-  !> total gradB drift in R
+! REAL(KIND=RSPEC), INTENT(IN) :: &
+!   rho_r(:),                     & 
+!   !> normalised rho array
+!   rcyl_p(:,:),                  & 
+!   !> cylindrical coordinates of pellet trajectory
+!   rflx_p(:,:),                  &
+!   !> flux coordinates of pellet trajectory
+!   pden_r(:),                    &
+!   !> density change due to injected pellet
+!   drift         
+!   !> total gradB drift in R
 
-!!Declaration of output variables
-CHARACTER(len=*), INTENT(OUT) :: &
-  message                !!warning or error message [character]
+! REAL(KIND=RSPEC), INTENT(IN), OPTIONAL :: &
+!   DVOL_R(:),                              &
+!   !> volume of cell
+!   DRP(:)
+!   !> rho step size for cell
+  
 
-INTEGER, INTENT(OUT) :: &
-  iflag                  !!error and warning flag [-]
-                         !!=-1 warning
-                         !!=0 no warnings or errors
-                         !!=1 error
+! !!Declaration of output variables
+! CHARACTER(len=*), INTENT(OUT) :: &
+!   message                !!warning or error message [character]
 
-REAL(KIND=RSPEC), INTENT(OUT) :: &
-  pden_r_shifted(:)
-  !> density change shifted due to gradB drift
+! INTEGER, INTENT(OUT) :: &
+!   iflag                  !!error and warning flag [-]
+!                          !!=-1 warning
+!                          !!=0 no warnings or errors
+!                          !!=1 error
 
-REAL(KIND=RSPEC) :: &
-  new_R                          
-  !> shfted R value
+! REAL(KIND=RSPEC), INTENT(OUT) :: &
+!   shifted_pro(:)                
+!   !> density change shifted due to gradB drift
+  
+! REAL(KIND=RSPEC), INTENT(OUT), OPTIONAL :: &
+!   DS_R(:)                
+!   !> source rate per cell volume
 
-INTEGER :: &
-  ii, jj, kk
-  !> counters
+! REAL(KIND=RSPEC) :: &
+!   new_R, rho_old                          
+!   !> shfted R value
 
-REAL(KIND=RSPEC), ALLOCATABLE :: &
-  interp_cyl(:,:),               &
-  !> cylindrical coords at rho of deposition depth
-  new_cyl(:),                    &
-  !> cylindrical coordinates of shifted deposition
-  new_flx(:),                    &
-  !> flux coordinates of shifted deposition
-  rho_r_map(:)
-  !> rho mapped to new deposition array
+! INTEGER :: &
+!   ii, jj, kk
+!   !> counters
 
-ALLOCATE(interp_cyl(3,n), &
-          new_cyl(3),    &
-          new_flx(3),    &
-          rho_r_map(n))
-          !> Allocate array sizes
+! REAL(KIND=RSPEC), ALLOCATABLE :: &
+!   interp_cyl(:,:),               &
+!   !> cylindrical coords at rho of deposition depth
+!   old_cyl(:),                    &
+!   new_cyl(:),                    &
+!   !> cylindrical coordinates of shifted deposition
+!   old_flx(:,:),                    &
+!   new_flx(:),                    &
+!   !> flux coordinates of shifted deposition
+!   rho_r_map(:)
+!   !> rho mapped to new deposition array
 
-interp_cyl(:,:)=0
-new_cyl(:)=0
-new_flx(:)=0
-rho_r_map(:)=0
-pden_r_shifted(:)=0
-!> Initialise arrays
+! ALLOCATE(interp_cyl(3,n), &
+!           old_cyl(3),  &
+!           new_cyl(3),    &
+!           old_flx(3,n),  &
+!           new_flx(3),    &
+!           rho_r_map(n))
+!           !> Allocate array sizes
 
-DO ii=1,n
-  IF (pden_r(ii).NE.0) EXIT
+! interp_cyl(:,:)=0
+! old_cyl(:)=0
+! new_cyl(:)=0
+! old_flx(:,:)=0
+! new_flx(:)=0
+! rho_r_map(:)=0
+! shifted_pro(:)=0
+! dS_r(:)=0
+! !> Initialise arrays
+
+! IF(shift_flag == 0) THEN
+!   DO ii=1,n
+!     IF (pden_r(ii).NE.0) EXIT
+!   ENDDO
+! ELSEIF(shift_flag == 1) THEN
+!   DS_R = (dvol_r*pden_r)/drp
+!   DO ii=1,n
+!     IF (DS_R(ii).NE.0) EXIT
+!   ENDDO
+! ENDIF
+
+! !> Find the first value of dne (density change) =/= 0...
+! !> This will be the deposition depth.
+! PRINT *, "Index of deposition depth             : ", ii
+
+! rho_old = rho_r(ii)
+! old_flx(1,:) = rho_r
+! CALL LINEAR1_INTERP(n,rflx_p(1,n:1:-1),rflx_p(2,n:1:-1),n,old_flx(1,n:1:-1),old_flx(2,n:1:-1),iflag,message)
+
+! CALL AJAX_FLX2CYL(old_flx(:,ii),old_cyl,iflag,message)
+! PRINT *, "Deposition depth in flux coords       : ", old_flx(:,ii)
+! PRINT *, "Deposition depth in cyl coords        : ", old_cyl
+
+! ! CALL LINEAR1_INTERP(n,rflx_p(1,n:1:-1),rflx_p(2,n:1:-1),n,rho_r(n:1:-1),interp_cyl(2,n:1:-1),iflag,message)
+
+! CALL LINEAR1_INTERP(n,rflx_p(1,n:1:-1),rflx_p(2,n:1:-1),n,rho_r(n:1:-1),interp_cyl(1,n:1:-1),iflag,message)
+! !> Interpolate to find the R coord of rho
+
+! ! PRINT *, "rho: ", rho_r(ii)
+! ! PRINT *, "R interp: ", interp_cyl(1,ii)
+! ! PRINT *, "Theta interp: ", interp_cyl(2,ii)
+! ! PRINT *, "Rcyl: ", rcyl_p(1,:)
+! ! PRINT *, "Zcyl: ", rcyl_p(3,:)
+
+! ! IF(k_drift==2) THEN
+! !   new_R = interp_cyl(1,ii) + drift
+! ! ELSEIF(k_drift==3) THEN
+! !   new_R = interp_cyl(1,ii) + drift
+! ! ENDIF
+! IF(k_drift==2) THEN
+!   new_cyl(1) = old_cyl(1) + drift
+! ELSEIF(k_drift==3) THEN
+!   new_cyl(1) = old_cyl(1) + drift
+! ENDIF
+! !> Add the drift distance to R
+
+! new_cyl(2) = 0.0
+! new_cyl(3) = old_cyl(3)
+
+! PRINT *, "Drift distance in R                   : ", drift
+
+! CALL LINEAR1_INTERP(n,rcyl_p(1,:),rcyl_p(3,:),n,interp_cyl(1,n:1:-1),interp_cyl(3,n:1:-1),iflag,message)
+! !> Interpolate to find the Z coord for the (R,Z) pair
+
+! ! new_cyl(1) = new_R
+! ! new_cyl(3) = interp_cyl(3,ii)
+! ! new_cyl(3) = 2.37058997E-02
+! !> Assign new cylindrical coords using shifted R but SAME Z
+
+! CALL AJAX_CYL2FLX(new_cyl,new_flx,iflag,message)
+! !> Calculate the rho coord for the shifted R location
+
+! PRINT *, "Drifted deposition depth in cyl coords: ", new_cyl
+! PRINT *, "Drifted deposition depth in flx coords: ", new_flx
+
+! DO jj=1,n
+!   IF (rho_r(jj)>new_flx(1)) EXIT
+! ENDDO
+! !> Find closest rho in original array that matches the new shifted rho
+! !> Could interp again to get exact...
+
+! rho_r_map(ncplas:n) = rho_r(ncplas:n)
+! !> Mapped SOL rho matches original rho array
+
+! DO kk=jj,ncplas
+!   rho_r_map(kk) = rho_r(ncplas) + ((rho_r(kk) - rho_r(ncplas))/(rho_r(jj) - rho_r(ncplas)))*(rho_r(ii) - rho_r(ncplas))
+! ENDDO
+! !> Mapping the shifted rho array
+
+! IF(shift_flag == 0) THEN
+!   CALL LINEAR1_INTERP(ncplas,rho_r,pden_r,ncplas-jj+1,rho_r_map(jj:ncplas),shifted_pro(jj:ncplas),iflag,message)
+!   !> Interpolating dne onto the mapped rho array
+! ELSEIF(shift_flag == 1) THEN
+!   CALL LINEAR1_INTERP(ncplas,rho_r,dS_r,ncplas-jj+1,rho_r_map(jj:ncplas),shifted_pro(jj:ncplas),iflag,message)
+! ENDIF
+
+! shifted_pro(:) = (rho_r(ii) - rho_r(ncplas)) / (rho_r(jj) - rho_r(ncplas))*shifted_pro(:)
+! !> Normalised shifted dne
+
+SUBROUTINE APPLY_DRIFTS(k_drift,ncplas,n,n_evt,rho_r,rho_rm,map_p,rcyl_p,rflx_p, &
+                        pden_r,src_p,drift,shifted_pro,message,iflag, &
+                        DVOL_R,RPEL_EVT_P,RPEL_R,RPEL_DRIFT_R, &
+                        RPEL_CYL_R,RPEL_CYL_DRIFT_R)
+
+INTEGER, INTENT(IN) :: k_drift,ncplas,n,n_evt
+INTEGER, INTENT(IN) :: map_p(:)
+
+REAL(KIND=RSPEC), INTENT(IN) :: rho_r(:),rho_rm(:),rcyl_p(:,:),rflx_p(:,:)
+REAL(KIND=RSPEC), INTENT(IN) :: pden_r(:),src_p(:),drift
+REAL(KIND=RSPEC), INTENT(OUT) :: shifted_pro(:)
+
+CHARACTER(len=*), INTENT(OUT) :: message
+INTEGER, INTENT(OUT) :: iflag
+
+REAL(KIND=RSPEC), INTENT(IN), OPTIONAL :: DVOL_R(:),RPEL_EVT_P(:)
+REAL(KIND=RSPEC), INTENT(OUT), OPTIONAL :: RPEL_R(:),RPEL_DRIFT_R(:)
+REAL(KIND=RSPEC), INTENT(OUT), OPTIONAL :: RPEL_CYL_R(:,:),RPEL_CYL_DRIFT_R(:,:)
+
+INTEGER :: i,l,j,iold,jnew,i_depth,l_depth,jlo,jhi
+REAL(KIND=RSPEC) :: rho_edge,rho_axis,rho_depth_old,rho_depth_new
+REAL(KIND=RSPEC) :: eta,rho_new,particles,coord_w,depth_w,wlo,whi,drho
+REAL(KIND=RSPEC) :: old_cyl(3),new_cyl(3),old_flx(3),new_flx(3)
+REAL(KIND=RSPEC) :: cyl_evt(3),cyl_drift_evt(3),flx_evt(3)
+REAL(KIND=RSPEC), ALLOCATABLE :: part_old(:),part_new(:),mom_old(:),mom_new(:)
+REAL(KIND=RSPEC), ALLOCATABLE :: cyl_mom_old(:,:),cyl_mom_new(:,:)
+
+iflag = 0
+message = ''
+shifted_pro(:) = 0.0_RSPEC
+IF(PRESENT(RPEL_R)) RPEL_R(:) = 0.0_RSPEC
+IF(PRESENT(RPEL_DRIFT_R)) RPEL_DRIFT_R(:) = 0.0_RSPEC
+IF(PRESENT(RPEL_CYL_R)) RPEL_CYL_R(:,:) = 0.0_RSPEC
+IF(PRESENT(RPEL_CYL_DRIFT_R)) RPEL_CYL_DRIFT_R(:,:) = 0.0_RSPEC
+
+IF(.NOT.PRESENT(DVOL_R)) THEN
+  iflag = 1
+  message = 'APPLY_DRIFTS: DVOL_R is required for conservative event remap'
+  RETURN
+ENDIF
+
+ALLOCATE(part_old(n),part_new(n),mom_old(n),mom_new(n), &
+         cyl_mom_old(3,n),cyl_mom_new(3,n))
+part_old(:)=0.0_RSPEC; part_new(:)=0.0_RSPEC
+mom_old(:)=0.0_RSPEC;  mom_new(:)=0.0_RSPEC
+cyl_mom_old(:,:)=0.0_RSPEC; cyl_mom_new(:,:)=0.0_RSPEC
+
+rho_edge = rho_r(ncplas)
+rho_axis = rho_r(1)
+
+! Find innermost rho_t cell that actually receives source.
+i_depth = 0
+l_depth = 0
+rho_depth_old = HUGE(1.0_RSPEC)
+
+DO l=1,n_evt
+  iold = map_p(l)
+  IF(iold < 1 .OR. iold > n) CYCLE
+  IF(ABS(src_p(l)) <= TINY(1.0_RSPEC)) CYCLE
+
+  IF(iold <= ncplas .AND. rho_r(iold) < rho_depth_old) THEN
+    rho_depth_old = rho_r(iold)
+    i_depth = iold
+    l_depth = l
+  ENDIF
 ENDDO
 
-!> Find the first value of dne (density change) =/= 0...
-!> This will be the deposition depth.
-
-! PRINT *, "RHO_R(ii): ", rho_r(ii)
-
-! PRINT *, "rlfx_p: ", rflx_p(1,n:1:-1)
-! PRINT *, "rcyl_p: ", rcyl_p(1,n:1:-1)
-! PRINT *, "n: ", n
-! PRINT *, "rho_r: ", rho_r(n:1:-1)
-
-CALL LINEAR1_INTERP(n,rflx_p(1,n:1:-1),rcyl_p(1,n:1:-1),n,rho_r(n:1:-1),interp_cyl(1,n:1:-1),iflag,message)
-!> Interpolate to find the R coord of rho
-
-! PRINT *, "R(ii): ", interp_cyl(1,ii)
-
-IF(k_drift==2) THEN
-  new_R = interp_cyl(1,ii) + drift
-ELSEIF(k_drift==3) THEN
-  new_R = interp_cyl(1,ii) + drift
+IF(i_depth == 0) THEN
+  DEALLOCATE(part_old,part_new,mom_old,mom_new,cyl_mom_old,cyl_mom_new)
+  RETURN
 ENDIF
-!> Add the drift distance to R
 
-! PRINT *, "Del R: ", drift
+! Source-weighted physical location of the depth cell, using actual path branch.
+old_cyl(:)=0.0_RSPEC
+depth_w=0.0_RSPEC
 
-! PRINT *, "Rnew: ", new_R
+DO l=1,n_evt
+  iold = map_p(l)
+  IF(iold < 1 .OR. iold > n) CYCLE
+  IF(ABS(src_p(l)) <= TINY(1.0_RSPEC)) CYCLE
 
-CALL LINEAR1_INTERP(n,rcyl_p(1,:),rcyl_p(3,:),n,interp_cyl(1,n:1:-1),interp_cyl(3,n:1:-1),iflag,message)
-!> Interpolate to find the Z coord for the (R,Z) pair
+  particles = src_p(l)*DVOL_R(iold)
+  part_old(iold) = part_old(iold) + particles
 
-new_cyl(1) = new_R
-new_cyl(3) = interp_cyl(3,ii)
-!> Assign new cylindrical coords using shifted R but SAME Z
+  IF(l+1 <= SIZE(rcyl_p,2)) THEN
+    cyl_evt(:) = 0.5_RSPEC*(rcyl_p(:,l) + rcyl_p(:,l+1))
+  ELSE
+    cyl_evt(:) = rcyl_p(:,l)
+  ENDIF
+
+  cyl_mom_old(:,iold) = cyl_mom_old(:,iold) + particles*cyl_evt(:)
+
+  IF(PRESENT(RPEL_EVT_P)) mom_old(iold) = mom_old(iold) + particles*RPEL_EVT_P(l)
+
+  IF(iold == i_depth) THEN
+    coord_w = ABS(particles)
+    old_cyl(:) = old_cyl(:) + coord_w*cyl_evt(:)
+    depth_w = depth_w + coord_w
+  ENDIF
+ENDDO
+
+IF(depth_w > 0.0_RSPEC) THEN
+  old_cyl(:) = old_cyl(:)/depth_w
+ELSE
+  iflag = 1
+  message = 'APPLY_DRIFTS: zero coordinate weight at deposition depth'
+  DEALLOCATE(part_old,part_new,mom_old,mom_new,cyl_mom_old,cyl_mom_new)
+  RETURN
+ENDIF
+
+old_flx(:) = 0.0_RSPEC
+IF(l_depth > 0 .AND. l_depth <= SIZE(rflx_p,2)) old_flx(:) = rflx_p(:,l_depth)
+old_flx(1) = rho_depth_old
+old_flx(3) = old_cyl(2)
+
+CALL AJAX_CYL2FLX(old_cyl,old_flx,iflag,message)
+IF(iflag > 0) THEN
+  message = 'APPLY_DRIFTS(old depth)/'//message
+  DEALLOCATE(part_old,part_new,mom_old,mom_new,cyl_mom_old,cyl_mom_new)
+  RETURN
+ENDIF
+
+! old_flx(1) is the flux coordinate of the source-weighted cylindrical centroid.
+! rho_depth_old is the rho_t grid-cell coordinate of the deepest deposited source.
+
+new_cyl(:) = old_cyl(:)
+IF(k_drift == 2 .OR. k_drift == 3) new_cyl(1) = old_cyl(1) + drift
+
+new_flx(:) = old_flx(:)
+new_flx(3) = new_cyl(2)
 
 CALL AJAX_CYL2FLX(new_cyl,new_flx,iflag,message)
-!> Calculate the rho coord for the shifted R location
+IF(iflag > 0) THEN
+  message = 'APPLY_DRIFTS(new depth)/'//message
+  DEALLOCATE(part_old,part_new,mom_old,mom_new,cyl_mom_old,cyl_mom_new)
+  RETURN
+ENDIF
 
-! PRINT *, "CYL_NEW: ", new_cyl
-! PRINT *, "FLX_NEW: ", new_flx
+rho_depth_new = MIN(MAX(new_flx(1),rho_axis),rho_edge)
+! new_flx(1) = rho_depth_new
 
-DO jj=1,n
-  IF (rho_r(jj)>new_flx(1)) EXIT
+PRINT *, 'Index of deposition depth             : ', i_depth
+PRINT *, 'Deposition depth cell rho_t           : ', rho_depth_old
+PRINT *, 'Deposition depth centroid flx coords  : ', old_flx
+PRINT *, 'Deposition depth centroid cyl coords  : ', old_cyl
+PRINT *, 'Drift distance in R                   : ', drift
+PRINT *, 'Drifted deposition depth cell rho_t   : ', rho_depth_new
+PRINT *, 'Drifted deposition depth centroid cyl : ', new_cyl
+PRINT *, 'Drifted deposition depth centroid flx : ', new_flx
+
+! Remap each conserved source packet from old depth interval to new depth interval.
+DO l=1,n_evt
+  iold = map_p(l)
+  IF(iold < 1 .OR. iold > n) CYCLE
+  IF(ABS(src_p(l)) <= TINY(1.0_RSPEC)) CYCLE
+
+  particles = src_p(l)*DVOL_R(iold)
+
+  IF(l+1 <= SIZE(rcyl_p,2)) THEN
+    cyl_evt(:) = 0.5_RSPEC*(rcyl_p(:,l) + rcyl_p(:,l+1))
+  ELSE
+    cyl_evt(:) = rcyl_p(:,l)
+  ENDIF
+
+  cyl_drift_evt(:) = cyl_evt(:)
+
+  IF(iold <= ncplas) THEN
+    eta = (rho_r(iold)-rho_edge)/(rho_depth_old-rho_edge)
+    eta = MIN(MAX(eta,0.0_RSPEC),1.0_RSPEC)
+    rho_new = rho_edge + eta*(rho_depth_new-rho_edge)
+
+    flx_evt(:) = 0.0_RSPEC
+    IF(l <= SIZE(rflx_p,2)) flx_evt(:) = rflx_p(:,l)
+    flx_evt(3) = cyl_evt(2)
+
+    CALL AJAX_CYL2FLX(cyl_evt,flx_evt,iflag,message)
+    IF(iflag > 0) THEN
+      message = 'APPLY_DRIFTS(event coord)/'//message
+      DEALLOCATE(part_old,part_new,mom_old,mom_new,cyl_mom_old,cyl_mom_new)
+      RETURN
+    ENDIF
+
+    flx_evt(1) = rho_new
+    CALL AJAX_FLX2CYL(flx_evt,cyl_drift_evt,iflag,message)
+    IF(iflag > 0) THEN
+      message = 'APPLY_DRIFTS(event drift coord)/'//message
+      DEALLOCATE(part_old,part_new,mom_old,mom_new,cyl_mom_old,cyl_mom_new)
+      RETURN
+    ENDIF
+
+    IF(rho_new <= rho_r(1)) THEN
+      jlo = 1
+      jhi = 1
+      wlo = 1.0_RSPEC
+      whi = 0.0_RSPEC
+    ELSEIF(rho_new >= rho_r(ncplas)) THEN
+      jlo = ncplas
+      jhi = ncplas
+      wlo = 1.0_RSPEC
+      whi = 0.0_RSPEC
+    ELSE
+      jlo = 1
+      DO j=1,ncplas-1
+        IF(rho_new >= rho_r(j) .AND. rho_new <= rho_r(j+1)) THEN
+          jlo = j
+          EXIT
+        ENDIF
+      ENDDO
+      jhi = jlo + 1
+      drho = rho_r(jhi) - rho_r(jlo)
+      IF(drho > TINY(1.0_RSPEC)) THEN
+        whi = (rho_new - rho_r(jlo))/drho
+        whi = MIN(MAX(whi,0.0_RSPEC),1.0_RSPEC)
+        wlo = 1.0_RSPEC - whi
+      ELSE
+        jhi = jlo
+        wlo = 1.0_RSPEC
+        whi = 0.0_RSPEC
+      ENDIF
+    ENDIF
+  ELSE
+    jnew = iold
+    jlo = jnew
+    jhi = jnew
+    wlo = 1.0_RSPEC
+    whi = 0.0_RSPEC
+  ENDIF
+
+  part_new(jlo) = part_new(jlo) + wlo*particles
+  cyl_mom_new(:,jlo) = cyl_mom_new(:,jlo) + wlo*particles*cyl_drift_evt(:)
+  IF(PRESENT(RPEL_EVT_P)) mom_new(jlo) = mom_new(jlo) + wlo*particles*RPEL_EVT_P(l)
+
+  IF(jhi /= jlo .AND. whi > 0.0_RSPEC) THEN
+    part_new(jhi) = part_new(jhi) + whi*particles
+    cyl_mom_new(:,jhi) = cyl_mom_new(:,jhi) + whi*particles*cyl_drift_evt(:)
+    IF(PRESENT(RPEL_EVT_P)) mom_new(jhi) = mom_new(jhi) + whi*particles*RPEL_EVT_P(l)
+  ENDIF
 ENDDO
-!> Find closest rho in original array that matches the new shifted rho
-!> Could interp again to get exact...
 
-rho_r_map(ncplas:n) = rho_r(ncplas:n)
-!> Mapped SOL rho matches original rho array
+DO i=1,n
+  IF(DVOL_R(i) > 0.0_RSPEC) shifted_pro(i) = part_new(i)/DVOL_R(i)
 
-DO kk=jj,ncplas
-  rho_r_map(kk) = rho_r(ncplas) + ((rho_r(kk) - rho_r(ncplas))/(rho_r(jj) - rho_r(ncplas)))*(rho_r(ii) - rho_r(ncplas))
+  IF(PRESENT(RPEL_EVT_P) .AND. PRESENT(RPEL_R)) THEN
+    IF(ABS(part_old(i)) > TINY(1.0_RSPEC)) RPEL_R(i) = mom_old(i)/part_old(i)
+  ENDIF
+
+  IF(PRESENT(RPEL_EVT_P) .AND. PRESENT(RPEL_DRIFT_R)) THEN
+    IF(ABS(part_new(i)) > TINY(1.0_RSPEC)) RPEL_DRIFT_R(i) = mom_new(i)/part_new(i)
+  ENDIF
+
+  IF(PRESENT(RPEL_CYL_R)) THEN
+    IF(ABS(part_old(i)) > TINY(1.0_RSPEC)) RPEL_CYL_R(:,i) = cyl_mom_old(:,i)/part_old(i)
+  ENDIF
+
+  IF(PRESENT(RPEL_CYL_DRIFT_R)) THEN
+    IF(ABS(part_new(i)) > TINY(1.0_RSPEC)) RPEL_CYL_DRIFT_R(:,i) = cyl_mom_new(:,i)/part_new(i)
+  ENDIF
 ENDDO
-!> Mapping the shifted rho array
 
-CALL LINEAR1_INTERP(ncplas,rho_r,pden_r,ncplas-jj+1,rho_r_map(jj:ncplas),pden_r_shifted(jj:ncplas),iflag,message)
-!> Interpolating dne onto the mapped rho array
+DEALLOCATE(part_old,part_new,mom_old,mom_new,cyl_mom_old,cyl_mom_new)
 
-pden_r_shifted(:) = (rho_r(ii) - rho_r(ncplas)) / (rho_r(jj) - rho_r(ncplas))*pden_r_shifted(:)
-!> Normalised shifted dne
-
-! PRINT *, "Old density change: ", pden_r
-! PRINT *, "New density change: ", pden_r_shifted
-
-END SUBROUTINE
+END SUBROUTINE APPLY_DRIFTS
 
 END MODULE DRIFTS_MOD
