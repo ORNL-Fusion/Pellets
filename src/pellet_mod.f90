@@ -117,7 +117,7 @@ SUBROUTINE PELLET(k_pel,amupel,rpel,vpel,n_r,den0_r,te0_r,n_p,map_p,s_p,&
                   PEL_IONS,T_P,RPEL1_P,SRC_P,DEN0_P,DEN1_P,TE0_P,TE1_P, &
                   R0,A0,BT0,NCSOL,K_PRL,NPRLCLD,IPRLCLD,FPELPRL,PRLINJANG,PRLQ_R,PRLDEP, &
                   K_DRIFT,DVOL_R_ARRAY,DVOL_R_POINT,ALPHA,LAM,KAPPA,DEL_DRIFT,RHO_RM,RHO2R, &
-                  R_SHIFTED,RHO_R_SHIFTED)
+                  R_SHIFTED,RHO_R_SHIFTED,RPEL_EVT_P)
 
 !!-------------------------------------------------------------------------------
 !!PELLET calculates the ablation profile for solid pellets injected into a plasma
@@ -237,7 +237,10 @@ REAL(KIND=rspec), OPTIONAL, INTENT(IN) :: &
   DVOL_R_ARRAY(:)              !!volume of plasma cell i [m**3]
 
 REAL(KIND=rspec), OPTIONAL, INTENT(OUT), ALLOCATABLE :: &
-  DVOL_R_POINT(:)             !!volume of plasma cell i [m**3]
+  DVOL_R_POINT(:)           !!volume of plasma cell i [m**3]
+
+REAL(KIND=rspec), INTENT(OUT), OPTIONAL :: &
+  RPEL_EVT_P(:)
 
 !!-------------------------------------------------------------------------------
 !!Declartation of local variables
@@ -249,7 +252,7 @@ INTEGER :: &
 
 REAL(KIND=rspec) :: &
   dennew,denold,dt,rp,rpold,srcp,t,tenew,teold,srcp_tot, &
-    rp_HPI2,ne_HPI2
+    rp_HPI2,ne_HPI2,plas_vol,ne_avg,check_glob
 
 !!
 !! Local variables for PRL extension
@@ -480,6 +483,7 @@ IF(PRESENT(DEN0_P)) DEN0_P(:)=0
 IF(PRESENT(DEN1_P)) DEN1_P(:)=0
 IF(PRESENT(TE0_P)) TE0_P(:)=0
 IF(PRESENT(TE1_P)) TE1_P(:)=0
+IF(PRESENT(RPEL_EVT_P)) RPEL_EVT_P(:)=0.
 
 !!Set private pellet parameters for normalizations
 rhosrp0_pl=(2*amup_pl*z_protonmass*denm_pl)*rpel_pl
@@ -517,6 +521,12 @@ ENDIF
 !!Optional output
 IF(PRESENT(PEL_IONS)) PEL_IONS=4*z_pi/3*rpel_pl**3*(2*denm_pl)
 
+ne_avg=0
+check_glob=0
+ne_avg = SUM(den0_r*DVOL_R_ARRAY)/SUM(DVOL_R_ARRAY)
+check_glob = 4*z_pi/3*rpel_pl**3*(2*denm_pl)/ne_avg
+! PRINT *, "Global check: ", check_glob
+srcp_tot = 0.0
 
 !!-------------------------------------------------------------------------------
 !!Follow the pellet path and determine the ablation rate
@@ -526,6 +536,10 @@ l_inside=.FALSE.
 
 !!Flag to indicate whether pellet has entered and exited plasma
 l_inout=.FALSE.
+
+PRINT *, "Initial pellet radius                 : ", rp
+PRINT *, "Pre loop density source total         : ", srcp_tot
+PRINT *, "======================================================="
 
 DO l=1,n_p
 
@@ -565,7 +579,6 @@ DO l=1,n_p
       CALL PELLET_RK4(DVOL_R_ARRAY(i),dt, &
                       t,rp,teold,denold, &
                       srcp,iflag,message)
-      ! PRINT *, "Exit message: ", l, message
       pden_r(i)=pden_r(i)+srcp
       dennew=den0_r(i)+pden_r(i)
       tenew=(den0_r(i)*te0_r(i)-pden_r(i)*z_eion_pl/1.5)/dennew
@@ -578,8 +591,24 @@ DO l=1,n_p
       IF(PRESENT(DEN1_P)) DEN1_P(l)=dennew
       IF(PRESENT(TE0_P)) TE0_P(l)=teold
       IF(PRESENT(TE1_P)) TE1_P(l)=tenew
+      IF(PRESENT(SRC_P)) SRC_P(l)=srcp
 
       srcp_tot = srcp_tot + srcp*DVOL_R_ARRAY(i)
+
+      IF(PRESENT(RPEL_EVT_P)) THEN
+        IF(srcp /= 0.0_RSPEC .AND. ABS(rpold**3 - rp**3) > TINY(1.0_RSPEC)) THEN
+          RPEL_EVT_P(l) = 0.75_RSPEC * (rpold**4 - rp**4) / (rpold**3 - rp**3)
+        ELSE
+          RPEL_EVT_P(l) = rp
+        ENDIF
+      ENDIF
+
+      PRINT *, "Current rho location                  : ", RHO_RM(i)
+      PRINT *, "Flux tube volume at current rho       : ", DVOL_R_ARRAY(i)
+      PRINT *, "Density source in cell                : ", srcp
+      PRINT *, "Sum density source so far             : ", srcp_tot
+      PRINT *, "Remaining atoms in pellet             : ", (4.0*z_pi/3.0)*(rp**3)*2.0*denm_pl
+      PRINT *, "======================================================="
 
       IF (K_PRL .gt.0 .and. PRESENT(NPRLCLD) .and. rp > 0.0) THEN   !! Call PRL drift model
 
@@ -703,6 +732,7 @@ endif
 ! PRINT *, "Finished pellet module."
 
 write(*,*) ' Total electrons: ',srcp_tot
+write(*,*) 'Analytic loss check: ', 4*z_pi/3*(2*denm_pl)*(rpel_pl**3 - rp**3)
 
 !!-------------------------------------------------------------------------------
 !!Cleanup and exit
@@ -2068,7 +2098,11 @@ REAL(KIND=rspec), PARAMETER :: &
 
 REAL(KIND=rspec) :: &
   dinf,rpcm,tinf,dndt, &
-  gam,lam,ehat,rhat,qhat,Q,Est,sig,Lst,Loss,A,lamst,Coef
+  gam,lam,ehat,rhat,qhat,Q,Est,sig,Lst,Loss,A,lamst,Coef, &
+  d_emc,d_emc_cm,t_emc,rp_emc,Est_emc,sig_emc,A_emc,Lst_emc, &
+  Loss_emc,lamst_emc,Coef_emc,dndt_emc,dndt_axis,rdot_emc, &
+  rdot_axis
+
 
 !!-------------------------------------------------------------------------------
 !!Initialization
@@ -2087,6 +2121,15 @@ tinf=te*1.0e3
 rpcm=rp*1.0e2
 dinf=den*1.0e-6
 
+! d_emc=5.0e22
+! d_emc_cm=d_emc*1.0e-6
+! t_emc=365
+! rp_emc=1.5*1.0e-2
+
+! PRINT*, "tinf, rpcm, dinf: ", tinf, rpcm, dinf
+! PRINT*, "t_emc, rp_emc, d_emc_cm: ", t_emc, rp_emc, d_emc_cm
+! PRINT*, "t_axis, rp_axis, d_axis: ", 1.991e3, 1.5*5.90832904E-02, 8.78e19*1.0e-6
+
 !! Determination of coefficients
 gam = 7/5.
 lam = 0.961
@@ -2103,6 +2146,14 @@ Loss = 2*Lst/Est
 lamst = sig + loss
 Coef = ((gam-1)**0.333 * lam)/(rhat**1.333 * qhat**0.333)
 
+! Est_emc = 2*t_emc/ehat
+! sig_emc = (8.8e-13/ Est_emc**1.71) - 1.62e-12/Est_emc**1.932
+! A_emc = 1./((Est_emc/100)**0.823 + 1/((Est_emc/60)**0.125) + 1/((Est_emc/48)**1.94))
+! Lst_emc = 8.62e-15*A_emc
+! Loss_emc = 2*Lst_emc/Est_emc
+! lamst_emc = sig_emc + loss_emc
+! Coef_emc = ((gam-1)**0.333 * lam)/(rhat**1.333 * qhat**0.333)
+
 !!-------------------------------------------------------------------------------
 !!Calculate ablation rate
 !!-------------------------------------------------------------------------------
@@ -2110,11 +2161,30 @@ Coef = ((gam-1)**0.333 * lam)/(rhat**1.333 * qhat**0.333)
 dndt=5.0586e7*Coef*Q**0.333*(amup_pl**(-0.333)*dinf**(0.333)*rpcm**(1.333)* &
        tinf**(0.5))/lamst**0.666
 
+! dndt_emc=5.0586e7*Coef_emc*Q**0.333*(amup_pl**(-0.333)*d_emc_cm**(0.333)*rp_emc**(1.333)* &
+!        t_emc**(0.5))/lamst_emc**0.666
+
+! dndt_axis=5.0586e7*Coef*Q**0.333*(amup_pl**(-0.333)*(8.78e19*1.0e-6)**(0.333)* &
+!         (1.5*5.90832904E-02))**(1.333)* &
+!        ((1.99e3)**(0.5))/lamst**0.666
+
+! PRINT *, "Tokamak dndt: ", dndt
+! PRINT *, "Tokamak axis dndt: ", dndt_axis
+! PRINT *, "EMC2 dndt: ", dndt_emc
+
 !!Compute dr/dt in m/s
 rdot=-dndt/((2*denm_pl)*4*z_pi*rp**2)
+! rdot_emc=-dndt_emc/((2*denm_pl)*4*z_pi*(1.5*1.0e-3)**2)
+! rdot_axis=-dndt_axis/((2*denm_pl)*4*z_pi*(1.5*(2*0.0005908328752337507))**2)
 
-PRINT *, "dndt: ", dndt
-PRINT *, "rdot: ", rdot
+! PRINT *, "rp, rp_axis, rp_emc: ", rp, 1.5*(2*0.0005908328752337507), 1.5*1.0e-3
+
+! PRINT *, "Tokamak drdt: ", rdot
+! PRINT *, "Tokamak axis drdt: ", rdot_axis
+! PRINT *, "EMC2 drdt: ", rdot_emc
+
+! PRINT *, "dndt: ", dndt
+! PRINT *, "rdot: ", rdot
 
 
 !!-------------------------------------------------------------------------------
@@ -2664,7 +2734,7 @@ REAL(KIND=rspec), PARAMETER :: &
 REAL(KIND=rspec) :: &
   adfac,areac,areap,ce,ddens,dens,dnte,drav,drp3,dtold,dts,endot, &
   fdts,fioncn,fnmax,fntmax,fte,rdot,rdotav,rdotmx,rp0,rp3,rpmin, &
-  rps,tcl,temin,tes,tfd,tnew,told,rp_min,dt_min,dts_new
+  rps,tcl,temin,tes,tfd,tnew,told,rp_min,dt_min,dts_new,check_loc
 
 REAL(KIND=rspec) :: &
   dr(4)
@@ -2686,6 +2756,7 @@ temin=z_eion_pl
 nstep=0
 rp_min=1.0e-2*rpel_pl
 dt_min=1.0e-7
+check_loc=0
 
 ! PRINT *, "Set maximum delta(n)/n, pellet size at that max, and the max ablation rate..."
 fntmax=(te-temin)/(z_eion_pl*2/3+temin)
@@ -2836,21 +2907,16 @@ step_loop: DO istep=1,mstep  !!Over time steps
     ENDIF
 
     dr(i)=dts*rdot
-    ! PRINT *, "dts: ", dts
-    ! PRINT *, "rdot: ", rdot
-    ! PRINT *, "dr: ", dr(i)
 
     IF(i <= 2) THEN
 
       IF((rp+dr(i)/2) < rpmin) dr(i)=2*(rpmin-rp)
       rps=rp+dr(i)/2
-      ! PRINT *, "i <= 2."
 
     ELSE
 
       IF((rp+dr(i)) < rpmin) dr(i)=rpmin-rp
       rps=rp+dr(i)
-      ! PRINT *, "i > 2."
 
     ENDIF
 
@@ -2861,9 +2927,6 @@ step_loop: DO istep=1,mstep  !!Over time steps
       ddens=2*denm_pl*z_pl/dvol*4*z_pi/3 *(rp**3-rps**3)
       dnte=2*ddens/3*z_eion_pl
       fte=2*(ddens+dnte/tes)/(dens+2*ddens)
-      ! PRINT *, "ddens: ", ddens
-      ! PRINT *, "dnte: ", dnte
-      ! PRINT *, "fte: ", fte
       fdts=1
       IF(fte /= 0.0) fdts=z_tolt/fte
 
@@ -2873,13 +2936,13 @@ step_loop: DO istep=1,mstep  !!Over time steps
         ! !!Reduce time step size and try again
         ! dts_new=0.9*fdts*dts
 
-        !   IF(dts_new <= dt_min) THEN
-        !     dts = dts_min
-        !     EXIT step_loop
-        !     ! converged = .TRUE.
-        !     ! rp = 0.0
-        !     ! GOTO 9999
-        !   ENDIF
+          ! IF(dts_new <= dt_min) THEN
+          !   dts = dts_min
+          !   EXIT step_loop
+          !   ! converged = .TRUE.
+          !   ! rp = 0.0
+          !   ! GOTO 9999
+          ! ENDIF
 
         ! dts = dts_new
         ! CYCLE step_loop
@@ -2896,24 +2959,35 @@ step_loop: DO istep=1,mstep  !!Over time steps
 
   IF((rp+drav) < (z_tolr*rpel_pl))THEN
 
-    ! dts=-rp/rdotav
-    ! drav=-rp
-    rp = 0.0
-    GOTO 9999
+    dts=-rp/rdotav
+    drav=-rp
+    ! rp = 0.0
+    ! GOTO 9999
 
   ENDIF
 
   rp=rp+drav
   dden=2*denm_pl*z_pl/dvol*4*z_pi/3*(rp0**3-rp**3)    !! Note:    2*denm_pl is atomic density
   t=t+dts
+  ! dts=tnew-t
   dts=MAX(tnew-t,dt_min)
 
 
-  ! PRINT *, "dts: ", dts, " : STOP FOR ", dt_min
-  ! PRINT *, "rp: ", rp, " : STOP FOR ", rp_min
+  ! check_loc = dden / (den*dvol)
+  ! PRINT *, "Local density change: ", check_loc
 
   IF((dts <= dt_min   ) .OR. &
-     (rp  <= rp_min)) GOTO 9999
+     (rp  <= rp_min)) THEN
+    PRINT *, "======================================================="
+    PRINT *, "RK4 STEPS COMPLETED. "
+    PRINT *, "======================================================="
+    PRINT *, "Average ablation rate dndt            : ", -rdotav*(2*denm_pl)*4*z_pi*rp**2
+    PRINT *, "Average radius regression speed drdt  : ", rdotav
+    PRINT *, "Pellet radius at cell exit            : ", rp
+    PRINT *, "Time spent in this cell               :  ", dt
+    PRINT *, "======================================================="
+    GOTO 9999
+  ENDIF
 
 ENDDO step_loop
 
