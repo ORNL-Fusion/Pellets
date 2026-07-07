@@ -68,7 +68,8 @@ INTEGER :: &
   nprlcld,             & !number of cloudlets to be used in PRL modeling
   iprlcld,             & !id number of cloudlet to output PRL diagnostic data
   k_prl,               & !switch to use PRL deposition model, 1=on
-  k_drift,             & 
+  k_drift,             &
+  shift_flag,          & !deprecated: retained only for old namelist compatibility
   k_ped                  !switch for pedestal Te model, 1= on
 
 
@@ -187,8 +188,12 @@ REAL(KIND=rspec), ALLOCATABLE :: &
   t_p(:),s_p(:),te0_p(:),te1_p(:),den0_p(:),den1_p(:),rpel1_p(:), &
   src_p(:),rcyl_p(:,:),rflx_p(:,:),rho2r_temp(:,:),rho_temp(:,:),rho2r(:), &
   s_c(:), pedte1(:), pedte2(:), pedne1(:), pedne2(:), prlq_r(:), prldep(:), &
-  r_shifted(:,:),rho_r_shifted(:,:),dvol_r_point(:),rho_r_map(:),pden_r_shifted(:), &
-  Rtraj(:),Ztraj(:),R2rho(:,:),Z2phi(:,:),conv_check(:,:),flx_check(:),cyl_check(:)
+  r_shifted(:,:),rho_r_shifted(:,:),dvol_r_point(:),rho_r_map(:),shifted_pro(:), &
+  Rtraj(:),Ztraj(:),R2rho(:,:),Z2phi(:,:),conv_check(:,:),flx_check(:),cyl_check(:), &
+  drp_arr(:),ds_r(:),ds_drift_r(:),delta_ne_drift_r(:), &
+  te_post_r(:),te_drift_post_r(:),ne_post_r(:),ne_drift_post_r(:), &
+  rpel_evt_p(:),rpel_drift_r(:),rpel_r(:), &
+  rpel_cyl_r(:,:),rpel_cyl_drift_r(:,:)
 
 !Physical constants, mathematical constants, conversion factors
 REAL(KIND=rspec), PARAMETER :: &
@@ -230,8 +235,8 @@ NAMELIST/indata/cn_eq,cn_prof, cn_runid, cn_device, &
                 pb,px_hb,qx_hb,amu_b,eb0,amu_i,dn01,rl_dn0, &
                 pa,px_ha,qx_ha, k_prl, nprlcld, iprlcld, &
 				        pedte, pedne, pedwid, k_ped, fpelprl, prlinjang, prlq0, prlqa, prlqf, &
-                k_drift, output 
-               
+                k_drift, shift_flag, output
+
 
 !-------------------------------------------------------------------------------
 !Initialization
@@ -257,6 +262,7 @@ k_readd=0
 k_seg_p=0
 k_prl=0     ! PRL model flag  LRB
 k_drift=0
+shift_flag=0
 nprlcld=0
 ncplas=0
 ncsol=0
@@ -364,7 +370,6 @@ ENDIF
 
 
 IF (output) THEN
-    IF (output) THEN
     WRITE(n_out,'(A)') '================================================================================'
     WRITE(n_out,'(A)') '                        ___    ____    _   _   _                                '
     WRITE(n_out,'(A)') '                       / _ \  |  _  \ | \ | | | |                               '
@@ -465,35 +470,61 @@ ALLOCATE(cur_rm(n), &
          te_r(n), &
          pden_r(n), &
          rho_r_map(n), &
-         pden_r_shifted(n), &
+         shifted_pro(n), &
          rho_r(n), &
          rho_rm(n), &
-		 pedte1(n),  &
-		 pedte2(n), &
-		 pedne1(n),  &
+         drp_arr(n), &
+         dS_r(n), &
+         ds_drift_r(n), &
+         delta_ne_drift_r(n), &
+         te_post_r(n), &
+         te_drift_post_r(n), &
+         ne_post_r(n), &
+         ne_drift_post_r(n), &
+			 pedte1(n),  &
+			 pedte2(n), &
+			 pedne1(n),  &
 		 pedne2(n), &
 		 prlq_r(n), &
-		 prldep(n))
+		 prldep(n), &
+     rpel_r(n), &
+     rpel_evt_p(6*n), &
+     rpel_drift_r(n), &
+     rpel_cyl_r(3,n), &
+     rpel_cyl_drift_r(3,n))
 
   cur_rm(:)=0
   den_r(:)=0
   dvol_r(:)=0
   te_r(:)=0
   pden_r(:)=0
-  pden_r_shifted(:)=0
+  shifted_pro(:)=0
   rho_r_map(:)=0
   rho_r(:)=0
   rho_rm(:)=0
+  drp_arr(:)=0
+  ds_r(:)=0
+  ds_drift_r(:)=0
+  delta_ne_drift_r(:)=0
+  te_post_r(:)=0
+  te_drift_post_r(:)=0
+  ne_post_r(:)=0
+  ne_drift_post_r(:)=0
   pedte1(:)=0
   pedte2(:)=0
   pedne1(:)=0
   pedne2(:)=0
   prlq_r(:)=0
   prldep(:)=0
+  rpel_r(:)=0
+  rpel_evt_p(:)=0
+  rpel_drift_r(:)=0
+  rpel_cyl_r(:,:)=0
+  rpel_cyl_drift_r(:,:)=0
 
 IF(output) THEN
   WRITE(n_out,*) "*******************************************************************************"
-  WRITE(n_out,*) "* Creating normalized rho grid with ", nc, " points and...                    *"
+  WRITE(n_out,*) "* Creating normalized rho grid with ", n, " points and...                    *"
 ENDIF
 
 !Set cell grid sizes and first node outside core (ghost or SOL)
@@ -502,6 +533,7 @@ IF(ncsol == 0) THEN
   !Core only
   drp=1/(REAL(ncplas,rspec)-0.5)
   rho_r(ncplas+1)=1.0+drp/2
+  drp_arr(ncplas+1)=drp
 
 ELSE
 
@@ -509,6 +541,7 @@ ELSE
   drso=dsol/ncsol
   drp=(1.0-drso/2)/(ncplas-1)
   rho_r(ncplas+1)=1.0+drso/2
+  drp_arr(ncplas+1)=drso
 
 ENDIF
 
@@ -518,11 +551,13 @@ IF(output .and. ncsol == 0) THEN
   WRITE(n_out,*) "* ...WITHOUT SOL                                                            *"
 ENDIF
 rho_r(1:ncplas)=(/ (i-1,i=1,ncplas) /)*drp
+drp_arr(1:ncplas)=drp
 
 !SOL
 IF(ncsol /= 0) THEN
 
   rho_r(ncplas+2:n)=rho_r(ncplas+1)+(/ (i,i=1,ncsol) /)*drso
+  drp_arr=drso
   IF(output) THEN
     WRITE(n_out,*) "* ...WITH SOL                                                               *"
     WRITE(n_out,*) "* SOL thickness: ", dsol, "                                                 *"
@@ -1103,7 +1138,9 @@ CALL PELLET(k_pel,amu_pel,r_pel,v_pel,nc,den_r,te_r,n_p-1,izone_p,s_p, &
             PRLINJANG=prlinjang, &
             PRLQ_R=prlq_r,   &
             PRLDEP=prldep, & 
-            DVOL_R_ARRAY=dvol_r)
+            DVOL_R_ARRAY=dvol_r, &
+            RHO_RM=rho_rm, &
+            RPEL_EVT_P=rpel_evt_p)
 
 !Check messages
 IF(iflag /= 0) THEN
@@ -1198,7 +1235,18 @@ IF (K_DRIFT .NE. 0) THEN
 
   ENDIF
 
-  CALL APPLY_DRIFTS(k_drift,ncplas,n,rho_r,rcyl_p,rflx_p,pden_r,Del_drift,pden_r_shifted,message,iflag)
+  CALL APPLY_DRIFTS(k_drift,ncplas,n,(n_p - 1),rho_r,rho_rm,izone_p,rcyl_p,rflx_p, &
+                        pden_r,src_p,Del_drift,shifted_pro,message,iflag, &
+                        DVOL_R=dvol_r,RPEL_EVT_P=rpel_evt_p,RPEL_R=rpel_r, &
+                        RPEL_DRIFT_R=rpel_drift_r,RPEL_CYL_R=rpel_cyl_r, &
+                        RPEL_CYL_DRIFT_R=rpel_cyl_drift_r)
+
+  IF(iflag /= 0) THEN
+    CALL WRITE_LINE(n_msg,message,1,1)
+    IF(iflag > 0) GOTO 9999
+    iflag=0
+    message=''
+  ENDIF
 
 ELSE
 
@@ -1418,6 +1466,47 @@ IF(nhorz > 0) THEN
 ENDIF
 
 !-------------------------------------------------------------------------------
+!Normalize pellet deposition outputs
+!-------------------------------------------------------------------------------
+!shifted_pro is the drifted density perturbation returned by APPLY_DRIFTS.
+!dS_r and dS_r_drift are derived here so both density and conserved-particle
+!forms are always written with one unambiguous meaning.
+dS_r(:)=0.0_rspec
+ds_drift_r(:)=0.0_rspec
+delta_ne_drift_r(:)=pden_r(:)
+
+DO i=1,n
+  IF(drp_arr(i) > 0.0_rspec) dS_r(i)=pden_r(i)*dvol_r(i)/drp_arr(i)
+ENDDO
+
+IF(k_drift /= 0) THEN
+  DO i=1,n
+    delta_ne_drift_r(i)=shifted_pro(i)
+    IF(drp_arr(i) > 0.0_rspec) &
+      ds_drift_r(i)=delta_ne_drift_r(i)*dvol_r(i)/drp_arr(i)
+  ENDDO
+ELSE
+  ds_drift_r(:)=dS_r(:)
+ENDIF
+
+ne_post_r(:)=den_r(:)+pden_r(:)
+ne_drift_post_r(:)=den_r(:)+delta_ne_drift_r(:)
+te_post_r(:)=te_r(:)
+te_drift_post_r(:)=te_r(:)
+
+DO i=1,n
+  IF(ne_post_r(i) > TINY(1.0_rspec)) THEN
+    te_post_r(i)=(den_r(i)*te_r(i)-pden_r(i)*(2.0_rspec/3.0_rspec) &
+                 *z_eion)/ne_post_r(i)
+  ENDIF
+
+  IF(ne_drift_post_r(i) > TINY(1.0_rspec)) THEN
+    te_drift_post_r(i)=(den_r(i)*te_r(i)-delta_ne_drift_r(i) &
+                       *(2.0_rspec/3.0_rspec)*z_eion)/ne_drift_post_r(i)
+  ENDIF
+ENDDO
+
+!-------------------------------------------------------------------------------
 !Print to summary file
 !-------------------------------------------------------------------------------
 !
@@ -1584,36 +1673,82 @@ descpro(npro)='Electron density perturbation'
 valpro(:,npro)=pden_r(:)
 
 npro=npro+1
+namepro(npro)='dS_r'
+unitpro(npro)='particles/rho'
+descpro(npro)='Deposited particles per normalized rho'
+valpro(:,npro)=dS_r(:)
+
+npro=npro+1
 namepro(npro)='delta_ne_drift'
 unitpro(npro)='/m**3'
-descpro(npro)='Shifted lectron density perturbation'
-valpro(:,npro)=pden_r_shifted(:)
+descpro(npro)='Drifted electron density perturbation'
+valpro(:,npro)=delta_ne_drift_r(:)
+
+npro=npro+1
+namepro(npro)='dS_r_drift'
+unitpro(npro)='particles/rho'
+descpro(npro)='Drifted deposited particles per normalized rho'
+valpro(:,npro)=ds_drift_r(:)
+
+npro=npro+1
+namepro(npro)='rpel_r'
+unitpro(npro)='m'
+descpro(npro)='Pellet radius on rho_t grid'
+valpro(:,npro)=rpel_r(:)
+
+npro=npro+1
+namepro(npro)='rpel_R'
+unitpro(npro)='m'
+descpro(npro)='Source-weighted major radius for rpel_r'
+valpro(:,npro)=rpel_cyl_r(1,:)
+
+npro=npro+1
+namepro(npro)='rpel_Z'
+unitpro(npro)='m'
+descpro(npro)='Source-weighted elevation for rpel_r'
+valpro(:,npro)=rpel_cyl_r(3,:)
+
+npro=npro+1
+namepro(npro)='rpel_drift_r'
+unitpro(npro)='m'
+descpro(npro)='Drifted pellet radius on rho_t grid'
+valpro(:,npro)=rpel_drift_r(:)
+
+npro=npro+1
+namepro(npro)='rpel_drift_R'
+unitpro(npro)='m'
+descpro(npro)='Source-weighted major radius for rpel_drift_r'
+valpro(:,npro)=rpel_cyl_drift_r(1,:)
+
+npro=npro+1
+namepro(npro)='rpel_drift_Z'
+unitpro(npro)='m'
+descpro(npro)='Source-weighted elevation for rpel_drift_r'
+valpro(:,npro)=rpel_cyl_drift_r(3,:)
 
 npro=npro+1
 namepro(npro)='Te(tpel+)'
 unitpro(npro)='keV'
 descpro(npro)='Final electron temperature'
-valpro(:,npro)=(den_r(:)*te_r(:)-pden_r(:)*(2.0/3.0) &
-                 *z_eion)/(den_r(:)+pden_r(:))
+valpro(:,npro)=te_post_r(:)
 
 npro=npro+1
 namepro(npro)='Te_d(tpel+)'
 unitpro(npro)='keV'
-descpro(npro)='Final electron temperature (drift)'
-valpro(:,npro)=(den_r(:)*te_r(:)-pden_r_shifted(:)*(2.0/3.0) &
-                 *z_eion)/(den_r(:)+pden_r_shifted(:))
+descpro(npro)='Final electron temperature with drifted deposition'
+valpro(:,npro)=te_drift_post_r(:)
 
 npro=npro+1
 namepro(npro)='ne(tpel+)'
 unitpro(npro)='/m**3'
 descpro(npro)='Final electron density'
-valpro(:,npro)=den_r(:)+pden_r(:)
+valpro(:,npro)=ne_post_r(:)
 
 npro=npro+1
 namepro(npro)='ne_d(tpel+)'
 unitpro(npro)='/m**3'
-descpro(npro)='Final electron density (drift)'
-valpro(:,npro)=den_r(:)+pden_r_shifted(:)
+descpro(npro)='Final electron density with drifted deposition'
+valpro(:,npro)=ne_drift_post_r(:)
 
 !PRL Deposition
 if (k_prl > 0) then
@@ -2009,8 +2144,8 @@ IF(iflag /= 0) THEN
 ENDIF
 
 ! r0 = a0*2.31907
-! PRINT *, "r0: ", r0
 ! bt0 = bt0*(1.0/(r0 - 0.4)**2)
+
 
 !-------------------------------------------------------------------------------
 !Call FLUXAV to generate metrics from EFIT MHD equilibrium
@@ -2211,6 +2346,7 @@ READ(nin,'(5e16.9)') rdim,zdim,r0,rmin,zmid
 READ(nin,'(5e16.9)') rmag,zmag,psimag,psilim,bt0
 READ(nin,'(5e16.9)') cur
 READ(nin,'(5e16.9)') dum
+
 
 !Read 1-D and 2-D data, radial grid is equally spaced in poloidal flux (1:nx_xy)
 READ(nin,'(5e16.9)') (f_x(i),i=1,nx_xy)
