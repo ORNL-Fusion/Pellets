@@ -1,39 +1,33 @@
-# Ignore fortran build files
-./src/build/**
+.DS_Store
+__pycache__/
+*.pyc
 
-# Ignore module files
-./src/build/modules/**
+src/CMakeCache.txt
+src/CMakeFiles/
+src/Makefile
+src/cmake_install.cmake
+src/*.out
+src/clean_pel.sh
 
-# Ignore CMake/make files
-./src/build/CMakeFiles/**
-./src/build/CMakeCache.txt
-./src/build/Makefile
-**/build/**
-./src/config/user.cmake
-./src/cmake_install.cmake
+src/*.eqdsk
+src/*.geqdsk
+src/*.png
+src/nml_pellet*.dat
+src/prof*.dat
+src/msg_pellet*.dat
+src/sum_pellet*.dat
 
-# Ignore output files
-./src/build/*.dat
-./src/build/*.txt
-
-# Ignore local input files
-./src/nml_pellet.dat
-./src/nml_pellet*.dat
-./src/build/nml_pellet*.dat
-./src/**.eqdsk
-./src/prof**.dat
+src/build/
+src/config/user.cmake
 
 # Ignore python cache and local file changes
 ./Python/__pycache__/**
 ./Python/Pellet*.py
 ./Python/pellet.py
-./Python/**
+Python/
 
 # Ignore vscode files
 .vscode
 
 # Ignore local doc files
 ./documentation/pellet_docs/
-
-# Ignore any shell scripts (e.g., to delete output files)
-./src/*.sh
