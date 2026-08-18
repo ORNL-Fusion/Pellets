@@ -247,7 +247,7 @@ iflag=0
 message=''
 
 !AJAX grids
-nrho_ajax=31
+nrho_ajax=101
 ntheta_ajax=33
 nzeta_ajax=21
 
