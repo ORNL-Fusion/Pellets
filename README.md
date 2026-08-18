@@ -7,8 +7,13 @@ PELLET uses 0D ablation models to calculate the pellet ablation rate, and can tr
 
 ```
 Pellets/
+|--- CMakeLists.txt
+|--- CMakePresets.json
+|--- CMakeUserPresets.json.example
+|--- documentation/
 |--- src/
-|--- Python/
+|    |--- CMakeLists.txt
+|    |___ *.f90
 ```
 
 ## DEPENDENCIES
@@ -35,7 +40,14 @@ This method will likely require root access. If you don't have it, you might hav
 
 ## BUILD
 
-To build using CMake, copy the `defaults.cmake` to a new `user.cmake` file and make any changes you need to e.g., the library paths. Once done, run `cmake . -B build` in the `src/` directory.
+To build using CMake, copy `CMakeUserPresets.json.example` to `CMakeUserPresets.json` and update the `CMAKE_PREFIX_PATH` and run from the top directory,
+
+```
+cmake --preset build
+cmake --build build
+```
+
+which puts the `xpellet` executable in the build directory.
 
 > [!NOTE]
-> In source builds are not supported, so you must create a "build" directory.
+> The presets file is just a simple example...
