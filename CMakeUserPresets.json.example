@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "configurePresets": [
+    {
+      "name": "local-build",
+      "inherits": "build",
+      "cacheVariables": {
+        "CMAKE_PREFIX_PATH": "/path/to/netcdf;/path/to/netcdf-fortran"
+      }
+    }
+  ]
+}
