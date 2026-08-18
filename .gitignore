@@ -7,7 +7,7 @@ src/CMakeFiles/
 src/Makefile
 src/cmake_install.cmake
 src/*.out
-src/clean_pel.sh
+clean_pel.sh
 
 CMakeCache.txt
 CMakeFiles/
