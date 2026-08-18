@@ -40,14 +40,14 @@ This method will likely require root access. If you don't have it, you might hav
 
 ## BUILD
 
-To build using CMake, copy `CMakeUserPresets.json.example` to `CMakeUserPresets.json` and update the `CMAKE_PREFIX_PATH` and run from the top directory,
+To build using CMake, copy `CMakeUserPresets.json.example` to `CMakeUserPresets.json`, update the `CMAKE_PREFIX_PATH` and run from the top directory,
 
 ```
 cmake --preset build
 cmake --build build
 ```
 
-which puts the `xpellet` executable in the build directory.
+which puts executable `xpellet` in the build directory.
 
 > [!NOTE]
 > The presets file is just a simple example...
