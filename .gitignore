@@ -9,6 +9,12 @@ src/cmake_install.cmake
 src/*.out
 src/clean_pel.sh
 
+CMakeCache.txt
+CMakeFiles/
+Makefile
+CMakeUserPresets.json
+/build/
+
 src/*.eqdsk
 src/*.geqdsk
 src/*.png
