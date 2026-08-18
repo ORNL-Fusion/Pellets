@@ -9,7 +9,9 @@ SUBROUTINE SETUP_AJAX(k_equil,n_eq,r0,a0,s0,e0,e1,d1,bt0,q0,q1,n_rho,rho,      &
 !-------------------------------------------------------------------------------
 USE SPEC_KIND_MOD
 USE AJAX_MOD
-USE FLUXAV_MOD, ONLY: FLUXAV_AJAX_SIZES, FLUXAV_AJAX_MOMENTS
+USE FLUXAV_MOD, ONLY: FLUXAV_AJAX_SIZES, FLUXAV_AJAX_MOMENTS, &
+                      FLUXAV_REG_GRIDS, FLUXAV_WRITE_SURFACES_GRID, &
+                      FLUXAV_WRITE_SURFACES, FLUXAV_FULL_MOMENTS
 IMPLICIT NONE
 
 !Declaration of input variables
@@ -48,20 +50,27 @@ INTEGER, INTENT(OUT) :: &
 !-------------------------------------------------------------------------------
 !Declaration of local variables
 INTEGER :: &
-  k_pflx, nr_rz, nk_rz
+  k_pflx, nr_rz, nk_rz, &
+  ii, jj, iflag_plot, ntheta_diag
 
 INTEGER, ALLOCATABLE :: &
   m(:), n(:)
 
 REAL(kind=rspec) :: &
-  phitot,q(1:n_rho),v1(1:n_rho),v2(1:n_rho)
+  phitot,q(1:n_rho),v1(1:n_rho),v2(1:n_rho), &
+  r_flx(3), r_cyl(3)
 
 REAL(kind=rspec), ALLOCATABLE :: &
-  rho_rz(:), q_ajax(:), rmn(:,:), zmn(:,:)
+  rho_rz(:), q_ajax(:), rmn(:,:), zmn(:,:), &
+  rho_diag(:), theta_diag(:), r_diag(:,:), z_diag(:,:), &
+  rc(:,:),rs(:,:),zc(:,:),zs(:,:),r_fourier(:,:),z_fourier(:,:)
 
 !Physical and conversion constants
 REAL(KIND=rspec), PARAMETER :: &
   z_pi=3.141592654
+
+CHARACTER(len=256) :: &
+  message_plot
 
 !-------------------------------------------------------------------------------
 !Get data
@@ -89,6 +98,8 @@ ELSEIF(k_equil==2) THEN
   message=''
   CALL FLUXAV_AJAX_SIZES(nr_rz,nk_rz,iflag,message)
 
+  nk_rz = 13
+
   ALLOCATE(rho_rz(nr_rz), &
            q_ajax(nr_rz))
   ALLOCATE(m(nk_rz), &
@@ -98,15 +109,74 @@ ELSEIF(k_equil==2) THEN
 
   CALL FLUXAV_AJAX_MOMENTS(nr_rz,nk_rz,rho_rz,m,n,rmn,zmn, &
                            phitot,q_ajax,iflag,message)
-                          
-  CALL AJAX_LOAD_RZLAM(nr_rz,nk_rz,rho_rz,m,n,rmn,zmn, &
-                       iflag,message, &
-                       K_GRID=0, &
-                       NRHO_AJAX=nrho_ajax, &
-                       NTHETA_AJAX=ntheta_ajax, &
-                       NZETA_AJAX=nzeta_ajax)
 
   k_pflx = 0
+
+  ntheta_diag = 129
+  
+  ALLOCATE(rho_diag(nr_rz), &
+           theta_diag(ntheta_diag), &
+           r_diag(nr_rz,ntheta_diag), &
+           z_diag(nr_rz,ntheta_diag), &
+           rc(nr_rz,nk_rz), &
+           rs(nr_rz,nk_rz), &
+           zc(nr_rz,nk_rz), &
+           zs(nr_rz,nk_rz), &
+           r_fourier(nr_rz,ntheta_diag), &
+           z_fourier(nr_rz,ntheta_diag))
+  
+  CALL FLUXAV_REG_GRIDS(nr_rz,ntheta_diag,rho_diag,theta_diag, &
+                        r_diag,z_diag,iflag_plot,message_plot)
+  
+  IF(iflag_plot == 0) THEN
+    OPEN(UNIT=87,FILE='diag_reg_surfaces.dat',STATUS='unknown')
+    CALL FLUXAV_WRITE_SURFACES_GRID(87,nr_rz,ntheta_diag,rho_diag,theta_diag, &
+                                   r_diag,z_diag,iflag_plot,message_plot)
+    CLOSE(87)
+  ENDIF
+
+  CALL FLUXAV_FULL_MOMENTS(nr_rz,nk_rz,ntheta_diag,r_diag,z_diag,theta_diag, &
+                               rc,rs,zc,zs,r_fourier,z_fourier,iflag,message)
+
+  IF(iflag_plot == 0) THEN
+    OPEN(UNIT=90,FILE='diag_fourier_surfaces.dat',STATUS='unknown')
+    CALL FLUXAV_WRITE_SURFACES_GRID(90,nr_rz,ntheta_diag,rho_diag,theta_diag, &
+                                   r_fourier,z_fourier,iflag_plot,message_plot)
+    CLOSE(90)
+  ENDIF
+
+  CALL AJAX_LOAD_RZLAM(nr_rz,nk_rz,rho_rz,m,n,rmn,zmn, &
+                     iflag,message, &
+                     K_GRID=0, &
+                     NRHO_AJAX=nrho_ajax, &
+                     NTHETA_AJAX=ntheta_ajax, &
+                     NZETA_AJAX=nzeta_ajax, &
+                     RC=rc, RS=rs, ZC=zc, ZS=zs)
+  
+  DEALLOCATE(rho_diag,theta_diag,r_diag,z_diag,rc,rs,zc,zs,r_fourier,z_fourier)
+
+  OPEN(UNIT=89,FILE='diag_ajax_surfaces.dat',STATUS='unknown')
+  WRITE(89,'(a)') '# isurf rho theta R Z'
+
+  DO jj = 2,nr_rz
+    DO ii = 1,129
+      r_flx(1) = rho_rz(jj)
+      r_flx(2) = 2.0_rspec*z_pi*REAL(ii-1,rspec)/REAL(128,rspec)
+      r_flx(3) = 0.0_rspec
+
+      CALL AJAX_FLX2CYL(r_flx,r_cyl,iflag_plot,message_plot)
+
+      IF(iflag_plot == 0) THEN
+        WRITE(89,'(i6,1x,4es20.12)') jj,r_flx(1),r_flx(2),r_cyl(1),r_cyl(3)
+      ENDIF
+    ENDDO
+  ENDDO
+
+  CLOSE(89)
+
+  OPEN(UNIT=88,FILE='diag_fluxav_surfaces.dat',STATUS='unknown')
+  CALL FLUXAV_WRITE_SURFACES(88,iflag_plot,message_plot)
+  CLOSE(88)
 
   CALL AJAX_LOAD_MAGFLUX(phitot,k_pflx,nr_rz,rho_rz,q_ajax, &
                          iflag,message)
