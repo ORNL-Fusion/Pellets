@@ -3512,10 +3512,10 @@ CHARACTER(len=*), INTENT(OUT) :: &
 ! Declaration of local variables
 ! Loop counters
 INTEGER :: &
-  ii,jj,kk,im,npt
+  ii,jj,kk,im
 
 REAL(KIND=rspec) :: &
-  ri,zi,theta
+  ri,zi,theta,dtheta,twopi
 
 !-------------------------------------------------------------------------------
 !Initialize
@@ -3532,6 +3532,8 @@ q_ajax(:) = 0.0_rspec
 rmn(1,1) = rmag_f
 zmn(1,:) = 0.0_rspec
 
+twopi = 2.0_rspec*z_pi
+
 !-------------------------------------------------------------------------------
 ! Map FLUXAV data to AJAX data
 !-------------------------------------------------------------------------------
@@ -3544,34 +3546,33 @@ DO kk = 1, nk_rz
   n(kk) = 0
 ENDDO
 
-DO jj = 2,nr_rz !Over flux surfaces
+DO jj = 2,nr_rz
 
-  npt = mp_f(jj) - 1 !number of pol data points on surfaces [-]
+  DO ii = 1,mp_f(jj)-1
 
-  DO ii = 1,npt
-    theta = 2.0_rspec*z_pi*REAL(ii-1,rspec) / REAL(npt,rspec) !poloidal angle around flux surface [-]
-    ri = xp_f(ii,jj)
-    zi = yp_f(ii,jj)
+    dtheta = ctheta_f(ii+1,jj) - ctheta_f(ii,jj)
 
-    rmn(jj,1) = rmn(jj,1) + ri
+    ! AJAX theta runs opposite to FLUXAV contour direction
+    theta = twopi - 0.5_rspec*(ctheta_f(ii+1,jj) + ctheta_f(ii,jj))
 
-    DO kk = 2, nk_rz
+    ri = 0.5_rspec*(xp_f(ii,jj) + xp_f(ii+1,jj))
+    zi = 0.5_rspec*(yp_f(ii,jj) + yp_f(ii+1,jj))
 
+    rmn(jj,1) = rmn(jj,1) + ri*dtheta
+
+    DO kk = 2,nk_rz
       im = m(kk)
-
-      rmn(jj,kk) = rmn(jj,kk) + ri*COS(REAL(im,rspec)*theta)
-      zmn(jj,kk) = zmn(jj,kk) + zi*SIN(REAL(im,rspec)*theta)
-
+      rmn(jj,kk) = rmn(jj,kk) + ri*COS(REAL(im,rspec)*theta)*dtheta
+      zmn(jj,kk) = zmn(jj,kk) + zi*SIN(REAL(im,rspec)*theta)*dtheta
     ENDDO
 
   ENDDO
 
-  ! Finish averages
-  rmn(jj,1) = rmn(jj,1) / REAL(npt,rspec)
+  rmn(jj,1) = rmn(jj,1)/twopi
 
   DO kk = 2,nk_rz
-    rmn(jj,kk) = 2.0_rspec*rmn(jj,kk) / REAL(npt,rspec)
-    zmn(jj,kk) = 2.0_rspec*zmn(jj,kk) / REAL(npt,rspec)
+    rmn(jj,kk) = 2.0_rspec*rmn(jj,kk)/twopi
+    zmn(jj,kk) = 2.0_rspec*zmn(jj,kk)/twopi
   ENDDO
 
 ENDDO
