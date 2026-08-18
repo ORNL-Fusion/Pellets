@@ -3461,6 +3461,8 @@ ELSE
   nk_rz = 1
 END IF
 
+nk_rz = 5
+
 !-------------------------------------------------------------------------------
 !Cleanup and exit
 !-------------------------------------------------------------------------------
@@ -3578,5 +3580,312 @@ DO jj = 2,nr_rz
 ENDDO
 
 END SUBROUTINE FLUXAV_AJAX_MOMENTS
+
+SUBROUTINE FLUXAV_FULL_MOMENTS(nrho,nk_rz,ntheta,r_surf,z_surf,theta_surf, &
+                               rc,rs,zc,zs,r_fourier,z_fourier,iflag,message)
+
+INTEGER, INTENT(IN) :: &
+  nrho,                &
+  nk_rz,               &
+  ntheta
+
+REAL(KIND=rspec), INTENT(IN) :: &
+  r_surf(nrho,ntheta),          &
+  z_surf(nrho,ntheta),          &
+  theta_surf(ntheta)
+
+REAL(KIND=rspec), INTENT(OUT) :: &
+  rc(nrho,nk_rz),rs(nrho,nk_rz), &
+  zc(nrho,nk_rz),zs(nrho,nk_rz), &
+  r_fourier(nrho,ntheta), &
+  z_fourier(nrho,ntheta)
+
+INTEGER, INTENT(OUT) :: &
+  iflag                    ! error flag [-]
+
+CHARACTER(len=*), INTENT(OUT) :: &
+  message                  ! warning or error message
+
+INTEGER :: &
+  ii,jj,kk,im,npt,m(nk_rz)
+
+REAL(KIND=rspec) :: &
+  theta,err,err_max,err_rms
+
+iflag = 0
+message = ' '
+
+rc(:,:) = 0.0_rspec
+rs(:,:) = 0.0_rspec
+zc(:,:) = 0.0_rspec
+zs(:,:) = 0.0_rspec
+
+r_fourier(:,:) = 0.0_rspec
+z_fourier(:,:) = 0.0_rspec
+
+DO kk = 1, nk_rz
+  m(kk) = kk - 1
+ENDDO
+
+DO jj = 1,nrho
+
+  err_max = 0.0_rspec
+  err_rms = 0.0_rspec
+
+  DO ii = 1,ntheta-1
+
+    theta = theta_surf(ii)
+
+    rc(jj,1) = rc(jj,1) + r_surf(jj,ii)
+    zc(jj,1) = zc(jj,1) + z_surf(jj,ii)
+
+    DO kk = 2,nk_rz
+      im = m(kk)
+
+      rc(jj,kk) = rc(jj,kk) + r_surf(jj,ii)*COS(REAL(im,rspec)*theta)
+      rs(jj,kk) = rs(jj,kk) + r_surf(jj,ii)*SIN(REAL(im,rspec)*theta)
+
+      zc(jj,kk) = zc(jj,kk) + z_surf(jj,ii)*COS(REAL(im,rspec)*theta)
+      zs(jj,kk) = zs(jj,kk) + z_surf(jj,ii)*SIN(REAL(im,rspec)*theta)
+
+    ENDDO
+  ENDDO
+
+  npt = ntheta - 1
+
+  rc(jj,1) = rc(jj,1)/REAL(npt,rspec)
+  zc(jj,1) = zc(jj,1)/REAL(npt,rspec)
+
+  DO kk = 2,nk_rz
+    rc(jj,kk) = 2.0_rspec*rc(jj,kk)/REAL(npt,rspec)
+    rs(jj,kk) = 2.0_rspec*rs(jj,kk)/REAL(npt,rspec)
+    zc(jj,kk) = 2.0_rspec*zc(jj,kk)/REAL(npt,rspec)
+    zs(jj,kk) = 2.0_rspec*zs(jj,kk)/REAL(npt,rspec)
+  ENDDO
+
+  DO ii=1,ntheta
+    r_fourier(jj,ii) = rc(jj,1)
+    z_fourier(jj,ii) = zc(jj,1)
+
+    DO kk = 2,nk_rz
+      im = m(kk)
+
+      r_fourier(jj,ii) = r_fourier(jj,ii) &
+                      + rc(jj,kk)*COS(REAL(im,rspec)*theta_surf(ii)) &
+                      + rs(jj,kk)*SIN(REAL(im,rspec)*theta_surf(ii))
+
+      z_fourier(jj,ii) = z_fourier(jj,ii) &
+                      + zc(jj,kk)*COS(REAL(im,rspec)*theta_surf(ii)) &
+                      + zs(jj,kk)*SIN(REAL(im,rspec)*theta_surf(ii))
+
+    ENDDO
+
+  ENDDO
+
+  DO ii=1,npt
+      err = SQRT((r_fourier(jj,ii)-r_surf(jj,ii))**2 + &
+                  (z_fourier(jj,ii)-z_surf(jj,ii))**2)
+      err_max = MAX(err_max,err)
+      err_rms = err_rms + err**2
+  ENDDO
+  
+  err_rms = SQRT(err_rms/REAL(ntheta,rspec))
+
+  PRINT *, "surface, max_err, rms_err: ", jj, err_max, err_rms
+
+ENDDO
+
+END SUBROUTINE FLUXAV_FULL_MOMENTS
+
+SUBROUTINE FLUXAV_REG_GRIDS(nrho,ntheta,rho_surf,theta_surf, &
+                            r_surf,z_surf,iflag,message)
+
+INTEGER, INTENT(IN) :: &
+  nrho,                &
+  ntheta
+
+REAL(KIND=rspec), INTENT(OUT) :: &
+  rho_surf(nrho),                &
+  theta_surf(ntheta),            &
+  r_surf(nrho,ntheta),           &
+  z_surf(nrho,ntheta)
+
+INTEGER, INTENT(OUT) :: &
+  iflag                    ! error flag [-]
+
+CHARACTER(len=*), INTENT(OUT) :: &
+  message                  ! warning or error message
+
+INTEGER :: &
+  ii,jj
+
+REAL(KIND=rspec) :: twopi
+
+iflag = 0
+message = ' '
+
+twopi = 2.0_rspec*z_pi
+
+rho_surf(:) = rhot_f(1:nrho)
+
+DO ii = 1,ntheta
+  theta_surf(ii) = twopi*REAL(ii-1,rspec)/REAL(ntheta-1,rspec)
+ENDDO
+
+r_surf(:,:) = 0.0_rspec
+z_surf(:,:) = 0.0_rspec
+
+r_surf(1,:) = rmag_f
+z_surf(1,:) = zmag_f
+
+DO jj = 2,nrho
+
+  DO ii = 1,ntheta
+
+    ! Here call a helper that interpolates xp_f/yp_f on surface jj
+    ! at AJAX theta_surf(ii).
+    CALL FLUXAV_SURFACE_AT_THETA(jj,theta_surf(ii), &
+                                 r_surf(jj,ii),z_surf(jj,ii), &
+                                 iflag,message)
+
+    IF(iflag /= 0) THEN
+      message = 'FLUXAV_REG_GRIDS/'//message
+      GOTO 9999
+    ENDIF
+
+  ENDDO
+
+ENDDO
+
+9999 CONTINUE
+
+END SUBROUTINE FLUXAV_REG_GRIDS
+
+SUBROUTINE FLUXAV_SURFACE_AT_THETA(jsurf,theta_ajax,r,z,iflag,message)
+
+INTEGER, INTENT(IN) :: &
+  jsurf
+
+REAL(kind=rspec), INTENT(IN) :: &
+  theta_ajax
+
+REAL(kind=rspec), INTENT(OUT) :: &
+  r,  &
+  z
+
+INTEGER, INTENT(OUT) :: &
+  iflag                    ! error flag [-]
+
+CHARACTER(len=*), INTENT(OUT) :: &
+  message                  ! warning or error message
+
+INTEGER :: &
+  ii,npt
+
+REAL(KIND=rspec) :: &
+  twopi,w,denom,theta_fluxav
+
+iflag = 0
+message = ' '
+
+twopi = 2.0_rspec*z_pi
+
+theta_fluxav = twopi - MOD(theta_ajax,twopi)
+
+IF(theta_fluxav >= twopi) theta_fluxav = 0.0_rspec
+IF(theta_fluxav < 0.0_rspec) theta_fluxav = theta_fluxav + twopi
+
+npt = mp_f(jsurf)
+
+DO ii = 1,npt-1
+
+  IF(theta_fluxav >= ctheta_f(ii,jsurf) .AND. &
+     theta_fluxav <= ctheta_f(ii+1,jsurf)) THEN
+
+    denom = ctheta_f(ii+1,jsurf) - ctheta_f(ii,jsurf)
+
+    IF(denom <= TINY(1.0_rspec)) THEN
+      iflag = 1
+      message = 'FLUXAV_SURFACE_AT_THETA/ERROR:bad theta interval'
+      GOTO 9999
+    ENDIF
+
+    w = (theta_fluxav - ctheta_f(ii,jsurf))/denom
+
+    r = (1.0_rspec-w)*xp_f(ii,jsurf) + w*xp_f(ii+1,jsurf)
+    z = (1.0_rspec-w)*yp_f(ii,jsurf) + w*yp_f(ii+1,jsurf)
+
+    GOTO 9999
+
+  ENDIF
+
+ENDDO
+
+iflag = 1
+message = 'FLUXAV_SURFACE_AT_THETA/ERROR:theta not found'
+
+9999 CONTINUE
+
+END SUBROUTINE FLUXAV_SURFACE_AT_THETA
+
+SUBROUTINE FLUXAV_WRITE_SURFACES(nout,iflag,message)
+
+INTEGER, INTENT(IN) :: nout
+INTEGER, INTENT(OUT) :: iflag
+CHARACTER(len=*), INTENT(OUT) :: message
+
+INTEGER :: ii,jj
+REAL(KIND=rspec) :: theta
+
+iflag = 0
+message = ' '
+
+WRITE(nout,'(a)') '# isurf rho theta R Z'
+
+DO jj = 2,nr_f
+  DO ii = 1,mp_f(jj)
+    theta = 2.0_rspec*z_pi - ctheta_f(ii,jj)
+    WRITE(nout,'(i6,1x,4es20.12)') jj,rhot_f(jj),theta,xp_f(ii,jj),yp_f(ii,jj)
+  ENDDO
+ENDDO
+
+END SUBROUTINE FLUXAV_WRITE_SURFACES
+
+SUBROUTINE FLUXAV_WRITE_SURFACES_GRID(nout,nrho,ntheta,rho_surf,theta_surf, &
+                                     r_surf,z_surf,iflag,message)
+
+INTEGER, INTENT(IN) :: &
+  nout,                &
+  nrho,                &
+  ntheta
+
+REAL(KIND=rspec), INTENT(IN) :: &
+  rho_surf(nrho),      &
+  theta_surf(ntheta),  &
+  r_surf(nrho,ntheta), &
+  z_surf(nrho,ntheta)
+
+INTEGER, INTENT(OUT) :: &
+  iflag
+
+CHARACTER(len=*), INTENT(OUT) :: &
+  message
+
+INTEGER :: &
+  ii,jj
+
+iflag = 0
+message = ' '
+
+WRITE(nout,'(a)') '# isurf rho theta R Z'
+
+DO jj = 1,nrho
+  DO ii = 1,ntheta
+    WRITE(nout,'(i6,1x,4es20.12)') jj,rho_surf(jj),theta_surf(ii), &
+                                    r_surf(jj,ii),z_surf(jj,ii)
+  ENDDO
+ENDDO
+
+END SUBROUTINE FLUXAV_WRITE_SURFACES_GRID
 
 END MODULE FLUXAV_MOD
