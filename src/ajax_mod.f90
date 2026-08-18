@@ -112,6 +112,7 @@ PRIVATE :: &
 LOGICAL, PRIVATE, SAVE :: &     
   l_fluxavb_3d,        & !!!!option for whether b-dependent integrals set up [-]
   l_fluxavg_3d,        & !!!!option for whether geom-dependent integrals set up [-]
+  l_rzfull_3d,         &
   l_mfilter_3d           !!!!option for mode filtering [logical]
 
 !!!!Poloidal and toroidal mode expansions
@@ -153,6 +154,10 @@ REAL(KIND=rspec), PRIVATE, SAVE, ALLOCATABLE :: &
   iotabar_3d(:,:),     & !!rotational transform/2pi [-]
   r_3d(:,:,:),         & !!expansion coefficients for R [m]
   z_3d(:,:,:),         & !!expansion coefficients for Z [m]
+  rc_3d(:,:,:),        &
+  rs_3d(:,:,:),        &
+  zc_3d(:,:,:),        &
+  zs_3d(:,:,:),        &
   lam_3d(:,:,:)          !!expansion coefficients for lambda [-]
 
 !!Arrays for flux surface averaging
@@ -389,7 +394,8 @@ END SUBROUTINE AJAX_LOAD_RZBDY
 SUBROUTINE AJAX_LOAD_RZLAM(nr_rz,nk_rz,rho_rz,m,n,r,z, &
                            iflag,message, &    
                            K_GRID,L_MFILTER_AJAX,NRHO_AJAX,NTHETA_AJAX, & 
-                           NZETA_AJAX,RHOMAX_AJAX,NR_LAM,NK_LAM,RHO_LAM,LAM)
+                           NZETA_AJAX,RHOMAX_AJAX,NR_LAM,NK_LAM,RHO_LAM,LAM, &
+                           RC,RS,ZC,ZS)
 !!-------------------------------------------------------------------------------
 !!AJAX_LOAD_RZLAM loads 2D/3D MHD equilibria in inverse coordinate form
 !!
@@ -458,7 +464,9 @@ REAL(KIND=rspec), INTENT(IN), OPTIONAL :: &
   RHOMAX_AJAX,         & !!value of internal radial grid at R,Z boundary [rho]
                          !!=1.0 default
   RHO_LAM(:),          & !!radial nodes in the input lambda [arb]
-  LAM(:,:)               !!expansion coeffs for lambda [-]
+  LAM(:,:),            & !!expansion coeffs for lambda [-]                                   
+  RC(:,:),RS(:,:),     & !!the full set of expansion coeffs for R [m]
+  ZC(:,:),ZS(:,:)        !!the full set of expansion coeffs for Z [m]
 
 !!-------------------------------------------------------------------------------
 !!Declaration of local variables
@@ -466,7 +474,8 @@ INTEGER :: &
   i,j,k,kmax,nset1,k_grid_l,k_vopt(1:3)=(/1,0,0/),k_bc1=3,k_bcn=0
   
 REAL(KIND=rspec), ALLOCATABLE :: &    
-  rho(:),rmn(:,:),zmn(:,:),fspl(:,:),values(:,:)
+  rho(:),rmn(:,:),zmn(:,:),fspl(:,:),values(:,:), &
+  rcmn(:,:),rsmn(:,:),zcmn(:,:),zsmn(:,:)
 
 !!-------------------------------------------------------------------------------
 !!Initialization
@@ -474,6 +483,9 @@ REAL(KIND=rspec), ALLOCATABLE :: &
 !!Null output
 iflag=0
 message=''
+
+l_rzfull_3d = PRESENT(RC) .AND. PRESENT(RS) .AND. &
+              PRESENT(ZC) .AND. PRESENT(ZS)
 
 !!Set number of angular modes
 krz_3d=nk_rz
@@ -704,141 +716,344 @@ ENDDO !!Over modes
 !!-------------------------------------------------------------------------------
 !!Load R and Z expansion data
 !!-------------------------------------------------------------------------------
-!!Initialization
-r_3d(:,:,:)=0
-z_3d(:,:,:)=0
 
-!!Make copy of radial grid and expansion coefficients
-!!If the user does not provide an axial value for R,Z data, need to fill in
-IF(rho_rz(1) > rhores_3d) THEN
+IF(l_rzfull_3d) THEN
+  !!Initialization
+  rc_3d(:,:,:)=0.0_rspec
+  rs_3d(:,:,:)=0.0_rspec
+  zc_3d(:,:,:)=0.0_rspec
+  zs_3d(:,:,:)=0.0_rspec
 
-  !!Allocate radial grid and R,Z arrays, add radial node at axis
-  nset1=nr_rz+1
-  ALLOCATE(rho(nset1), &     
-           rmn(nset1,nk_rz), &    
-           zmn(nset1,nk_rz))
+  !!Make copy of radial grid and expansion coefficients
+  !!If the user does not provide an axial value for R,Z data, need to fill in
+  IF(rho_rz(1) > rhores_3d) THEN
 
-    rho(:)=0
-    rmn(:,:)=0
-    zmn(:,:)=0
+    !!Allocate radial grid and R,Z arrays, add radial node at axis
+    nset1=nr_rz+1
+    ALLOCATE(rho(nset1), &     
+            rcmn(nset1,nk_rz), & 
+            rsmn(nset1,nk_rz), &    
+            zcmn(nset1,nk_rz), & 
+            zsmn(nset1,nk_rz))
+
+    rho(:)=0.0_rspec
+    rcmn(:,:)=0.0_rspec
+    rsmn(:,:)=0.0_rspec
+    zcmn(:,:)=0.0_rspec
+    zsmn(:,:)=0.0_rspec
     rho(2:nset1)=rho_rz(1:nr_rz)/rho_rz(nr_rz)
-    rmn(2:nset1,1:nk_rz)=r(1:nr_rz,1:nk_rz)
-    zmn(2:nset1,1:nk_rz)=z(1:nr_rz,1:nk_rz)
+    rcmn(2:nset1,1:nk_rz)=RC(1:nr_rz,1:nk_rz)
+    rsmn(2:nset1,1:nk_rz)=RS(1:nr_rz,1:nk_rz)
+    zcmn(2:nset1,1:nk_rz)=ZC(1:nr_rz,1:nk_rz)
+    zsmn(2:nset1,1:nk_rz)=ZS(1:nr_rz,1:nk_rz)
 
-ELSE
+  ELSE
 
-  !!Allocate radial grid and R,Z arrays, use input grid
-  nset1=nr_rz
-  ALLOCATE(rho(nset1), &     
-           rmn(nset1,nk_rz), &    
-           zmn(nset1,nk_rz))
+    !!Allocate radial grid and R,Z arrays, use input grid
+    nset1=nr_rz
+    ALLOCATE(rho(nset1), &     
+            rcmn(nset1,nk_rz), & 
+            rsmn(nset1,nk_rz), & 
+            zcmn(nset1,nk_rz), &    
+            zsmn(nset1,nk_rz))
 
-    rho(:)=0
-    rmn(:,:)=0
-    zmn(:,:)=0
-    rho(1:nset1)=rho_rz(1:nset1)/rho_rz(nset1)
-    rmn(1:nset1,1:nk_rz)=r(1:nset1,1:nk_rz)
-    zmn(1:nset1,1:nk_rz)=z(1:nset1,1:nk_rz)
+      rho(:)=0.0_rspec
+      rcmn(:,:)=0.0_rspec
+      rsmn(:,:)=0.0_rspec
+      zcmn(:,:)=0.0_rspec
+      zsmn(:,:)=0.0_rspec
+      rho(1:nset1)=rho_rz(1:nset1)/rho_rz(nset1)
+      rcmn(1:nset1,1:nk_rz)=RC(1:nset1,1:nk_rz)
+      rsmn(1:nset1,1:nk_rz)=RS(1:nset1,1:nk_rz)
+      zcmn(1:nset1,1:nk_rz)=ZC(1:nset1,1:nk_rz)
+      zsmn(1:nset1,1:nk_rz)=ZS(1:nset1,1:nk_rz)
 
-ENDIF
+  ENDIF
 
-!!Convert rho to sqrt(toroidal flux) if necesssary and scale
-k_grid_l=0
-IF(PRESENT(K_GRID)) k_grid_l=K_GRID
+  !!Convert rho to sqrt(toroidal flux) if necesssary and scale
+  k_grid_l=0
+  IF(PRESENT(K_GRID)) k_grid_l=K_GRID
 
-IF(k_grid_l == 1) THEN
+  IF(k_grid_l == 1) THEN
 
-  !!~toroidal flux
-  rho(:)=SQRT(rho(:))*rhomax_3d
+    !!~toroidal flux
+    rho(:)=SQRT(rho(:))*rhomax_3d
 
-ELSEIF(k_grid_l == 0) THEN
+  ELSEIF(k_grid_l == 0) THEN
 
-  !!~sqrt(toroidal flux)
-  rho(:)=rho(:)*rhomax_3d
+    !!~sqrt(toroidal flux)
+    rho(:)=rho(:)*rhomax_3d
 
-ELSE
+  ELSE
 
-  !!Unallowed choice of input grid
-  iflag=1
-  message='AJAX_LOAD_RZLAM/ERROR(5):unallowed choice of K_GRID'
-  GOTO 9999
-
-ENDIF
-
-!!Set the inner radial boundary of R,Z for checking axial extrapolation
-rhomin_3d=rho(2)
-
-!!Allocate spline arrays
-ALLOCATE(fspl(4,nset1), &     
-         values(3,nrho_3d))
-
-  fspl(:,:)=0
-  values(:,:)=0
-
-!!Normalize the expansion coefficients to rho**m
-DO k=1,krz_3d !!Over modes
-
-  DO i=2,nset1 !!Over radial nodes
-
-    rmn(i,k)=rmn(i,k)/rho(i)**mabs_3d(k)
-    zmn(i,k)=zmn(i,k)/rho(i)**mabs_3d(k)
-
-  ENDDO !!Over radial nodes
-
-!!Parabolic extrapolation to axis (user values ignored)
-  rmn(1,k)=(rmn(2,k)*rho(3)**2-rmn(3,k)*rho(2)**2)/(rho(3)**2-rho(2)**2)
-  zmn(1,k)=(zmn(2,k)*rho(3)**2-zmn(3,k)*rho(2)**2)/(rho(3)**2-rho(2)**2)
-
-!!Map R_mn to internal radial grid
-  fspl(1,1:nset1)=rmn(1:nset1,k)
-  iflag=0
-  message=''
-  CALL SPLINE1_INTERP(k_vopt,nset1,rho,fspl,nrho_3d,rho_3d,values, &
-                      iflag,message, &    
-                      K_BC1=k_bc1, &    
-                      K_BCN=k_bcn)
-
-  !!Check messages
-  IF(iflag > 0) THEN
-
-    message='AJAX_LOAD_RZLAM(6)/'//message
+    !!Unallowed choice of input grid
+    iflag=1
+    message='AJAX_LOAD_RZLAM/ERROR(5):unallowed choice of K_GRID'
     GOTO 9999
 
   ENDIF
 
-  !!Respline the R coeffs for internal storage
-  r_3d(1,1:nrho_3d,k)=values(1,1:nrho_3d)
-  CALL SPLINE1_FIT(nrho_3d,rho_3d,r_3d(:,:,k), &  
-                   K_BC1=k_bc1, &    
-                   K_BCN=k_bcn)
+  !!Set the inner radial boundary of R,Z for checking axial extrapolation
+  rhomin_3d=rho(2)
 
-!!Map Z_mn to internal radial grid
-  fspl(1,1:nset1)=zmn(1:nset1,k)
-  iflag=0
-  message=''
-  CALL SPLINE1_INTERP(k_vopt,nset1,rho,fspl,nrho_3d,rho_3d, & 
-                      values,iflag,message, &   
-                      K_BC1=k_bc1, &    
-                      K_BCN=k_bcn)
+  !!Allocate spline arrays
+  ALLOCATE(fspl(4,nset1), &     
+          values(3,nrho_3d))
 
-  !!Check messages
-  IF(iflag > 0) THEN
+    fspl(:,:)=0
+    values(:,:)=0
 
-    message='AJAX_LOAD_RZLAM(7)/'//message
+  !!Normalize the expansion coefficients to rho**m
+  DO k=1,krz_3d !!Over modes
+
+    DO i=2,nset1 !!Over radial nodes
+
+      rcmn(i,k)=rcmn(i,k)/rho(i)**mabs_3d(k)
+      rsmn(i,k)=rsmn(i,k)/rho(i)**mabs_3d(k)
+      zcmn(i,k)=zcmn(i,k)/rho(i)**mabs_3d(k)
+      zsmn(i,k)=zsmn(i,k)/rho(i)**mabs_3d(k)
+
+    ENDDO !!Over radial nodes
+
+  !!Parabolic extrapolation to axis (user values ignored)
+    rcmn(1,k)=(rcmn(2,k)*rho(3)**2-rcmn(3,k)*rho(2)**2)/(rho(3)**2-rho(2)**2)
+    rsmn(1,k)=(rsmn(2,k)*rho(3)**2-rsmn(3,k)*rho(2)**2)/(rho(3)**2-rho(2)**2)
+    zcmn(1,k)=(zcmn(2,k)*rho(3)**2-zcmn(3,k)*rho(2)**2)/(rho(3)**2-rho(2)**2)
+    zsmn(1,k)=(zsmn(2,k)*rho(3)**2-zsmn(3,k)*rho(2)**2)/(rho(3)**2-rho(2)**2)
+
+  !!Map R_mn to internal radial grid
+    fspl(1,1:nset1)=rcmn(1:nset1,k)
+    iflag=0
+    message=''
+    CALL SPLINE1_INTERP(k_vopt,nset1,rho,fspl,nrho_3d,rho_3d,values, &
+                        iflag,message, &    
+                        K_BC1=k_bc1, &    
+                        K_BCN=k_bcn)
+
+    !!Check messages
+    IF(iflag > 0) THEN
+
+      message='AJAX_LOAD_RZLAM(6)/'//message
+      GOTO 9999
+
+    ENDIF
+
+    !!Respline the R coeffs for internal storage
+    rc_3d(1,1:nrho_3d,k)=values(1,1:nrho_3d)
+    CALL SPLINE1_FIT(nrho_3d,rho_3d,rc_3d(:,:,k), &  
+                    K_BC1=k_bc1, &    
+                    K_BCN=k_bcn)
+
+    fspl(1,1:nset1)=rsmn(1:nset1,k)
+    iflag=0
+    message=''
+    CALL SPLINE1_INTERP(k_vopt,nset1,rho,fspl,nrho_3d,rho_3d,values, &
+                        iflag,message, &    
+                        K_BC1=k_bc1, &    
+                        K_BCN=k_bcn)
+
+    !!Check messages
+    IF(iflag > 0) THEN
+
+      message='AJAX_LOAD_RZLAM(6)/'//message
+      GOTO 9999
+
+    ENDIF
+
+    !!Respline the R coeffs for internal storage
+    rs_3d(1,1:nrho_3d,k)=values(1,1:nrho_3d)
+    CALL SPLINE1_FIT(nrho_3d,rho_3d,rs_3d(:,:,k), &  
+                    K_BC1=k_bc1, &    
+                    K_BCN=k_bcn)
+
+  !!Map Z_mn to internal radial grid
+    fspl(1,1:nset1)=zcmn(1:nset1,k)
+    iflag=0
+    message=''
+    CALL SPLINE1_INTERP(k_vopt,nset1,rho,fspl,nrho_3d,rho_3d, & 
+                        values,iflag,message, &   
+                        K_BC1=k_bc1, &    
+                        K_BCN=k_bcn)
+
+    !!Check messages
+    IF(iflag > 0) THEN
+
+      message='AJAX_LOAD_RZLAM(7)/'//message
+      GOTO 9999
+
+    ENDIF
+
+    !!Respline the Z coeffs for internal storage
+    zc_3d(1,1:nrho_3d,k)=values(1,1:nrho_3d)        
+    CALL SPLINE1_FIT(nrho_3d,rho_3d,zc_3d(:,:,k), &  
+                    K_BC1=k_bc1, &    
+                    K_BCN=k_bcn)
+
+    fspl(1,1:nset1)=zsmn(1:nset1,k)
+    iflag=0
+    message=''
+    CALL SPLINE1_INTERP(k_vopt,nset1,rho,fspl,nrho_3d,rho_3d, & 
+                        values,iflag,message, &   
+                        K_BC1=k_bc1, &    
+                        K_BCN=k_bcn)
+
+    !!Check messages
+    IF(iflag > 0) THEN
+
+      message='AJAX_LOAD_RZLAM(7)/'//message
+      GOTO 9999
+
+    ENDIF
+
+    !!Respline the Z coeffs for internal storage
+    zs_3d(1,1:nrho_3d,k)=values(1,1:nrho_3d)        
+    CALL SPLINE1_FIT(nrho_3d,rho_3d,zs_3d(:,:,k), &  
+                    K_BC1=k_bc1, &    
+                    K_BCN=k_bcn)
+
+  ENDDO !!Over modes
+
+  !!Set the length scale factors
+  r000_3d=rc_3d(1,1,km0n0_3d)
+
+ELSE
+  !!Initialization
+  r_3d(:,:,:)=0
+  z_3d(:,:,:)=0
+
+  !!Make copy of radial grid and expansion coefficients
+  !!If the user does not provide an axial value for R,Z data, need to fill in
+  IF(rho_rz(1) > rhores_3d) THEN
+
+    !!Allocate radial grid and R,Z arrays, add radial node at axis
+    nset1=nr_rz+1
+    ALLOCATE(rho(nset1), &     
+            rmn(nset1,nk_rz), &    
+            zmn(nset1,nk_rz))
+
+      rho(:)=0
+      rmn(:,:)=0
+      zmn(:,:)=0
+      rho(2:nset1)=rho_rz(1:nr_rz)/rho_rz(nr_rz)
+      rmn(2:nset1,1:nk_rz)=r(1:nr_rz,1:nk_rz)
+      zmn(2:nset1,1:nk_rz)=z(1:nr_rz,1:nk_rz)
+
+  ELSE
+
+    !!Allocate radial grid and R,Z arrays, use input grid
+    nset1=nr_rz
+    ALLOCATE(rho(nset1), &     
+            rmn(nset1,nk_rz), &    
+            zmn(nset1,nk_rz))
+
+      rho(:)=0
+      rmn(:,:)=0
+      zmn(:,:)=0
+      rho(1:nset1)=rho_rz(1:nset1)/rho_rz(nset1)
+      rmn(1:nset1,1:nk_rz)=r(1:nset1,1:nk_rz)
+      zmn(1:nset1,1:nk_rz)=z(1:nset1,1:nk_rz)
+
+  ENDIF
+
+  !!Convert rho to sqrt(toroidal flux) if necesssary and scale
+  k_grid_l=0
+  IF(PRESENT(K_GRID)) k_grid_l=K_GRID
+
+  IF(k_grid_l == 1) THEN
+
+    !!~toroidal flux
+    rho(:)=SQRT(rho(:))*rhomax_3d
+
+  ELSEIF(k_grid_l == 0) THEN
+
+    !!~sqrt(toroidal flux)
+    rho(:)=rho(:)*rhomax_3d
+
+  ELSE
+
+    !!Unallowed choice of input grid
+    iflag=1
+    message='AJAX_LOAD_RZLAM/ERROR(5):unallowed choice of K_GRID'
     GOTO 9999
 
   ENDIF
 
-  !!Respline the Z coeffs for internal storage
-  z_3d(1,1:nrho_3d,k)=values(1,1:nrho_3d)        
-  CALL SPLINE1_FIT(nrho_3d,rho_3d,z_3d(:,:,k), &  
-                   K_BC1=k_bc1, &    
-                   K_BCN=k_bcn)
+  !!Set the inner radial boundary of R,Z for checking axial extrapolation
+  rhomin_3d=rho(2)
 
-ENDDO !!Over modes
+  !!Allocate spline arrays
+  ALLOCATE(fspl(4,nset1), &     
+          values(3,nrho_3d))
 
-!!Set the length scale factors
-r000_3d=r_3d(1,1,km0n0_3d)
+    fspl(:,:)=0
+    values(:,:)=0
+
+  !!Normalize the expansion coefficients to rho**m
+  DO k=1,krz_3d !!Over modes
+
+    DO i=2,nset1 !!Over radial nodes
+
+      rmn(i,k)=rmn(i,k)/rho(i)**mabs_3d(k)
+      zmn(i,k)=zmn(i,k)/rho(i)**mabs_3d(k)
+
+    ENDDO !!Over radial nodes
+
+  !!Parabolic extrapolation to axis (user values ignored)
+    rmn(1,k)=(rmn(2,k)*rho(3)**2-rmn(3,k)*rho(2)**2)/(rho(3)**2-rho(2)**2)
+    zmn(1,k)=(zmn(2,k)*rho(3)**2-zmn(3,k)*rho(2)**2)/(rho(3)**2-rho(2)**2)
+
+  !!Map R_mn to internal radial grid
+    fspl(1,1:nset1)=rmn(1:nset1,k)
+    iflag=0
+    message=''
+    CALL SPLINE1_INTERP(k_vopt,nset1,rho,fspl,nrho_3d,rho_3d,values, &
+                        iflag,message, &    
+                        K_BC1=k_bc1, &    
+                        K_BCN=k_bcn)
+
+    !!Check messages
+    IF(iflag > 0) THEN
+
+      message='AJAX_LOAD_RZLAM(6)/'//message
+      GOTO 9999
+
+    ENDIF
+
+    !!Respline the R coeffs for internal storage
+    r_3d(1,1:nrho_3d,k)=values(1,1:nrho_3d)
+    CALL SPLINE1_FIT(nrho_3d,rho_3d,r_3d(:,:,k), &  
+                    K_BC1=k_bc1, &    
+                    K_BCN=k_bcn)
+
+  !!Map Z_mn to internal radial grid
+    fspl(1,1:nset1)=zmn(1:nset1,k)
+    iflag=0
+    message=''
+    CALL SPLINE1_INTERP(k_vopt,nset1,rho,fspl,nrho_3d,rho_3d, & 
+                        values,iflag,message, &   
+                        K_BC1=k_bc1, &    
+                        K_BCN=k_bcn)
+
+    !!Check messages
+    IF(iflag > 0) THEN
+
+      message='AJAX_LOAD_RZLAM(7)/'//message
+      GOTO 9999
+
+    ENDIF
+
+    !!Respline the Z coeffs for internal storage
+    z_3d(1,1:nrho_3d,k)=values(1,1:nrho_3d)        
+    CALL SPLINE1_FIT(nrho_3d,rho_3d,z_3d(:,:,k), &  
+                    K_BC1=k_bc1, &    
+                    K_BCN=k_bcn)
+
+  ENDDO !!Over modes
+
+  !!Set the length scale factors
+  r000_3d=r_3d(1,1,km0n0_3d)
+
+ENDIF
 
 !!-------------------------------------------------------------------------------
 !!Magnetic stream function
@@ -890,14 +1105,13 @@ ENDIF
 !!-------------------------------------------------------------------------------
 9999 CONTINUE
 
-IF(ALLOCATED(rho)) THEN
-
-  !!Deallocate radial grid and R,Z arrays
-  DEALLOCATE(rho, &      
-             rmn, &      
-             zmn)
-
-ENDIF
+IF(ALLOCATED(rho)) DEALLOCATE(rho)
+IF(ALLOCATED(rmn)) DEALLOCATE(rmn)
+IF(ALLOCATED(zmn)) DEALLOCATE(zmn)
+IF(ALLOCATED(rcmn)) DEALLOCATE(rcmn)
+IF(ALLOCATED(rsmn)) DEALLOCATE(rsmn)
+IF(ALLOCATED(zcmn)) DEALLOCATE(zcmn)
+IF(ALLOCATED(zsmn)) DEALLOCATE(zsmn)
 
 IF(ALLOCATED(fspl)) THEN
 
@@ -1430,7 +1644,8 @@ INTEGER, PARAMETER :: &
   k_vopt(1:3)=(/1,1,0/)
 
 REAL(KIND=rspec) :: &     
-  ct,st,rho,rhom,drhom,rmnx,drmnx,zmnx,dzmnx,g_cylt(1:6),value(1:3)
+  ct,st,rho,rhom,drhom,rmnx,drmnx,zmnx,dzmnx,g_cylt(1:6),value(1:3), &
+  rcx,rsx,zcx,zsx,drcx,drsx,dzcx,dzsx
 
 !!-------------------------------------------------------------------------------
 !!Initialization
@@ -1456,96 +1671,216 @@ rho=MAX(rho,rhores_3d)
 !!-------------------------------------------------------------------------------
 !!Evaluate R,Z and derivatives
 !!-------------------------------------------------------------------------------
-!!Loop over modes
-DO k=1,krz_3d !!Over modes
+IF (l_rzfull_3d) THEN
+  !!Loop over modes
+  DO k=1,krz_3d !!Over modes
 
-  !!Set sine and cosine values
-  ct=COS(m_3d(k)*r_flx(2)-n_3d(k)*r_flx(3))
-  st=SIN(m_3d(k)*r_flx(2)-n_3d(k)*r_flx(3))
+    !!Set sine and cosine values
+    ct=COS(m_3d(k)*r_flx(2)-n_3d(k)*r_flx(3))
+    st=SIN(m_3d(k)*r_flx(2)-n_3d(k)*r_flx(3))
 
-  !!Calculate rho**m and its derivative
-  IF(mabs_3d(k) == 0) THEN
+    !!Calculate rho**m and its derivative
+    IF(mabs_3d(k) == 0) THEN
 
-    !!rho**0
-    rhom=1
-    drhom=0
+      !!rho**0
+      rhom=1
+      drhom=0
 
-  ELSEIF(r_flx(1) < rhomax_3d+rhores_3d) THEN
+    ELSEIF(r_flx(1) < rhomax_3d+rhores_3d) THEN
 
-    !!Inside last closed surface, rho**|m|
-    rhom=rho**mabs_3d(k)
-    drhom=mabs_3d(k)*rho**(mabs_3d(k)-1)
-    ! IF(k==1) THEN
-    ! PRINT *, "Inside."
-    ! ENDIF
+      !!Inside last closed surface, rho**|m|
+      rhom=rho**mabs_3d(k)
+      drhom=mabs_3d(k)*rho**(mabs_3d(k)-1)
+      ! IF(k==1) THEN
+      ! PRINT *, "Inside."
+      ! ENDIF
 
-  ELSE
+    ELSE
 
-    !!Outside last closed surface, rhomax**|m|
-    rhom=rhomax_3d**mabs_3d(k)
-    drhom=0
-    ! PRINT *, "Outside."
+      !!Outside last closed surface, rhomax**|m|
+      rhom=rhomax_3d**mabs_3d(k)
+      drhom=0
+      ! PRINT *, "Outside."
+
+    ENDIF
+
+    !!R_mn and dR_mn/drho from spline fits
+    CALL SPLINE1_EVAL(k_vopt,nrho_3d,rho,rho_3d, &  
+                      rc_3d(1:4,1:nrho_3d,k),i,value)
+    rcx=value(1)
+    drcx=value(2)
+
+    CALL SPLINE1_EVAL(k_vopt,nrho_3d,rho,rho_3d, &  
+                      rs_3d(1:4,1:nrho_3d,k),i,value)
+    rsx=value(1)
+    drsx=value(2)
+
+    !!Z_mn and dZ_mn/drho from spline fits
+    CALL SPLINE1_EVAL(k_vopt,nrho_3d,rho,rho_3d, &
+                      zc_3d(1:4,1:nrho_3d,k),i,value)
+    zcx=value(1)
+    dzcx=value(2)
+
+    CALL SPLINE1_EVAL(k_vopt,nrho_3d,rho,rho_3d, &
+                      zs_3d(1:4,1:nrho_3d,k),i,value)
+    zsx=value(1)
+    dzsx=value(2)
+
+    !!R = sum_mn [ R_mn * cos(m*theta-n*zeta) * rho**m ]
+    r_cyl(1)=r_cyl(1)+(rcx*ct + rsx*st)*rhom
+
+    !!Z = sum_mn [ Z_mn * sin(m*theta-n*zeta) * rho**m ]
+    r_cyl(3)=r_cyl(3)+(zcx*ct + zsx*st)*rhom
+
+    !!dR/dtheta = sum_mn [ -m * R_mn * sin(m*theta-n*zeta) * rho**m ]
+    g_cylt(2)=g_cylt(2)+m_3d(k)*(-rcx*st + rsx*ct)*rhom
+
+    !!dR/dzeta = sum_mn [ n * R_mn * sin(m*theta-n*zeta) * rho**m ]
+    g_cylt(3)=g_cylt(3)+n_3d(k)*(rcx*st - rsx*ct)*rhom
+
+    !!dZ/dtheta = sum_mn [ m * Z_mn * cos(m*theta-n*zeta) * rho**m ]
+    g_cylt(5)=g_cylt(5)+m_3d(k)*(-zcx*st + zsx*ct)*rhom
+
+    !!dZ/dzeta = sum_mn [ -n * Z_mn * cos(m*theta-n*zeta) * rho**m ]
+    g_cylt(6)=g_cylt(6)+n_3d(k)*(zcx*st - zsx*ct)*rhom
+
+    !!Radial derivatives inside R,Z domain
+    IF(r_flx(1) <= rhomax_3d+rhores_3d) THEN
+
+      !!dR/drho = sum_mn [ rho**m * dR_mn/drho + R_mn *d(rho**m)/drho ]
+      !!                   * cos(m*theta-n*zeta)
+      g_cylt(1)=g_cylt(1)+ &
+                ((drcx*rhom+rcx*drhom)*ct + &
+                 (drsx*rhom+rsx*drhom)*st) 
+
+      !!dZ/drho = sum_mn [ rho**m * dZ_mn/drho + Z_mn *d(rho**m)/drho ]
+      !!                   * sin(m*theta-n*zeta)
+      g_cylt(4)=g_cylt(4)+ &
+                ((dzcx*rhom+zcx*drhom)*ct + &
+                 (dzsx*rhom+zsx*drhom)*st)
+
+    ENDIF
+
+  ENDDO !!Over modes
+
+  !!Radial derivatives outside R,Z domain
+  IF(r_flx(1) > rhomax_3d+rhores_3d) THEN
+
+    !!This point is off the grid toward the wall
+    ct=COS(m_3d(km1n0_3d)*r_flx(2))
+    st=SIN(m_3d(km1n0_3d)*r_flx(2))
+    ! r_cyl(1)=r_cyl(1)+(rcx*ct + rsx*st)*rhom
+    r_cyl(1)=r_cyl(1)+(r_flx(1)-rhomax_3d)*(rc_3d(1,nrho_3d,km1n0_3d)*ct + &
+                                            rs_3d(1,nrho_3d,km1n0_3d)*st)
+    r_cyl(3)=r_cyl(3)+(r_flx(1)-rhomax_3d)*(zc_3d(1,nrho_3d,km1n0_3d)*ct + &
+                                            zs_3d(1,nrho_3d,km1n0_3d)*st)
+
+    g_cylt(1)=rc_3d(1,nrho_3d,km1n0_3d)*ct + rs_3d(1,nrho_3d,km1n0_3d)*st
+    g_cylt(4)=zc_3d(1,nrho_3d,km1n0_3d)*ct + zs_3d(1,nrho_3d,km1n0_3d)*st
+
+    g_cylt(2)=g_cylt(2)+(r_flx(1)-rhomax_3d)*m_3d(km1n0_3d)* &
+                        (-rc_3d(1,nrho_3d,km1n0_3d)*st + rs_3d(1,nrho_3d,km1n0_3d)*ct)
+
+    g_cylt(5)=g_cylt(5)+(r_flx(1)-rhomax_3d)*m_3d(km1n0_3d)* &
+                        (-zc_3d(1,nrho_3d,km1n0_3d)*st + zs_3d(1,nrho_3d,km1n0_3d)*ct) 
+                        
 
   ENDIF
 
-  !!R_mn and dR_mn/drho from spline fits
-  CALL SPLINE1_EVAL(k_vopt,nrho_3d,rho,rho_3d, &  
-                     r_3d(1:4,1:nrho_3d,k),i,value)
-  rmnx=value(1)
-  drmnx=value(2)
+ELSE
 
-  !!Z_mn and dZ_mn/drho from spline fits
-  CALL SPLINE1_EVAL(k_vopt,nrho_3d,rho,rho_3d,z_3d(1:4,1:nrho_3d,k),i,value)
-  zmnx=value(1)
-  dzmnx=value(2)
+  !!Loop over modes
+  DO k=1,krz_3d !!Over modes
 
-  !!R = sum_mn [ R_mn * cos(m*theta-n*zeta) * rho**m ]
-  r_cyl(1)=r_cyl(1)+rmnx*ct*rhom
+    !!Set sine and cosine values
+    ct=COS(m_3d(k)*r_flx(2)-n_3d(k)*r_flx(3))
+    st=SIN(m_3d(k)*r_flx(2)-n_3d(k)*r_flx(3))
 
-  !!Z = sum_mn [ Z_mn * sin(m*theta-n*zeta) * rho**m ]
-  r_cyl(3)=r_cyl(3)+zmnx*st*rhom
+    !!Calculate rho**m and its derivative
+    IF(mabs_3d(k) == 0) THEN
 
-  !!dR/dtheta = sum_mn [ -m * R_mn * sin(m*theta-n*zeta) * rho**m ]
-  g_cylt(2)=g_cylt(2)-m_3d(k)*rmnx*st*rhom
+      !!rho**0
+      rhom=1
+      drhom=0
 
-  !!dR/dzeta = sum_mn [ n * R_mn * sin(m*theta-n*zeta) * rho**m ]
-  g_cylt(3)=g_cylt(3)+n_3d(k)*rmnx*st*rhom
+    ELSEIF(r_flx(1) < rhomax_3d+rhores_3d) THEN
 
-  !!dZ/dtheta = sum_mn [ m * Z_mn * cos(m*theta-n*zeta) * rho**m ]
-  g_cylt(5)=g_cylt(5)+m_3d(k)*zmnx*ct*rhom
+      !!Inside last closed surface, rho**|m|
+      rhom=rho**mabs_3d(k)
+      drhom=mabs_3d(k)*rho**(mabs_3d(k)-1)
+      ! IF(k==1) THEN
+      ! PRINT *, "Inside."
+      ! ENDIF
 
-  !!dZ/dtheta = sum_mn [ -n * Z_mn * cos(m*theta-n*zeta) * rho**m ]
-  g_cylt(6)=g_cylt(6)-n_3d(k)*zmnx*ct*rhom
+    ELSE
 
-  !!Radial derivatives inside R,Z domain
-  IF(r_flx(1) <= rhomax_3d+rhores_3d) THEN
+      !!Outside last closed surface, rhomax**|m|
+      rhom=rhomax_3d**mabs_3d(k)
+      drhom=0
+      ! PRINT *, "Outside."
 
-    !!dR/drho = sum_mn [ rho**m * dR_mn/drho + R_mn *d(rho**m)/drho ]
-    !!                   * cos(m*theta-n*zeta)
-    g_cylt(1)=g_cylt(1)+(drmnx*rhom+rmnx*drhom)*ct
+    ENDIF
 
-    !!dZ/drho = sum_mn [ rho**m * dZ_mn/drho + Z_mn *d(rho**m)/drho ]
-    !!                   * sin(m*theta-n*zeta)
-    g_cylt(4)=g_cylt(4)+(dzmnx*rhom+zmnx*drhom)*st
+    !!R_mn and dR_mn/drho from spline fits
+    CALL SPLINE1_EVAL(k_vopt,nrho_3d,rho,rho_3d, &  
+                      r_3d(1:4,1:nrho_3d,k),i,value)
+    rmnx=value(1)
+    drmnx=value(2)
+
+    !!Z_mn and dZ_mn/drho from spline fits
+    CALL SPLINE1_EVAL(k_vopt,nrho_3d,rho,rho_3d,z_3d(1:4,1:nrho_3d,k),i,value)
+    zmnx=value(1)
+    dzmnx=value(2)
+
+    !!R = sum_mn [ R_mn * cos(m*theta-n*zeta) * rho**m ]
+    r_cyl(1)=r_cyl(1)+rmnx*ct*rhom
+
+    !!Z = sum_mn [ Z_mn * sin(m*theta-n*zeta) * rho**m ]
+    r_cyl(3)=r_cyl(3)+zmnx*st*rhom
+
+    !!dR/dtheta = sum_mn [ -m * R_mn * sin(m*theta-n*zeta) * rho**m ]
+    g_cylt(2)=g_cylt(2)-m_3d(k)*rmnx*st*rhom
+
+    !!dR/dzeta = sum_mn [ n * R_mn * sin(m*theta-n*zeta) * rho**m ]
+    g_cylt(3)=g_cylt(3)+n_3d(k)*rmnx*st*rhom
+
+    !!dZ/dtheta = sum_mn [ m * Z_mn * cos(m*theta-n*zeta) * rho**m ]
+    g_cylt(5)=g_cylt(5)+m_3d(k)*zmnx*ct*rhom
+
+    !!dZ/dzeta = sum_mn [ -n * Z_mn * cos(m*theta-n*zeta) * rho**m ]
+    g_cylt(6)=g_cylt(6)-n_3d(k)*zmnx*ct*rhom
+
+    !!Radial derivatives inside R,Z domain
+    IF(r_flx(1) <= rhomax_3d+rhores_3d) THEN
+
+      !!dR/drho = sum_mn [ rho**m * dR_mn/drho + R_mn *d(rho**m)/drho ]
+      !!                   * cos(m*theta-n*zeta)
+      g_cylt(1)=g_cylt(1)+(drmnx*rhom+rmnx*drhom)*ct
+
+      !!dZ/drho = sum_mn [ rho**m * dZ_mn/drho + Z_mn *d(rho**m)/drho ]
+      !!                   * sin(m*theta-n*zeta)
+      g_cylt(4)=g_cylt(4)+(dzmnx*rhom+zmnx*drhom)*st
+
+    ENDIF
+
+  ENDDO !!Over modes
+
+  !!Radial derivatives outside R,Z domain
+  IF(r_flx(1) > rhomax_3d+rhores_3d) THEN
+
+    !!This point is off the grid toward the wall
+    ct=COS(m_3d(km1n0_3d)*r_flx(2))
+    st=SIN(m_3d(km1n0_3d)*r_flx(2))
+    r_cyl(1)=r_cyl(1)+(r_flx(1)-rhomax_3d)*r_3d(1,nrho_3d,km1n0_3d)*ct
+    r_cyl(3)=r_cyl(3)+(r_flx(1)-rhomax_3d)*z_3d(1,nrho_3d,km1n0_3d)*st
+    g_cylt(1)=r_3d(1,nrho_3d,km1n0_3d)*ct
+    g_cylt(2)=g_cylt(2)-(r_flx(1)-rhomax_3d)*r_3d(1,nrho_3d,km1n0_3d)*st & 
+                        *m_3d(km1n0_3d)
+    g_cylt(4)=z_3d(1,nrho_3d,km1n0_3d)*st
+    g_cylt(5)=g_cylt(5)+(r_flx(1)-rhomax_3d)*z_3d(1,nrho_3d,km1n0_3d)*ct & 
+                        *m_3d(km1n0_3d)
 
   ENDIF
-
-ENDDO !!Over modes
-
-!!Radial derivatives outside R,Z domain
-IF(r_flx(1) > rhomax_3d+rhores_3d) THEN
-
-  !!This point is off the grid toward the wall
-  ct=COS(m_3d(km1n0_3d)*r_flx(2))
-  st=SIN(m_3d(km1n0_3d)*r_flx(2))
-  r_cyl(1)=r_cyl(1)+(r_flx(1)-rhomax_3d)*r_3d(1,nrho_3d,km1n0_3d)*ct
-  r_cyl(3)=r_cyl(3)+(r_flx(1)-rhomax_3d)*z_3d(1,nrho_3d,km1n0_3d)*st
-  g_cylt(1)=r_3d(1,nrho_3d,km1n0_3d)*ct
-  g_cylt(2)=g_cylt(2)-(r_flx(1)-rhomax_3d)*r_3d(1,nrho_3d,km1n0_3d)*st & 
-                      *m_3d(km1n0_3d)
-  g_cylt(4)=z_3d(1,nrho_3d,km1n0_3d)*st
-  g_cylt(5)=g_cylt(5)+(r_flx(1)-rhomax_3d)*z_3d(1,nrho_3d,km1n0_3d)*ct & 
-                      *m_3d(km1n0_3d)
 
 ENDIF
 
@@ -4516,17 +4851,15 @@ IF(ALLOCATED(rho_3d)) THEN
   IF(nset1 /= nrho_3d .OR. &     
      nset2 /= krz_3d) THEN
 
-    !!Reallocate radial grid and R,Z
-    DEALLOCATE(rho_3d, &     
-               r_3d, &     
-               z_3d)
-    ALLOCATE(rho_3d(nrho_3d), &    
-             r_3d(4,nrho_3d,krz_3d), &   
-             z_3d(4,nrho_3d,krz_3d))
+  DEALLOCATE(rho_3d, r_3d, z_3d, rc_3d, rs_3d, zc_3d, zs_3d)
 
-      rho_3d(:)=0
-      r_3d(:,:,:)=0
-      z_3d(:,:,:)=0
+  ALLOCATE(rho_3d(nrho_3d), &
+          r_3d(4,nrho_3d,krz_3d), &
+          z_3d(4,nrho_3d,krz_3d), &
+          rc_3d(4,nrho_3d,krz_3d), &
+          rs_3d(4,nrho_3d,krz_3d), &
+          zc_3d(4,nrho_3d,krz_3d), &
+          zs_3d(4,nrho_3d,krz_3d))
 
   ENDIF
 
@@ -4535,11 +4868,19 @@ ELSE
   !!Allocate radial grid and R,Z
   ALLOCATE(rho_3d(nrho_3d), &    
            r_3d(4,nrho_3d,krz_3d), &   
-           z_3d(4,nrho_3d,krz_3d))
+           z_3d(4,nrho_3d,krz_3d), &
+           rc_3d(4,nrho_3d,krz_3d), &
+           rs_3d(4,nrho_3d,krz_3d), &
+           zc_3d(4,nrho_3d,krz_3d), &
+           zs_3d(4,nrho_3d,krz_3d))
 
     rho_3d(:)=0
     r_3d(:,:,:)=0
     z_3d(:,:,:)=0
+    rc_3d(:,:,:)=0
+    rs_3d(:,:,:)=0
+    zc_3d(:,:,:)=0
+    zs_3d(:,:,:)=0
 
 ENDIF
 
