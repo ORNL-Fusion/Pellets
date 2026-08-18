@@ -9,6 +9,7 @@ SUBROUTINE SETUP_AJAX(k_equil,n_eq,r0,a0,s0,e0,e1,d1,bt0,q0,q1,n_rho,rho,      &
 !-------------------------------------------------------------------------------
 USE SPEC_KIND_MOD
 USE AJAX_MOD
+USE FLUXAV_MOD, ONLY: FLUXAV_AJAX_SIZES, FLUXAV_AJAX_MOMENTS
 IMPLICIT NONE
 
 !Declaration of input variables
@@ -47,10 +48,16 @@ INTEGER, INTENT(OUT) :: &
 !-------------------------------------------------------------------------------
 !Declaration of local variables
 INTEGER :: &
-  k_pflx
+  k_pflx, nr_rz, nk_rz
+
+INTEGER, ALLOCATABLE :: &
+  m(:), n(:)
 
 REAL(kind=rspec) :: &
   phitot,q(1:n_rho),v1(1:n_rho),v2(1:n_rho)
+
+REAL(kind=rspec), ALLOCATABLE :: &
+  rho_rz(:), q_ajax(:), rmn(:,:), zmn(:,:)
 
 !Physical and conversion constants
 REAL(KIND=rspec), PARAMETER :: &
@@ -75,6 +82,36 @@ IF(k_equil == 1) THEN
     GOTO 9999
 
   ENDIF
+
+ELSEIF(k_equil==2) THEN
+
+  iflag=0
+  message=''
+  CALL FLUXAV_AJAX_SIZES(nr_rz,nk_rz,iflag,message)
+
+  ALLOCATE(rho_rz(nr_rz), &
+           q_ajax(nr_rz))
+  ALLOCATE(m(nk_rz), &
+           n(nk_rz))
+  ALLOCATE(rmn(nr_rz,nk_rz), &
+           zmn(nr_rz,nk_rz))
+
+  CALL FLUXAV_AJAX_MOMENTS(nr_rz,nk_rz,rho_rz,m,n,rmn,zmn, &
+                           phitot,q_ajax,iflag,message)
+                          
+  CALL AJAX_LOAD_RZLAM(nr_rz,nk_rz,rho_rz,m,n,rmn,zmn, &
+                       iflag,message, &
+                       K_GRID=0, &
+                       NRHO_AJAX=nrho_ajax, &
+                       NTHETA_AJAX=ntheta_ajax, &
+                       NZETA_AJAX=nzeta_ajax)
+
+  k_pflx = 0
+
+  CALL AJAX_LOAD_MAGFLUX(phitot,k_pflx,nr_rz,rho_rz,q_ajax, &
+                         iflag,message)
+
+  DEALLOCATE(rho_rz,q_ajax,m,n,rmn,zmn)
 
 ELSE
 
