@@ -3410,19 +3410,56 @@ rhot_f(1:nr_f)=SQRT(phit_f(1:nr_f)/phit_f(nr_f))
 
 END SUBROUTINE FLUXAV_SURF
 
-SUBROUTINE FLUXAV_AJAX_SIZES(nx_xy,ny_xy,nr_rz,nk_rz)
+SUBROUTINE FLUXAV_AJAX_SIZES(nr_rz,nk_rz,iflag,message)
+!-------------------------------------------------------------------------------
+! FLUXAV_AJAX_SIZES returns the private data for number of x,y points
+! on the psi(x,y) grid. Needed for FLUXAV_AJAX_MOMENTS.
+!
+! Comment:
+!   mp_min        -
+!-------------------------------------------------------------------------------
 
-!Declaration of input variables
-INTEGER, INTENT(IN) :: &
-  nx_xy,               & !number of x points on psi(x,y) grid [-]
-  ny_xy                  !number of y points on psi(x,y) grid [-]
-
+!Declaration of output variables
 INTEGER, INTENT(OUT) :: &
   nr_rz,                & !number of x points on psi(x,y) grid [-]
-  nk_rz                   !number of y points on psi(x,y) grid [-]
+  nk_rz,                & !number of y points on psi(x,y) grid [-]
+  iflag                   !error flag[-]
 
-nr_rz=nx_xy
-nk_rz=ny_xy
+CHARACTER(len=*), INTENT(OUT) :: &
+  message                !warning or error message
+
+! Declaration of local variables
+INTEGER :: &
+  mp_min
+
+!-------------------------------------------------------------------------------
+!Initialize
+!-------------------------------------------------------------------------------
+iflag = 0
+message = ' '
+
+nr_rz = 0
+nk_rz = 0
+
+!-------------------------------------------------------------------------------
+!Check that FLUXAV_LOAD has already produced flux surfaces
+!-------------------------------------------------------------------------------
+IF (nr_f <= 0 .OR. .NOT. ALLOCATED(rhot_f) .OR. .NOT. ALLOCATED(mp_f)) THEN
+  iflag = 1
+  message = 'FLUXAV_AJAX_SIZES: FLUXAV_LOAD must be called before exporting AJAX data'
+  GOTO 9999
+END IF
+
+nr_rz = nr_f
+
+! Use a modest first-pass Fourier representation: m = 0,...,8.
+! Also avoid asking for more modes than the contour resolution supports.
+IF (nr_f > 1) THEN
+  mp_min = MINVAL(mp_f(2:nr_f)-1)
+  nk_rz = MIN(9, MAX(1, mp_min/2))
+ELSE
+  nk_rz = 1
+END IF
 
 !-------------------------------------------------------------------------------
 !Cleanup and exit
@@ -3430,5 +3467,115 @@ nk_rz=ny_xy
 9999 CONTINUE
 
 END SUBROUTINE FLUXAV_AJAX_SIZES
+
+SUBROUTINE FLUXAV_AJAX_MOMENTS(nr_rz, nk_rz, rho_rz, m, n, rmn, zmn, &
+                               phitot, q_ajax, iflag, message)
+!-------------------------------------------------------------------------------
+! FLUXAV_AJAX_MOMENTS takes private data from FLUXAV and converts it to 
+!   the shape needed for AJAX to use. This is done for the EQDSK reader, 
+!   where PELLET_EFIT already calls FLUXAV_LOAD which calculates and
+!   stores the arrays needed, but they aren't available outside the module. 
+!
+! Comment:
+!   ri          -
+!   zi          -
+!   theta       -
+!-------------------------------------------------------------------------------
+
+!Declare input variables
+INTEGER, INTENT(IN) :: &
+  nr_rz,               & ! number of radial flux surfaces [-]
+  nk_rz                  ! number of R/Z Fourier modes [-]
+
+!Declare output variables
+REAL(KIND=rspec), INTENT(OUT) :: &
+  phitot                 ! total toroidal flux
+
+REAL(KIND=rspec), INTENT(OUT) :: &
+  rho_rz(nr_rz),        & ! normalized rho grid for AJAX [rho]
+                          ! (pref. ~sqrt(toroidal flux))
+  rmn(nr_rz,nk_rz),     & ! Fourier shape coefficient [-]
+                          ! rmn(j,k) R shape for surface j, mode k
+  zmn(nr_rz,nk_rz),     & ! Fourier shape coefficient [-]
+                          ! zmn(j,k) Z shape for surface j, mode k
+  q_ajax(nr_rz)           ! q profile on rho_rz grid [-]
+
+INTEGER, INTENT(OUT) :: &
+  iflag                    ! error flag [-]
+
+INTEGER, INTENT(OUT) :: &
+  m(nk_rz),n(nk_rz)        ! Fourier mode numbers; axisymmetric -> n(:) = 0
+
+CHARACTER(len=*), INTENT(OUT) :: &
+  message                  ! warning or error message
+
+! Declaration of local variables
+! Loop counters
+INTEGER :: &
+  ii,jj,kk,im,npt
+
+REAL(KIND=rspec) :: &
+  ri,zi,theta
+
+!-------------------------------------------------------------------------------
+!Initialize
+!-------------------------------------------------------------------------------
+phitot = 0.0_rspec
+
+rho_rz(:) = 0.0_rspec
+m(:) = 0
+n(:) = 0
+rmn(:,:) = 0.0_rspec
+zmn(:,:) = 0.0_rspec
+q_ajax(:) = 0.0_rspec
+
+rmn(1,1) = rmag_f
+zmn(1,:) = 0.0_rspec
+
+!-------------------------------------------------------------------------------
+! Map FLUXAV data to AJAX data
+!-------------------------------------------------------------------------------
+rho_rz(:) = rhot_f(:) !radial grid prop to sqrt(tor flux) [rho]
+phitot = phit_f(nr_f) !tor magnetic flux on radial grid [Wb]
+q_ajax(:) = q_f(:)    !safety factor on radial grid [-]
+
+DO kk = 1, nk_rz
+  m(kk) = kk - 1
+  n(kk) = 0
+ENDDO
+
+DO jj = 2,nr_rz !Over flux surfaces
+
+  npt = mp_f(jj) - 1 !number of pol data points on surfaces [-]
+
+  DO ii = 1,npt
+    theta = 2.0_rspec*z_pi*REAL(ii-1,rspec) / REAL(npt,rspec) !poloidal angle around flux surface [-]
+    ri = xp_f(ii,jj)
+    zi = yp_f(ii,jj)
+
+    rmn(jj,1) = rmn(jj,1) + ri
+
+    DO kk = 2, nk_rz
+
+      im = m(kk)
+
+      rmn(jj,kk) = rmn(jj,kk) + ri*COS(REAL(im,rspec)*theta)
+      zmn(jj,kk) = zmn(jj,kk) + zi*SIN(REAL(im,rspec)*theta)
+
+    ENDDO
+
+  ENDDO
+
+  ! Finish averages
+  rmn(jj,1) = rmn(jj,1) / REAL(npt,rspec)
+
+  DO kk = 2,nk_rz
+    rmn(jj,kk) = 2.0_rspec*rmn(jj,kk) / REAL(npt,rspec)
+    zmn(jj,kk) = 2.0_rspec*zmn(jj,kk) / REAL(npt,rspec)
+  ENDDO
+
+ENDDO
+
+END SUBROUTINE FLUXAV_AJAX_MOMENTS
 
 END MODULE FLUXAV_MOD
